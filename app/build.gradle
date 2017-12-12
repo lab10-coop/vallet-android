@@ -15,19 +15,27 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    flavorDimensions "free"
+    flavorDimensions "free", "environment"
 
     productFlavors {
         client {
             applicationId "io.lab10.vallet"
             versionCode 1
             versionName "1.0"
+            dimension "free"
         }
 
         admin {
             applicationId "io.lab10.vallet.admin"
             versionCode 1
             versionName "1.0"
+            dimension "free"
+        }
+        staging {
+            dimension "environment"
+        }
+        production {
+            dimension "environment"
         }
     }
 
