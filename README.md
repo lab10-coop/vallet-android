@@ -11,3 +11,8 @@ To avoid additional overhead we are using product Flavors to distinguish between
 This way we will be able to speed up the development process by sharing at the beginning some code base.
 
 For more details check build `productFlavors` in `app/build.gradle`
+
+# Build
+
+To compile project choose desired build variant to build and compile it.
+
