@@ -14,6 +14,23 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    flavorDimensions "free"
+
+    productFlavors {
+        client {
+            applicationId "io.lab10.vallet"
+            versionCode 1
+            versionName "1.0"
+        }
+
+        admin {
+            applicationId "io.lab10.vallet.admin"
+            versionCode 1
+            versionName "1.0"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

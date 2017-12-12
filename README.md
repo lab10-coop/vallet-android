@@ -1,6 +1,6 @@
 # Vallet
 
-Client app for Vallet platform
+Client and Admin app for Vallet platform
 
 # Dev setup
 
