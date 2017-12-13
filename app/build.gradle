@@ -1,11 +1,19 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
+apply plugin: 'com.github.triplet.play'
 
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
+
+    playAccountConfigs {
+        defaultAccountConfig {
+            jsonFile = file('app/GitLabCI.json')
+        }
+    }
+
     defaultConfig {
         applicationId "io.lab10.vallet"
         minSdkVersion 21
@@ -13,6 +21,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
+
     }
 
     flavorDimensions "free", "environment"
@@ -45,6 +55,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
