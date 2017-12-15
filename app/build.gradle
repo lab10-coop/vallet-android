@@ -5,12 +5,13 @@ apply plugin: 'com.github.triplet.play'
 
 apply plugin: 'kotlin-android-extensions'
 
+
 android {
     compileSdkVersion 26
 
     playAccountConfigs {
         defaultAccountConfig {
-            jsonFile = file('app/GitLabCI.json')
+            jsonFile = file('GitLabCI.json')
         }
     }
 
@@ -22,7 +23,14 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         playAccountConfig = playAccountConfigs.defaultAccountConfig
-
+        signingConfigs {
+            release {
+                storeFile file("../Lab10.jks")
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+                storePassword System.getenv('ANDROID_STORE_PASSWORD')
+                keyAlias "key0"
+            }
+        }
     }
 
     flavorDimensions "free", "environment"
@@ -30,16 +38,18 @@ android {
     productFlavors {
         client {
             applicationId "io.lab10.vallet"
-            versionCode 1
-            versionName "1.0"
+            versionCode 2
+            versionName "1.0.1"
             dimension "free"
+            signingConfig signingConfigs.release
         }
 
         admin {
             applicationId "io.lab10.vallet.admin"
-            versionCode 1
-            versionName "1.0"
+            versionCode 2
+            versionName "1.0.1"
             dimension "free"
+            signingConfig signingConfigs.release
         }
         staging {
             dimension "environment"
@@ -53,6 +63,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 

@@ -21,13 +21,20 @@ before_script:
   - chmod +x ./gradlew
 
 stages:
-  - build
-  - test
+  - release
 
-build:
-  stage: build
+releaseStagingClient:
+  stage: release
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew publishApkClientStagingRelease
+  artifacts:
+    paths:
+    - app/build/outputs/
+
+releaseStagingAdmin:
+  stage: release
+  script:
+    - ./gradlew publishApkAdminStagingRelease
   artifacts:
     paths:
     - app/build/outputs/
