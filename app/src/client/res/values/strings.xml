@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Vallet</string>
+    <string name="title_activity_client">ClientActivity</string>
+</resources>
