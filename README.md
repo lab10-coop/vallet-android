@@ -16,3 +16,12 @@ For more details check build `productFlavors` in `app/build.gradle`
 
 To compile project choose desired build variant to build and compile it.
 
+# Keystore
+
+Keystore is part of the git repo is encrypted and password is keept in secret. Ask @rmi for details.
+
+# CI/CD
+
+We are using `gradle-play-publisher` for deployment.
+Gitlab is handling our builds (tests in the future) and deployment to google play see `.gitlabci.yml` for details.
+Required secret variables for keystore password and keypassword. See `app/build.gradle` for details.
