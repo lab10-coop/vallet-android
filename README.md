@@ -1,3 +1,6 @@
+[![pipeline status](https://code.lab10.io/graz/06-Voucher-Wallet/vallet/android/vallet/badges/master/pipeline.svg)](https://code.lab10.io/graz/06-Voucher-Wallet/vallet/android/vallet/commits/master)
+
+
 # Vallet
 
 Client and Admin app for Vallet platform
