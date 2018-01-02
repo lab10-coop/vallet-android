@@ -38,16 +38,16 @@ android {
     productFlavors {
         client {
             applicationId "io.lab10.vallet"
-            versionCode 3
-            versionName "1.0.2"
+            versionCode 4
+            versionName "1.0.3"
             dimension "free"
             signingConfig signingConfigs.release
         }
 
         admin {
             applicationId "io.lab10.vallet.admin"
-            versionCode 3
-            versionName "1.0.2"
+            versionCode 4
+            versionName "1.0.3"
             dimension "free"
             signingConfig signingConfigs.release
         }
