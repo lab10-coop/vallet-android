@@ -12,8 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="io.lab10.vallet.admin.AdminActivity"
+            android:name=".admin.AdminActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".admin.VoucherActivity"
+            android:label="@string/title_activity_voucher"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".admin.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

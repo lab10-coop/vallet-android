@@ -6,4 +6,6 @@
 
     <string name="action_scan">Scan</string>
     <string name="title_activity_admin">Vallet Admin</string>
+    <string name="title_activity_voucher">VoucherActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
