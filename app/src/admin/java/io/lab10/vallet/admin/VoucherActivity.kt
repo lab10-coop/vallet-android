@@ -1,22 +1,24 @@
 package io.lab10.vallet.admin
 
-import android.support.design.widget.Snackbar
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import io.lab10.vallet.R
 
 import kotlinx.android.synthetic.admin.activity_voucher.*
-import kotlinx.android.synthetic.admin.fragment_voucher.view.*
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Spinner
+import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
+
 
 class VoucherActivity : AppCompatActivity() {
 
@@ -28,94 +30,91 @@ class VoucherActivity : AppCompatActivity() {
      * may be best to switch to a
      * [android.support.v4.app.FragmentStatePagerAdapter].
      */
-    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private var mStepsPagerAdapter: StepsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voucher)
 
-        setSupportActionBar(toolbar)
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+        mStepsPagerAdapter = StepsPagerAdapter(supportFragmentManager)
 
-        // Set up the ViewPager with the sections adapter.
-        container.adapter = mSectionsPagerAdapter
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
+        // Set up the ViewPager with the step adapter.
+        voucherSettingsViewPager.adapter = mStepsPagerAdapter
     }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_voucher, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        if (id == R.id.action_settings) {
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
 
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
+     * one of the steps.
      */
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    inner class StepsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1)
+            when(position) {
+                0 -> {
+                    return VoucherNameFragment.newInstance(voucherSettingsViewPager)
+                }
+                1 -> {
+                    return VoucherSettingsFragment.newInstance()
+                } else -> {
+                    return VoucherNameFragment.newInstance(voucherSettingsViewPager)
+                }
+            }
         }
 
         override fun getCount(): Int {
-            // Show 3 total pages.
-            return 3
+            return 2
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    class PlaceholderFragment : Fragment() {
+    class VoucherNameFragment : Fragment(), View.OnClickListener {
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        override fun onClick(view: View?) {
+            when (view?.id) {
+                R.id.voucherNextBtn -> {
+                    voucherViewPager?.currentItem = 1
+                }
+            }
+        }
+
+        override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_voucher, container, false)
-            rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
+            val rootView = inflater.inflate(R.layout.fragment_voucher_name, viewGroup, false)
+            rootView.voucherNextBtn.setOnClickListener(this)
             return rootView
         }
 
         companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
-            private val ARG_SECTION_NUMBER = "section_number"
+            var voucherViewPager: ViewPager? = null
 
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
-                val args = Bundle()
-                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-                fragment.arguments = args
+            fun newInstance(viewPager: ViewPager): VoucherNameFragment {
+                val fragment = VoucherNameFragment()
+                voucherViewPager = viewPager
+                return fragment
+            }
+        }
+    }
+
+    class VoucherSettingsFragment : Fragment() {
+        override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+            val rootView = inflater.inflate(R.layout.fragment_voucher_settings, viewGroup, false)
+            val adapter = ArrayAdapter.createFromResource(this.context,
+                    R.array.voucher_type, android.R.layout.simple_spinner_item)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            val spinner = rootView.findViewById(R.id.voucherTypeSpinner) as Spinner
+            spinner.adapter = adapter
+            val finishButton = rootView.findViewById(R.id.voucherFinishBtn) as Button
+            finishButton.setOnClickListener() {v ->
+                // TODO store all details and trigger initialization of the voucher
+                val intent = Intent(view?.context, AdminActivity::class.java)
+                startActivity(intent)
+            }
+            return rootView
+        }
+
+        companion object {
+            fun newInstance() : VoucherSettingsFragment {
+                val fragment = VoucherSettingsFragment()
                 return fragment
             }
         }

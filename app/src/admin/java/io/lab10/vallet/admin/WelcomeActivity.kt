@@ -16,7 +16,7 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_welcome)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(baseContext)
-        val firstRun = sharedPreferences.getBoolean("FIRST_RUN", false)
+        val firstRun = sharedPreferences.getBoolean("FIRST_RUN", true)
         if (firstRun) {
             // TODO Start VoucherActivity
             val intent = Intent(this, VoucherActivity::class.java)

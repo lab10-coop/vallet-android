@@ -8,4 +8,9 @@
     <string name="title_activity_admin">Vallet Admin</string>
     <string name="title_activity_voucher">VoucherActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="voucher_name_label">Enter name for your voucher</string>
+    <string-array name="voucher_type">
+        <item>EUR</item>
+        <item>Item</item>
+    </string-array>
 </resources>
