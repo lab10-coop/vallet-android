@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 
@@ -17,7 +18,9 @@ import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
+import kotlinx.android.synthetic.admin.fragment_voucher_settings.view.*
 
 
 class VoucherActivity : AppCompatActivity() {
@@ -31,6 +34,7 @@ class VoucherActivity : AppCompatActivity() {
      * [android.support.v4.app.FragmentStatePagerAdapter].
      */
     private var mStepsPagerAdapter: StepsPagerAdapter? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +75,10 @@ class VoucherActivity : AppCompatActivity() {
         override fun onClick(view: View?) {
             when (view?.id) {
                 R.id.voucherNextBtn -> {
+                    val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+                    val editor = sharedPref.edit()
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_name), inputVoucherName.text.toString())
+                    editor.commit()
                     voucherViewPager?.currentItem = 1
                 }
             }
@@ -78,8 +86,12 @@ class VoucherActivity : AppCompatActivity() {
 
         override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
+
             val rootView = inflater.inflate(R.layout.fragment_voucher_name, viewGroup, false)
             rootView.voucherNextBtn.setOnClickListener(this)
+            val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
+            rootView.inputVoucherName.setText(voucherName)
             return rootView
         }
 
@@ -95,6 +107,7 @@ class VoucherActivity : AppCompatActivity() {
     }
 
     class VoucherSettingsFragment : Fragment() {
+
         override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?, savedInstanceState: Bundle?): View? {
 
             val rootView = inflater.inflate(R.layout.fragment_voucher_settings, viewGroup, false)
@@ -105,7 +118,13 @@ class VoucherActivity : AppCompatActivity() {
             spinner.adapter = adapter
             val finishButton = rootView.findViewById(R.id.voucherFinishBtn) as Button
             finishButton.setOnClickListener() {v ->
-                // TODO store all details and trigger initialization of the voucher
+                val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), Integer.parseInt(rootView.inputVoucherDecimal.text.toString()))
+                editor.putString(resources.getString(R.string.shared_pref_voucher_type), rootView.voucherTypeSpinner.selectedItem.toString())
+                editor.putBoolean("FIRST_RUN", false)
+                editor.commit()
+
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)
             }

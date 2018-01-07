@@ -13,4 +13,8 @@
         <item>EUR</item>
         <item>Item</item>
     </string-array>
+
+    <string name="shared_pref_voucher_name">voucher_name</string>
+    <string name="shared_pref_voucher_type">voucher_type</string>
+    <string name="shared_pref_voucher_decimal">voucher_decimal</string>
 </resources>

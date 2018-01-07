@@ -6,23 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import io.lab10.vallet.R
-import kotlinx.android.synthetic.admin.activity_admin.*
-import kotlinx.android.synthetic.admin.app_bar_admin.*
 import android.content.IntentFilter
 import android.bluetooth.BluetoothAdapter
 import android.util.Log
+import kotlinx.android.synthetic.admin.activity_admin.*
 
 
-class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class AdminActivity : AppCompatActivity() {
 
     val TAG = "AdminActivity"
     val broadCastReceiver = object : BroadcastReceiver() {
@@ -56,38 +51,21 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
-        setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        nav_view.setNavigationItemSelectedListener(this)
         // Register for broadcasts when a device is discovered.
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         filter.addAction(BluetoothDevice.ACTION_UUID)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
         registerReceiver(broadCastReceiver, filter)
+
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
+        voucherNameLabel.text = voucherName.toString()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadCastReceiver)
-    }
-
-    override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,33 +82,6 @@ class AdminActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.action_scan -> startScanningForAddresses()
             else -> return super.onOptionsItemSelected(item)
         }
-        return true
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
-            }
-        }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 

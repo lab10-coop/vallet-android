@@ -7,4 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="logo_margin">16dp</dimen>
     <dimen name="label_margin">8dp</dimen>
+    <dimen name="font_normal">16sp</dimen>
+    <dimen name="font_big">32sp</dimen>
 </resources>
