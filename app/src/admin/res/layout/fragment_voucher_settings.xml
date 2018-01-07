@@ -33,6 +33,7 @@
             android:id="@+id/voucherSpinnerLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
             android:text="Type of voucher" />
 
         <Spinner
@@ -43,6 +44,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
             android:text="Decimal"/>
 
         <EditText
