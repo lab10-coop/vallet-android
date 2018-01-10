@@ -8,14 +8,14 @@ import android.widget.TextView
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment.OnListFragmentInteractionListener
-import io.lab10.vallet.admin.dummy.DummyContent.DummyItem
+import io.lab10.vallet.admin.models.Users
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
-class DiscoveryUserRecyclerViewAdapter(private val mValues: List<DummyItem>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
+class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,11 +26,15 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<DummyItem>, pri
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues[position]
         holder.mIdView.text = mValues[position].id
-        holder.mContentView.text = mValues[position].content
+        holder.mContentView.text = mValues[position].address
 
         holder.mView.setOnClickListener {
-            //mListener?.onListFragmentInteraction(holder.mItem)
+            val user = holder.mItem
+            if (user != null) {
+                mListener?.onListFragmentInteraction(user)
+            }
         }
+
     }
 
     override fun getItemCount(): Int {
@@ -40,7 +44,7 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<DummyItem>, pri
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView
         val mContentView: TextView
-        var mItem: DummyItem? = null
+        var mItem: Users.User? = null
 
         init {
             mIdView = mView.findViewById(R.id.id) as TextView

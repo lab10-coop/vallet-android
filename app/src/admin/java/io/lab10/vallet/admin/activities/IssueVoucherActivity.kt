@@ -7,13 +7,13 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment
-import io.lab10.vallet.admin.dummy.DummyContent
+import io.lab10.vallet.admin.models.Users
 
 import kotlinx.android.synthetic.admin.activity_issue_voucher.*
 
 class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFragmentInteractionListener {
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem) {
+    override fun onListFragmentInteraction(item: Users.User) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

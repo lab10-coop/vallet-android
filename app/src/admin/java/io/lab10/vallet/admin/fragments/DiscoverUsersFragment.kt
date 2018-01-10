@@ -11,8 +11,7 @@ import android.view.ViewGroup
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 
-import io.lab10.vallet.admin.dummy.DummyContent
-import io.lab10.vallet.admin.dummy.DummyContent.DummyItem
+import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 
 /**
@@ -42,7 +41,7 @@ class DiscoverUsersFragment : Fragment() {
             val context = view.list.getContext()
             val recyclerView = view.list as RecyclerView
             recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = DiscoveryUserRecyclerViewAdapter(DummyContent.ITEMS, mListener)
+            recyclerView.adapter = DiscoveryUserRecyclerViewAdapter(Users.ITEMS, mListener)
         }
         return view
     }
@@ -73,7 +72,7 @@ class DiscoverUsersFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem)
+        fun onListFragmentInteraction(item: Users.User)
     }
 
     companion object {
