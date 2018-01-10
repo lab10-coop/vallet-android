@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context="io.lab10.vallet.admin.WelcomeActivity">
+    tools:context="io.lab10.vallet.admin.activities.WelcomeActivity">
 
     <ImageView
         android:id="@+id/imageView2"

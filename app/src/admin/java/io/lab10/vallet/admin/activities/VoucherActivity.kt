@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet.admin.activities
 
 import android.content.Context
 import android.content.Intent

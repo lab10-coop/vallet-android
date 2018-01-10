@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context="io.lab10.vallet.admin.VoucherActivity$VoucherNameFragment">
+    tools:context="io.lab10.vallet.admin.activities.VoucherActivity$VoucherNameFragment">
 
 
     <LinearLayout

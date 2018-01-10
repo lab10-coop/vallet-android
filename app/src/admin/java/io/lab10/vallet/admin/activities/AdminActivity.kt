@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet.admin.activities
 
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -47,7 +47,6 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
@@ -61,6 +60,12 @@ class AdminActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
         voucherNameLabel.text = voucherName.toString()
+
+        issueVouchersBtn.setOnClickListener() { v ->
+            val intent = Intent(this, IssueVoucherActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onDestroy() {

@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="io.lab10.vallet.admin.activities.VoucherActivity">
+    tools:context="io.lab10.vallet.admin.activities.IssueVoucherActivity">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/voucherSettingsViewPager"
+    <io.lab10.vallet.admin.NonSwipeableViewPager
+        android:id="@+id/issueVoucherViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

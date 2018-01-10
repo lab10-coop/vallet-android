@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context="io.lab10.vallet.admin.activities.IssueVoucherActivity">
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="0dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/background"
+        app:layout_constraintTop_toTopOf="parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/logo_margin"
+            android:paddingBottom="50dp"
+            android:paddingTop="50dp"
+            android:src="@drawable/vallet_logo" />
+
+        <TextView
+            android:id="@+id/selectUserLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:textAlignment="center"
+            android:textSize="@dimen/font_normal"
+            android:text="@string/select_user_nearby"
+            tools:text="Select user nearby" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:background="@drawable/divider_gradient" />
+
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/list"
+            android:name="io.lab10.vallet.admin.DiscoverUsersFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context="io.lab10.vallet.admin.fragments.DiscoverUsersFragment"
+            tools:listitem="@layout/fragment_user_item" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
