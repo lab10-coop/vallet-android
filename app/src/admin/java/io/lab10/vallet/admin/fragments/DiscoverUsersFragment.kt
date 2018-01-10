@@ -1,17 +1,25 @@
 package io.lab10.vallet.admin.fragments
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 
 import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.admin.recievers.BluetoothBroadcastReveiver
+import io.lab10.vallet.connectivity.BTUtils
+import kotlinx.android.synthetic.admin.fragment_user_list.*
 import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 
 /**
@@ -25,17 +33,37 @@ import kotlinx.android.synthetic.admin.fragment_user_list.view.*
  * Mandatory empty constructor for the fragment manager to instantiate the
  * fragment (e.g. upon screen orientation changes).
  */
-class DiscoverUsersFragment : Fragment() {
+class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+
     private var mListener: OnListFragmentInteractionListener? = null
+    private var bluetoothReceiver: BluetoothBroadcastReveiver? = BluetoothBroadcastReveiver()
+    override fun onRefresh() {
+        Toast.makeText(this.context, "Refresh", Toast.LENGTH_SHORT).show()
+        BTUtils.startScanningForAddresses(activity)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Register for broadcasts when a device is discovered.
+        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        filter.addAction(BluetoothDevice.ACTION_UUID)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+        activity.registerReceiver(bluetoothReceiver, filter)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        BTUtils.startScanningForAddresses(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_user_list, container, false)
 
+        view.swipe_container.setOnRefreshListener(this)
         // Set the adapter
         if (view.list is RecyclerView) {
             val context = view.list.getContext()
@@ -44,6 +72,11 @@ class DiscoverUsersFragment : Fragment() {
             recyclerView.adapter = DiscoveryUserRecyclerViewAdapter(Users.ITEMS, mListener)
         }
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity.unregisterReceiver(bluetoothReceiver)
     }
 
 

@@ -1,5 +1,10 @@
 package io.lab10.vallet.connectivity
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import java.math.BigInteger
 import java.util.*
 import java.util.regex.Matcher
@@ -13,7 +18,7 @@ object BTUtils {
 
 
     internal fun decodeAddress(uuid: String): String? {
-        val regex = "([a-f0-9]{8})-([a-f0-9]{4})-4([a-f0-9]{3})-8([a-f0-9]{3})-([a-f0-9]{8})c0de"
+        val regex = "([a-f0-9]{8})-([a-f0-9]{4})-4([a-f0-9]{3})-8([a-f0-9]{3})-([a-f0-9]{9})lab"
         val pattern = Pattern.compile(regex)
         val m = pattern.matcher(uuid.toLowerCase())
         if (m.find()) {
@@ -39,6 +44,28 @@ object BTUtils {
                 hexData.substring(15, 18) + "-" +
                 hexData.substring(18) + "eth1")
 
+    }
+
+    fun startScanningForAddresses(activity: Activity) {
+
+        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(activity, "This device does not support BT can't use scanning", Toast.LENGTH_SHORT)
+            return
+        }
+        if (!mBluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            activity.startActivityForResult(enableBtIntent, 1)
+            // TODO handle turn on off in activity
+            // see https://developer.android.com/guide/topics/connectivity/bluetooth.html
+        }
+        // TODO find out what will happen if the scanning is ongoing
+        val btStarted = mBluetoothAdapter.startDiscovery()
+        if(btStarted) {
+            Toast.makeText(activity, "Start scanning for addresses nearby", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(activity,"Something went wrong", Toast.LENGTH_SHORT).show()
+        }
     }
 }
 

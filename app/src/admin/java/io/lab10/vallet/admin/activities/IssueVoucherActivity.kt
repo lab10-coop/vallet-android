@@ -1,18 +1,18 @@
 package io.lab10.vallet.admin.activities
 
-import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment
 import io.lab10.vallet.admin.models.Users
-
 import kotlinx.android.synthetic.admin.activity_issue_voucher.*
 
 class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFragmentInteractionListener {
 
+    val TAG = IssueVoucherActivity::class.java.simpleName
     override fun onListFragmentInteraction(item: Users.User) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -39,7 +39,6 @@ class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFr
         issueVoucherViewPager.adapter = mSectionsPagerAdapter
     }
 
-
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
      * one of the steps.
@@ -65,5 +64,4 @@ class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFr
             return 2
         }
     }
-
 }
