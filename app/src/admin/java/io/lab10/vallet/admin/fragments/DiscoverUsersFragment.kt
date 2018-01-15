@@ -12,15 +12,20 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
+import io.lab10.vallet.admin.events.BTScanningActivityEvent
 
 import io.lab10.vallet.admin.models.Users
-import io.lab10.vallet.admin.recievers.BluetoothBroadcastReveiver
+import io.lab10.vallet.admin.recievers.BluetoothBroadcastReceiver
 import io.lab10.vallet.connectivity.BTUtils
 import kotlinx.android.synthetic.admin.fragment_user_list.*
 import kotlinx.android.synthetic.admin.fragment_user_list.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.ThreadMode
+import org.greenrobot.eventbus.Subscribe
+
+
 
 /**
  * A fragment representing a list of Items.
@@ -36,9 +41,8 @@ import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var mListener: OnListFragmentInteractionListener? = null
-    private var bluetoothReceiver: BluetoothBroadcastReveiver? = BluetoothBroadcastReveiver()
+    private var bluetoothReceiver: BluetoothBroadcastReceiver? = BluetoothBroadcastReceiver()
     override fun onRefresh() {
-        Toast.makeText(this.context, "Refresh", Toast.LENGTH_SHORT).show()
         BTUtils.startScanningForAddresses(activity)
     }
 
@@ -52,6 +56,21 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
         activity.registerReceiver(bluetoothReceiver, filter)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: BTScanningActivityEvent) {
+       swipe_container.isRefreshing = event.isRunning
     }
 
     override fun onResume() {

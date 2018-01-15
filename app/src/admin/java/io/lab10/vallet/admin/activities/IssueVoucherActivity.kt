@@ -9,6 +9,13 @@ import io.lab10.vallet.R
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_issue_voucher.*
+import org.greenrobot.eventbus.EventBus
+import android.widget.Toast
+import io.lab10.vallet.admin.events.NewAddressEvent
+import org.greenrobot.eventbus.ThreadMode
+import org.greenrobot.eventbus.Subscribe
+
+
 
 class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFragmentInteractionListener {
 
@@ -37,6 +44,22 @@ class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFr
 
         // Set up the ViewPager with the sections adapter.
         issueVoucherViewPager.adapter = mSectionsPagerAdapter
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: NewAddressEvent) {
+        Toast.makeText(this, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
     }
 
     /**
