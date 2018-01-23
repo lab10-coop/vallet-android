@@ -45,7 +45,7 @@ class ClientActivity : AppCompatActivity() {
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // TODO store eth address in preferences
         val address = "Lab10Vallet"
-        val uuid = BTUtils.encodeServiceName(address)
+        val uuid = BTUtils.encodeAddress(address)
         val btSocket = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(getString(R.string.app_name), uuid)
 
     }
