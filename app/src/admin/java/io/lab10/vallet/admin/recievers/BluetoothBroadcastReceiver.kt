@@ -21,6 +21,7 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
 
 
     val TAG = BluetoothBroadcastReceiver::class.java.simpleName
+    var mDeviceList = ArrayList<BluetoothDevice>()
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -28,8 +29,8 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
             when (intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice
-                    Log.d(TAG, "Found device asking for list of services")
-                    device.fetchUuidsWithSdp()
+                    Log.d(TAG, "Found device waiting to finish scannaning ...")
+                    mDeviceList.add(device)
                 }
                 BluetoothDevice.ACTION_UUID -> {
                     val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) as? Array<Parcelable>
@@ -48,7 +49,15 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                     EventBus.getDefault().post(BTScanningActivityEvent(true))
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    Log.d(TAG, "Scanning is done")
+                    Log.d(TAG, "Scanning is done asking for UUIDS")
+                    if(!mDeviceList.isEmpty()) {
+                        for (device in mDeviceList) {
+                            // NOTE: fetching uuids needs to be called after scanning otherwise could not work
+                            // in many cases. It is due to the implementation of API.
+                            device.fetchUuidsWithSdp()
+                        }
+                    }
+
                     EventBus.getDefault().post(BTScanningActivityEvent(false))
                 }
 
