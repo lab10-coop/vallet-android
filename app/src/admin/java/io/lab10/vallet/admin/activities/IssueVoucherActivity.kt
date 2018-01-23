@@ -46,22 +46,6 @@ class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFr
         issueVoucherViewPager.adapter = mSectionsPagerAdapter
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this);
-
-    }
-
-    override fun onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: NewAddressEvent) {
-        Toast.makeText(this, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
-    }
-
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
      * one of the steps.

@@ -12,9 +12,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 import io.lab10.vallet.admin.events.BTScanningActivityEvent
+import io.lab10.vallet.admin.events.NewAddressEvent
 
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.admin.recievers.BluetoothBroadcastReceiver
@@ -42,6 +44,7 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var mListener: OnListFragmentInteractionListener? = null
     private var bluetoothReceiver: BluetoothBroadcastReceiver? = BluetoothBroadcastReceiver()
+    private var adapter: DiscoveryUserRecyclerViewAdapter? = null
     override fun onRefresh() {
         BTUtils.startScanningForAddresses(activity)
     }
@@ -87,10 +90,20 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         if (view.list is RecyclerView) {
             val context = view.list.getContext()
             val recyclerView = view.list as RecyclerView
+            adapter = DiscoveryUserRecyclerViewAdapter(Users.getUsers(), mListener)
             recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = DiscoveryUserRecyclerViewAdapter(Users.ITEMS, mListener)
+            recyclerView.adapter = adapter
         }
         return view
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: NewAddressEvent) {
+        var user = Users.User(event.address, event.address, event.deviceName)
+        Users.addItem(user)
+        adapter!!.notifyDataSetChanged()
+        Toast.makeText(context, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
