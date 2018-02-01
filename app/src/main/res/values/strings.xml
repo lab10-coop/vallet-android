@@ -8,4 +8,5 @@
 
 
     <string name="ipfs_server">http://192.168.1.103:5001/api/v0/</string>
+    <string name="artis_node_address">http://artis.lab10.io:8545/</string>
 </resources>
