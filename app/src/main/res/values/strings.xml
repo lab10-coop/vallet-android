@@ -5,4 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+
+    <string name="ipfs_server">/ip4/127.0.0.1/tcp/4001/ipfs/QmbGsTfc7dEo7AaCmZZ9GE3CvbraU2ctniY4xXpgKhHqiA</string>
 </resources>

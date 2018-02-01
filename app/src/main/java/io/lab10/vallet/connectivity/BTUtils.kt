@@ -2,12 +2,10 @@ package io.lab10.vallet.connectivity
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import java.math.BigInteger
 import java.util.*
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
