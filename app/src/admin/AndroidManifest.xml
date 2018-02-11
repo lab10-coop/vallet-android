@@ -3,6 +3,7 @@
     package="io.lab10.vallet">
 
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +36,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".admin.activities.PriceListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".admin.activities.AddProductActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

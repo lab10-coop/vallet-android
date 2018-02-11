@@ -39,9 +39,9 @@ class ProductFragment : Fragment() {
             val view = inflater!!.inflate(R.layout.fragment_product_list, container, false)
 
             // Set the adapter
-            if (view.list is RecyclerView) {
-                val context = view.list.getContext()
-                val recyclerView = view.list as RecyclerView
+            if (view.productList is RecyclerView) {
+                val context = view.productList.getContext()
+                val recyclerView = view.productList as RecyclerView
                 adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener)
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = adapter
@@ -62,6 +62,11 @@ class ProductFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mListener = null
+    }
+
+    fun addProduct(product: Products.Product) {
+        Products.addItem(product)
+        adapter!!.notifyDataSetChanged()
     }
 
     /**

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import io.lab10.vallet.R
 
@@ -25,8 +26,8 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues.get(position)
-        holder.mIdView.setText(mValues.get(position).id)
-        holder.mContentView.setText(mValues.get(position).name)
+        holder.mProductName.setText(mValues.get(position).name)
+        holder.mProductPrice.setText(mValues.get(position).price.toString())
 
         holder.mView.setOnClickListener {
             val product = holder.mItem
@@ -41,17 +42,20 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
     }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView
-        val mContentView: TextView
+        val mProductName: TextView
+        val mProductImage: ImageView
+        val mProductPrice: TextView
         var mItem: Products.Product? = null
 
         init {
-            mIdView = mView.findViewById(R.id.id) as TextView
-            mContentView = mView.findViewById(R.id.content) as TextView
+            mProductName = mView.findViewById(R.id.productName) as TextView
+            mProductImage = mView.findViewById(R.id.productImage) as ImageView
+            mProductPrice = mView.findViewById(R.id.productPrice) as TextView
+
         }
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.getText() + "'"
+            return super.toString() + " '" + mProductName.getText() + "'"
         }
     }
 }
