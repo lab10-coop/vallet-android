@@ -23,5 +23,10 @@ class AdminActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        priceListBtn.setOnClickListener() { v ->
+            val intent = Intent(this, PriceListActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
