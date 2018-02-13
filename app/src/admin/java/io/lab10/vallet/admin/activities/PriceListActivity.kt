@@ -8,7 +8,7 @@ import io.lab10.vallet.admin.fragments.ProductFragment
 import io.lab10.vallet.admin.models.Products
 import kotlinx.android.synthetic.main.activity_price_list.*
 import android.app.Activity
-
+import android.util.Log
 
 
 class PriceListActivity : AppCompatActivity(), ProductFragment.OnListFragmentInteractionListener {

@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -9,19 +10,30 @@ import io.lab10.vallet.R
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_issue_voucher.*
-import org.greenrobot.eventbus.EventBus
-import android.widget.Toast
-import io.lab10.vallet.admin.events.NewAddressEvent
-import org.greenrobot.eventbus.ThreadMode
-import org.greenrobot.eventbus.Subscribe
+import io.lab10.vallet.admin.fragments.IssueTokenFragment
 
-
-
-class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFragmentInteractionListener {
+class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFragmentInteractionListener, IssueTokenFragment.OnFragmentInteractionListener {
+    override fun onFragmentInteraction(uri: Uri) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     val TAG = IssueVoucherActivity::class.java.simpleName
     override fun onListFragmentInteraction(item: Users.User) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fragmentPagerAdapter = issueVoucherViewPager.getAdapter() as FragmentPagerAdapter
+        for (i in 0 until fragmentPagerAdapter.count) {
+
+            val viewPagerFragment = issueVoucherViewPager.getAdapter().instantiateItem(issueVoucherViewPager, i) as Fragment
+            if (viewPagerFragment != null && viewPagerFragment.isAdded) {
+
+                if (viewPagerFragment is IssueTokenFragment) {
+                    val oneFragment = viewPagerFragment as IssueTokenFragment
+                    if (oneFragment != null) {
+                        oneFragment!!.updateUser(item)
+                    }
+                }
+            }
+        }
+        issueVoucherViewPager.currentItem = 2
     }
 
     /**
@@ -58,7 +70,7 @@ class IssueVoucherActivity : AppCompatActivity(), DiscoverUsersFragment.OnListFr
                     return DiscoverUsersFragment.newInstance()
                 }
                 1 -> {
-                    return DiscoverUsersFragment.newInstance()
+                    return IssueTokenFragment.newInstance()
                 }
                 else -> {
                     // THIS should never happen
