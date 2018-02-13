@@ -85,7 +85,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'org.greenrobot:eventbus:3.1.1'
     compile 'com.github.ligi:ipfs-api-kotlin:0.11'
-    compile ('org.web3j:core:3.1.1-android')
+    compile('org.web3j:core:3.1.1-android')
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
 }
 
 
