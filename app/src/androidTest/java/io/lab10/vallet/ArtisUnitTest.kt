@@ -23,6 +23,7 @@ class ArtisUnitTest {
 
     private lateinit var node : Web3j
     private lateinit var appContext: Context
+    private val WALLET_ADDRESS_SIZE = 40;
 
     @Rule @JvmField
     var exception = ExpectedException.none()
@@ -49,6 +50,16 @@ class ArtisUnitTest {
         val password = "8e38DZDRT0Jy"
         val walletFileName = Web3jManager.INSTANCE.createWallet(appContext,password)
         Assert.assertNotNull(walletFileName)
+    }
+
+    @Test
+    fun artis_fetchWalletAddress() {
+        val password = "12s1dq212d"
+        val walletFileName = Web3jManager.INSTANCE.createWallet(appContext,password)
+        Assert.assertNotNull(walletFileName)
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFileName)
+        Assert.assertNotNull(walletAddress)
+        Assert.assertEquals(walletAddress.length, WALLET_ADDRESS_SIZE)
     }
 
     @Test

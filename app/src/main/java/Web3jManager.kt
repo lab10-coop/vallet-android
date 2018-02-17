@@ -46,4 +46,9 @@ class Web3jManager private constructor(){
                 password,
                 walletPath)
     }
+
+    fun getWalletAddress(walletFileName: String): String {
+        var addr = walletFileName.split("--");
+        return addr.last().split(".").first()
+    }
 }
