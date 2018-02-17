@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.web3j.crypto.CipherException
 import org.web3j.protocol.Web3j
 import java.io.File
+import java.math.BigInteger
 
 /**
  * Created by mtfk on 17.02.18.
@@ -50,7 +51,6 @@ class ArtisWalletUnitTest {
         Assert.assertEquals(walletAddress.length, WALLET_ADDRESS_SIZE)
     }
 
-
     @Test
     fun artis_loadCredential() {
         val walletPath = File(appContext.filesDir, walletFileName)
@@ -65,5 +65,13 @@ class ArtisWalletUnitTest {
         val wrongPassword = "wrongpassword"
         val walletPath = File(appContext.filesDir, walletFileName)
         Web3jManager.INSTANCE.loadCredential(wrongPassword, walletPath.absolutePath)
+    }
+
+    @Test
+    fun artis_getWalletBalance() {
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFileName)
+        var balance = Web3jManager.INSTANCE.getBalance(appContext, walletAddress)
+        val expected_balance = BigInteger.ZERO
+        Assert.assertEquals(balance.balance, expected_balance)
     }
 }

@@ -19,4 +19,5 @@
     <string name="shared_pref_voucher_name">voucher_name</string>
     <string name="shared_pref_voucher_type">voucher_type</string>
     <string name="shared_pref_voucher_decimal">voucher_decimal</string>
+    <string name="shared_pref_voucher_wallet_address">voucher_wallet_address</string>
 </resources>

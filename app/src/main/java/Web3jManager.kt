@@ -7,6 +7,10 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
 import java.io.File
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.methods.response.EthGetBalance
+
+
 
 
 /**
@@ -50,5 +54,13 @@ class Web3jManager private constructor(){
     fun getWalletAddress(walletFileName: String): String {
         var addr = walletFileName.split("--");
         return addr.last().split(".").first()
+    }
+
+    fun getBalance(context: Context, address: String) : EthGetBalance {
+        // send asynchronous requests to get balance
+        return getConnection(context).ethGetBalance("0x" + address, DefaultBlockParameterName.LATEST)
+                .sendAsync()
+                .get()
+
     }
 }

@@ -123,6 +123,10 @@ class VoucherActivity : AppCompatActivity() {
                 editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), Integer.parseInt(rootView.inputVoucherDecimal.text.toString()))
                 editor.putString(resources.getString(R.string.shared_pref_voucher_type), rootView.voucherTypeSpinner.selectedItem.toString())
                 editor.putBoolean("FIRST_RUN", false)
+                // TODO: Manage password for the key
+                val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
+                val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+                editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
                 editor.commit()
 
                 val intent = Intent(view?.context, AdminActivity::class.java)

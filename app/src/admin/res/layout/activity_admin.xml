@@ -43,6 +43,22 @@
                 android:text="Lab10"
                 android:textAlignment="center" />
 
+            <TextView
+                android:id="@+id/voucherWalletAddresLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:text="0x00"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/voucherWalletBalanceLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:text="0"
+                android:textAlignment="center" />
+
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dip"
