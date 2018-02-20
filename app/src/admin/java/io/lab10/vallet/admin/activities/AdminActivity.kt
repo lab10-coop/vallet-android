@@ -38,5 +38,9 @@ class AdminActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        historyBtn.setOnClickListener() { v ->
+            Web3jManager.INSTANCE.poolTokenCreateEvent(this)
+        }
+
     }
 }

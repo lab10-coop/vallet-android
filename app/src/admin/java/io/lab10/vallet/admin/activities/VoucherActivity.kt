@@ -21,6 +21,8 @@ import android.widget.Spinner
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_settings.view.*
+import java.io.File
+import java.math.BigInteger
 
 
 class VoucherActivity : AppCompatActivity() {
@@ -120,14 +122,18 @@ class VoucherActivity : AppCompatActivity() {
             finishButton.setOnClickListener() {v ->
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
-                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), Integer.parseInt(rootView.inputVoucherDecimal.text.toString()))
+                var decimal = Integer.parseInt(rootView.inputVoucherDecimal.text.toString())
+                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), decimal)
                 editor.putString(resources.getString(R.string.shared_pref_voucher_type), rootView.voucherTypeSpinner.selectedItem.toString())
                 editor.putBoolean("FIRST_RUN", false)
                 // TODO: Manage password for the key
                 val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
                 val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+                val walletPath = File(context.filesDir, walletFile)
+                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath )
                 editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
                 editor.commit()
+                Web3jManager.INSTANCE.generateNewToken(context, credentials, decimal)
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)
