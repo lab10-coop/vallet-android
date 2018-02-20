@@ -1,6 +1,7 @@
 package io.lab10.vallet
 
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -11,7 +12,7 @@ import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
 
 import kotlinx.android.synthetic.client.activity_client.*
-
+import java.io.File
 
 
 class ClientActivity : AppCompatActivity() {
@@ -23,6 +24,20 @@ class ClientActivity : AppCompatActivity() {
         productListBtn.setOnClickListener() { v ->
             val intent = Intent(this, ProductListActivity::class.java)
             startActivity(intent)
+        }
+
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), null)
+
+        if (voucherWalletAddress == null) {
+            val editor = sharedPref.edit()
+            val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
+            val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+            editor.commit()
+            walletAddressLabel.text = walletAddress
+        } else {
+            walletAddressLabel.text = voucherWalletAddress
         }
     }
 
