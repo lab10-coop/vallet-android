@@ -28,6 +28,10 @@ class ClientActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        requestTokenBtn.setOnClickListener() { v ->
+            startBroadcastingAddress()
+        }
+
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
 
@@ -40,19 +44,6 @@ class ClientActivity : AppCompatActivity() {
         }
 
         walletAddressLabel.text = voucherWalletAddress
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
-            R.id.menuGetVoucher -> startBroadcastingAddress()
-        }
-        return true
     }
 
     fun startBroadcastingAddress() {
