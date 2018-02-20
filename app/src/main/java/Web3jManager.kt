@@ -1,7 +1,6 @@
 import android.content.Context
 import android.util.Log
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.ObserverAction
 import io.lab10.vallet.admin.TokenFactory
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.http.HttpService
@@ -12,10 +11,6 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.tx.Contract
-import rx.functions.Action
-import java.math.BigInteger
-import rx.functions.Action1
-import org.web3j.protocol.core.methods.response.EthLog
 import rx.Single
 import rx.schedulers.Schedulers
 
