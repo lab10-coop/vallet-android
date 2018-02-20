@@ -129,10 +129,10 @@ class VoucherActivity : AppCompatActivity() {
                 // TODO: Manage password for the key
                 val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
                 val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-                val walletPath = File(context.filesDir, walletFile)
-                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath )
                 editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
                 editor.commit()
+                val walletPath = File(context.filesDir, walletFile)
+                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath )
                 Web3jManager.INSTANCE.generateNewToken(context, credentials, decimal)
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
