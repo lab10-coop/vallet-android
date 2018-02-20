@@ -17,6 +17,8 @@ import java.io.File
 
 class ClientActivity : AppCompatActivity() {
 
+    var voucherWalletAddress : String = "";
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client)
@@ -27,18 +29,17 @@ class ClientActivity : AppCompatActivity() {
         }
 
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), null)
+        voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
 
-        if (voucherWalletAddress == null) {
+        if (voucherWalletAddress.equals("")) {
             val editor = sharedPref.edit()
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
-            val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+            voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), voucherWalletAddress)
             editor.commit()
-            walletAddressLabel.text = walletAddress
-        } else {
-            walletAddressLabel.text = voucherWalletAddress
         }
+
+        walletAddressLabel.text = voucherWalletAddress
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,8 +59,7 @@ class ClientActivity : AppCompatActivity() {
         // TODO make sure that BT is on if not turn it on
         Toast.makeText(this,"Broadcasting address", Toast.LENGTH_LONG).show()
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        // TODO store eth address in preferences
-        val address = "Lab10Vallet"
+        val address = voucherWalletAddress
         val uuid = BTUtils.encodeAddress(address)
         val btSocket = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(getString(R.string.app_name), uuid)
 
