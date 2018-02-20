@@ -9,4 +9,6 @@
     <dimen name="label_margin">8dp</dimen>
     <dimen name="font_normal">16sp</dimen>
     <dimen name="font_big">32sp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="button_margin">5dp</dimen>
 </resources>
