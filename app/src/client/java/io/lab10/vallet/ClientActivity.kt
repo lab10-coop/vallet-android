@@ -4,15 +4,12 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
 
 import kotlinx.android.synthetic.client.activity_client.*
-import java.io.File
+import java.util.*
 
 
 class ClientActivity : AppCompatActivity() {
@@ -51,9 +48,19 @@ class ClientActivity : AppCompatActivity() {
         Toast.makeText(this,"Broadcasting address", Toast.LENGTH_LONG).show()
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         val address = voucherWalletAddress
-        val uuid = BTUtils.encodeAddress(address)
-        val btSocket = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(getString(R.string.app_name), uuid)
-
+        val part1 = address.substring(0, BTUtils.SERVICE_NAME_SIZE)
+        val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE)
+        val uuid1 = BTUtils.encodeAddress(part1)
+        val uuid2 = BTUtils.encodeAddress(part2)
+        if (!mBluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            this.startActivityForResult(enableBtIntent, 1)
+            // TODO handle turn on off in activity
+            // see https://developer.android.com/guide/topics/connectivity/bluetooth.html
+        } else {
+            mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid1)
+            mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid2)
+        }
     }
 
 }

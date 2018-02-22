@@ -31,17 +31,27 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                     val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice
                     Log.d(TAG, "Found device waiting to finish scannaning ...")
                     mDeviceList.add(device)
+                    // TODO
+                    // moved it here to speed up scanning but this can cause some collisions.
+                    device.fetchUuidsWithSdp()
                 }
                 BluetoothDevice.ACTION_UUID -> {
                     val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) as? Array<Parcelable>
                     val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice
                     if (uuids != null) {
+                        var walletAddress = ""
                         for (uuid in uuids) {
                             Log.d(TAG, "Found UUID " + uuid)
                             val address = uuid.toString()
                             var decodedAddress = BTUtils.decodeAddress(address)
                             if (decodedAddress != null)
-                                EventBus.getDefault().post(NewAddressEvent(decodedAddress, device.name));                        }
+                                walletAddress += decodedAddress
+                        }
+                        // Make sure to take only 40 characters as that is the max size of the wallet address
+                        // If the services would be added more then once on the client it can happen that the address will be duplicated
+                        // TODO
+                        walletAddress = walletAddress.substring(0,40)
+                        EventBus.getDefault().post(NewAddressEvent(walletAddress, device.name));
                     }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
@@ -54,7 +64,8 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                         for (device in mDeviceList) {
                             // NOTE: fetching uuids needs to be called after scanning otherwise could not work
                             // in many cases. It is due to the implementation of API.
-                            device.fetchUuidsWithSdp()
+                            // TODO this is the safest place to ask for SDP but user need to wait for finished scanning
+                            //device.fetchUuidsWithSdp()
                         }
                     }
 
