@@ -10,6 +10,7 @@ import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
+import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import rx.Single
 import rx.schedulers.Schedulers
@@ -23,7 +24,6 @@ class Web3jManager private constructor(){
     init {}
 
     var web3: Web3j? = null
-    val contractAddress = "0x06b40eb4b6eece1dadd723cde8f6b290bcbcddf8"
     val TAG = Web3jManager::class.java.simpleName
 
 
@@ -69,26 +69,35 @@ class Web3jManager private constructor(){
     }
 
     fun generateNewToken(context: Context, credentials: Credentials, decimal: Int) {
+        val CONTRACT_ADDRESS = context.getString(R.string.artis_contract_address)
 
-
-        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
-        tokenFactory.createToken(decimal.toBigInteger())
+        var tokenFactory = TokenFactory.load(CONTRACT_ADDRESS, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
+        Single.fromCallable {
+            tokenFactory.createToken(decimal.toBigInteger()).send()
+        }.subscribeOn(Schedulers.io())
+        .subscribe() { result ->
+            var respons = tokenFactory.getTokenCreatedEvents(result)
+            // TODO check if I am the owner and how many events can get back, how to choose proper one?
+            var tokenContractaddress = respons.last()._address
+            val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.putString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
+            editor.commit()
+        }
     }
 
+    // TODO this probably won't be needed
     fun poolTokenCreateEvent(context: Context) {
-        val filter = EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, contractAddress)
+        val CONTRACT_ADDRESS = context.getString(R.string.artis_contract_address)
+        val filter = EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, CONTRACT_ADDRESS)
+
         //filter.addSingleTopic("TokenCreated")
-
-
-
         Single.fromCallable {
-            val ethLog = getConnection(context).ethGetLogs(filter).send()
-            ethLog.logs
+            getConnection(context).ethGetLogs(filter).send()
         }.subscribeOn(Schedulers.io())
-                .subscribe {
-                    // What you need to do with your result on the view
-                    result -> Log.i(TAG, result.toString())
-                }
+        .subscribe {
+            result -> Log.i(TAG, result.toString())
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.activity_admin.*
+import java.io.File
 
 
 class AdminActivity : AppCompatActivity() {
@@ -40,6 +41,16 @@ class AdminActivity : AppCompatActivity() {
 
         historyBtn.setOnClickListener() { v ->
             Web3jManager.INSTANCE.poolTokenCreateEvent(this)
+        }
+
+        createToken.setOnClickListener() { v ->
+            val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            val walletFile = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_file), "")
+            if (walletFile != "") {
+                val walletPath = File(this.filesDir, walletFile)
+                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
+                Web3jManager.INSTANCE.generateNewToken(this, credentials, 2)
+            }
         }
 
     }

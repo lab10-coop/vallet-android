@@ -114,6 +114,15 @@
                 android:background="@color/primaryButtonBg"
                 android:text="History" />
 
+
+            <Button
+                android:id="@+id/createToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/button_margin"
+                android:background="@color/primaryButtonBg"
+                android:text="Create Token" />
+
         </LinearLayout>
 
     </ScrollView>
