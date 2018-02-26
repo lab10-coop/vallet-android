@@ -26,7 +26,10 @@ class AdminActivity : AppCompatActivity() {
         voucherWalletAddresLabel.text = voucherWalletAddress.toString()
         var walletBalance = Web3jManager.INSTANCE.getBalance(this, voucherWalletAddress)
         voucherWalletBalanceLabel.text = walletBalance.balance.toString()
+        voucherContractAddresLabel.text = sharedPref.getString(resources.getString(R.string.shared_pref_token_contract_address), "0x0")
 
+
+        Log.i(TAG, "Voucher contract address: " + voucherContractAddresLabel.text)
         Log.i(TAG, "Wallet address: " + voucherWalletAddress )
 
         issueVouchersBtn.setOnClickListener() { v ->
