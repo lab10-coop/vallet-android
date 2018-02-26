@@ -81,7 +81,7 @@ class Web3jManager private constructor(){
             var tokenContractaddress = respons.last()._address
             val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
-            editor.putString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
+            editor.putString(context.getString(R.string.shared_pref_token_contract_address), tokenContractaddress)
             editor.commit()
         }
     }
