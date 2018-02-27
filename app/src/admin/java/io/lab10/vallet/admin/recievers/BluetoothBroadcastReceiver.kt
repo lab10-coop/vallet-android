@@ -33,7 +33,7 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                     mDeviceList.add(device)
                     // TODO
                     // moved it here to speed up scanning but this can cause some collisions.
-                    device.fetchUuidsWithSdp()
+                    //device.fetchUuidsWithSdp()
                 }
                 BluetoothDevice.ACTION_UUID -> {
                     val uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID) as? Array<Parcelable>
@@ -50,7 +50,13 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                         // Make sure to take only 40 characters as that is the max size of the wallet address
                         // If the services would be added more then once on the client it can happen that the address will be duplicated
                         // TODO
-                        walletAddress = walletAddress.substring(0,40)
+                        if (walletAddress.length >= 40) {
+                            walletAddress = walletAddress.substring(0, 40)
+                        } else {
+                            // Note: means the device was found but no valid address (probably broadcasting didn't work)
+                            walletAddress = "0x0"
+                        }
+                        Log.i(TAG, "Client address: " + walletAddress)
                         EventBus.getDefault().post(NewAddressEvent(walletAddress, device.name));
                     }
                 }
@@ -65,7 +71,7 @@ class BluetoothBroadcastReceiver : BroadcastReceiver() {
                             // NOTE: fetching uuids needs to be called after scanning otherwise could not work
                             // in many cases. It is due to the implementation of API.
                             // TODO this is the safest place to ask for SDP but user need to wait for finished scanning
-                            //device.fetchUuidsWithSdp()
+                            device.fetchUuidsWithSdp()
                         }
                     }
 

@@ -1,6 +1,7 @@
 import android.content.Context
 import android.util.Log
 import io.lab10.vallet.R
+import io.lab10.vallet.Token
 import io.lab10.vallet.admin.TokenFactory
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.http.HttpService
@@ -14,6 +15,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import rx.Single
 import rx.schedulers.Schedulers
+import java.math.BigInteger
 
 
 /**
@@ -96,6 +98,19 @@ class Web3jManager private constructor(){
             getConnection(context).ethGetLogs(filter).send()
         }.subscribeOn(Schedulers.io())
         .subscribe {
+            result -> Log.i(TAG, result.toString())
+        }
+    }
+
+    fun issueTokensTo(context: Context, credentials: Credentials, to: String, amount: BigInteger) {
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val tokenContractAddress = sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
+
+        // TODO validate if address is valid if not throw exception.
+        var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        Single.fromCallable {
+            token.issue(to, amount).send()
+        }.subscribeOn(Schedulers.io()).subscribe {
             result -> Log.i(TAG, result.toString())
         }
     }

@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:layout_margin="@dimen/label_margin"
-            tools:text="1928d12d9812730192"
+            tools:text="0x0"
             android:textAlignment="center" />
 
         <EditText

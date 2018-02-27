@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
+import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
+import java.io.File
+import java.math.BigInteger
 
 /**
  * A simple [Fragment] subclass.
@@ -34,12 +37,29 @@ class IssueTokenFragment : Fragment() {
             userName = arguments.getString(USER_NAME_PARAM)
             userAddress = arguments.getString(USER_ADDRESS_PARAM)
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        val view = inflater!!.inflate(R.layout.fragment_issue_token, container, false)
+
+        view.issueBtn.setOnClickListener() { v ->
+            val amountInput = voucherAmountInput.text.toString()
+            val amount = BigInteger(amountInput)
+            val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            val walletFile = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_file), "")
+            if (walletFile != "" && userAddress != null) {
+                val walletPath = File(context.filesDir, walletFile)
+                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
+                Web3jManager.INSTANCE.issueTokensTo(activity, credentials, userAddress!!, amount)
+                activity.finish()
+            }
+        }
+
         // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_issue_token, container, false)
+        return view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -51,6 +71,8 @@ class IssueTokenFragment : Fragment() {
 
     fun updateUser(user: Users.User) {
         addressLabel.text = user.name + ": " + user.address
+        userAddress = user.address
+        userName = user.name
     }
 
     override fun onAttach(context: Context?) {
