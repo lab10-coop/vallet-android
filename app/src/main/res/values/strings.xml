@@ -8,13 +8,13 @@
 
 
     <string name="ipfs_server">http://192.168.1.103:5001/api/v0/</string>
-    <string name="artis_node_address">http://artis.lab10.io:8545/</string>
-    <string name="artis_contract_address">0x06b40eb4b6eece1dadd723cde8f6b290bcbcddf8</string>
+    <string name="artis_node_address">http://192.168.1.107:8545/</string>
 
 
     <string name="shared_pref_voucher_name">voucher_name</string>
     <string name="shared_pref_voucher_type">voucher_type</string>
     <string name="shared_pref_voucher_decimal">voucher_decimal</string>
     <string name="shared_pref_voucher_wallet_address">voucher_wallet_address</string>
+    <string name="shared_pref_voucher_wallet_path">voucher_wallet_path</string>
     <string name="shared_pref_token_contract_address">voucher_token_contract_address</string>
 </resources>

@@ -18,6 +18,8 @@ import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.Toast
+import kotlinx.android.synthetic.admin.activity_voucher.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_settings.view.*
@@ -41,11 +43,41 @@ class VoucherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voucher)
+        voucherFinishBtn.visibility = View.GONE
+
 
         mStepsPagerAdapter = StepsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the step adapter.
         voucherSettingsViewPager.adapter = mStepsPagerAdapter
+        voucherSettingsViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+            override fun onPageSelected(position: Int) {
+                if (position == 0) {
+                    voucherNextBtn.visibility = View.VISIBLE
+                    voucherFinishBtn.visibility = View.GONE
+                    step1.setImageDrawable(getDrawable(R.drawable.step_circle_active))
+                    step2.setImageDrawable(getDrawable(R.drawable.step_circle))
+                    step3.setImageDrawable(getDrawable(R.drawable.step_circle))
+
+                }
+
+                if (position == 1) {
+                    voucherNextBtn.visibility = View.GONE
+                    voucherFinishBtn.visibility = View.VISIBLE
+                    step1.setImageDrawable(getDrawable(R.drawable.step_circle))
+                    step2.setImageDrawable(getDrawable(R.drawable.step_circle_active))
+                    step3.setImageDrawable(getDrawable(R.drawable.step_circle))
+                }
+            }
+
+        })
     }
 
     /**
@@ -77,11 +109,15 @@ class VoucherActivity : AppCompatActivity() {
         override fun onClick(view: View?) {
             when (view?.id) {
                 R.id.voucherNextBtn -> {
-                    val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-                    val editor = sharedPref.edit()
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_name), inputVoucherName.text.toString())
-                    editor.commit()
-                    voucherViewPager?.currentItem = 1
+                    if (inputVoucherName.text.toString().length < 3) {
+                        Toast.makeText(activity, resources.getString(R.string.error_voucher_name_too_short), Toast.LENGTH_SHORT).show()
+                    } else {
+                        val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+                        val editor = sharedPref.edit()
+                        editor.putString(resources.getString(R.string.shared_pref_voucher_name), inputVoucherName.text.toString())
+                        editor.commit()
+                        voucherViewPager?.currentItem = 1
+                    }
                 }
             }
         }
@@ -90,7 +126,7 @@ class VoucherActivity : AppCompatActivity() {
                                   savedInstanceState: Bundle?): View? {
 
             val rootView = inflater.inflate(R.layout.fragment_voucher_name, viewGroup, false)
-            rootView.voucherNextBtn.setOnClickListener(this)
+            activity.voucherNextBtn.setOnClickListener(this)
             val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
             val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
             rootView.inputVoucherName.setText(voucherName)
@@ -118,12 +154,11 @@ class VoucherActivity : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             val spinner = rootView.findViewById(R.id.voucherTypeSpinner) as Spinner
             spinner.adapter = adapter
-            val finishButton = rootView.findViewById(R.id.voucherFinishBtn) as Button
+            val finishButton = activity.voucherFinishBtn
             finishButton.setOnClickListener() {v ->
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
-                var decimal = Integer.parseInt(rootView.inputVoucherDecimal.text.toString())
-                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), decimal)
+                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), 12)
                 editor.putString(resources.getString(R.string.shared_pref_voucher_type), rootView.voucherTypeSpinner.selectedItem.toString())
                 editor.putBoolean("FIRST_RUN", false)
                 // TODO: Manage password for the key

@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="50dp"
@@ -46,26 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/label_margin"
             android:text="Decimal"/>
-
-        <EditText
-            android:id="@+id/inputVoucherDecimal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Voucher decimal"
-            android:inputType="numberDecimal"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:maxLength="2"
-            android:text="2"
-            tools:text="2" />
-
-        <Button
-            android:id="@+id/voucherFinishBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryButtonBg"
-            android:text="Save" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -8,8 +8,10 @@
     <string name="title_activity_admin">Vallet Admin</string>
     <string name="title_activity_voucher">VoucherActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="voucher_name_label">Enter name for your voucher</string>
+    <string name="create_voucher_hint">Welcome admin, create your own Vallet
+in three simple steps.</string>
     <string name="select_user_nearby">Select user nearby</string>
+    <string name="token_factory_contract_address">0xb02158257c7efd6f928f93d8e5defd63bdde1487</string>
 
     <string-array name="voucher_type">
         <item>EUR</item>
@@ -21,5 +23,7 @@
     <string name="shared_pref_voucher_decimal">voucher_decimal</string>
     <string name="shared_pref_voucher_wallet_address">voucher_wallet_address</string>
     <string name="shared_pref_voucher_wallet_file">voucher_wallet_file</string>
+    <string name="label_voucher_name">Name</string>
+    <string name="error_voucher_name_too_short">Voucher name too short. Min 3 characters.</string>
 
 </resources>

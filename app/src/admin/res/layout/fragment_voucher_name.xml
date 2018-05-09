@@ -15,6 +15,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:padding="@dimen/layout_padding"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/logo_margin"
@@ -34,9 +35,19 @@
             android:id="@+id/voucherNameLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/label_margin"
-            android:text="@string/voucher_name_label"
-            tools:text="Enter a name for your Voucher " />
+            android:layout_marginBottom="42dp"
+            android:fontFamily="@font/work_sans"
+            android:lineSpacingMultiplier="1.50"
+            style="@style/RegularText"
+            android:text="@string/create_voucher_hint" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:lineSpacingMultiplier="1.19"
+            style="@style/LabelText"
+            android:text="@string/label_voucher_name"
+            />
 
         <EditText
             android:id="@+id/inputVoucherName"
@@ -47,14 +58,9 @@
             android:inputType="textPersonName"
             android:selectAllOnFocus="true"
             android:singleLine="true"
+            style="@style/InputText"
             android:layout_marginBottom="20dp"
-            tools:text="Name" />
+            tools:text="Voucher Name" />
 
-        <Button
-            android:id="@+id/voucherNextBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryButtonBg"
-            android:text="Start" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

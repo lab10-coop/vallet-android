@@ -5,16 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
 
 import kotlinx.android.synthetic.client.activity_client.*
+import org.web3j.tx.Contract
+import java.io.File
 import java.util.*
 
 
 class ClientActivity : AppCompatActivity() {
 
     var voucherWalletAddress : String = "";
+    val TAG = ClientActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +41,19 @@ class ClientActivity : AppCompatActivity() {
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
             editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), voucherWalletAddress)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_path), walletFile)
             editor.commit()
         }
 
         walletAddressLabel.text = voucherWalletAddress
+        Log.i(TAG, "Wallet address: " + voucherWalletAddress)
+        val walletFile = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_path), "")
+        if (walletFile != "") {
+            val walletPath = File(this.filesDir, walletFile)
+            var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
+            var walletBalance = Web3jManager.INSTANCE.getClientBalance(this, voucherWalletAddress, credentials)
+            activeVouchersCount.text = walletBalance.toString()
+        }
     }
 
     fun startBroadcastingAddress() {

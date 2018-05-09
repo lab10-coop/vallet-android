@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval">
+            <solid android:color="#FFFFFFFF" />
+            <size android:height="60dp"
+                android:width="60dp">
+
+            </size>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_arrow_forward_blue_24dp" android:height="40dp" android:width="40dp" android:gravity="center"/>
+</layer-list>
