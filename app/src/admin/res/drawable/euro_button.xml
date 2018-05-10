@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:width="150dp" android:height="56dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="40dp" />
+            <solid android:color="#ffffffff" />
+            <item name="shadow">#1a000000</item>
+            <!-- TextView shadow offsets do not respect scale. -->
+            <item name="android:shadowDx">0</item>
+            <item name="android:shadowDy">2</item>
+        </shape>
+    </item>
+    <item android:width="34dp" android:height="34dp"
+        android:drawable="@drawable/euro_icon"
+        android:gravity="left" android:left="14dp" android:top="10dp"/>
+</layer-list>

@@ -15,16 +15,12 @@ import android.view.ViewGroup
 import io.lab10.vallet.R
 
 import kotlinx.android.synthetic.admin.activity_voucher.*
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
 import android.widget.Toast
-import kotlinx.android.synthetic.admin.activity_voucher.view.*
+import io.lab10.vallet.admin.models.Voucher
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
-import kotlinx.android.synthetic.admin.fragment_voucher_settings.view.*
-import java.io.File
-import java.math.BigInteger
+import kotlinx.android.synthetic.admin.fragment_voucher_settings.*
+import android.view.WindowManager
 
 
 class VoucherActivity : AppCompatActivity() {
@@ -149,17 +145,26 @@ class VoucherActivity : AppCompatActivity() {
         override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?, savedInstanceState: Bundle?): View? {
 
             val rootView = inflater.inflate(R.layout.fragment_voucher_settings, viewGroup, false)
-            val adapter = ArrayAdapter.createFromResource(this.context,
-                    R.array.voucher_type, android.R.layout.simple_spinner_item)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            val spinner = rootView.findViewById(R.id.voucherTypeSpinner) as Spinner
-            spinner.adapter = adapter
             val finishButton = activity.voucherFinishBtn
-            finishButton.setOnClickListener() {v ->
+            finishButton.setOnClickListener() { v ->
+                // TODO add voucher.valid? before submitting
+
+                // TOOD this seems not work very fast. There is a lag between pressed and showing progress bar.
+                activity.runOnUiThread {
+
+                    progressBar.visibility = View.VISIBLE
+                    activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                }
+
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
                 editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), 12)
-                editor.putString(resources.getString(R.string.shared_pref_voucher_type), rootView.voucherTypeSpinner.selectedItem.toString())
+                if (euroBtn.isChecked) {
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), Voucher.Type.EUR.toString())
+                } else {
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), Voucher.Type.VOUCHER.toString())
+                }
                 editor.putBoolean("FIRST_RUN", false)
                 // TODO: Manage password for the key
                 val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
@@ -167,6 +172,9 @@ class VoucherActivity : AppCompatActivity() {
                 editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
                 editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
                 editor.commit()
+
+
+
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)

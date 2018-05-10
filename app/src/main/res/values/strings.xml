@@ -17,4 +17,8 @@
     <string name="shared_pref_voucher_wallet_address">voucher_wallet_address</string>
     <string name="shared_pref_voucher_wallet_path">voucher_wallet_path</string>
     <string name="shared_pref_token_contract_address">voucher_token_contract_address</string>
+    <string name="voucher_type_euro">V-EUR</string>
+    <string name="voucher_type_voucher">Voucher</string>
+    <string name="message_creating_token">New voucher</string>
+    <string name="message_creating_token_in_proggres">Creating new voucher ...</string>
 </resources>

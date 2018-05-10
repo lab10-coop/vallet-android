@@ -7,45 +7,68 @@
     android:background="@color/background"
     tools:context="io.lab10.vallet.admin.activities.VoucherActivity$VoucherNameFragment">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="87dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vallet_logo"
+        android:layout_marginTop="81dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:elevation="2dp"
+        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="378dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:paddingTop="81dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/logo">
 
-        <ImageView
-            android:id="@+id/logo"
+        <RadioGroup
+            android:id="@+id/voucher_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="50dp"
-            android:layout_margin="@dimen/logo_margin"
-            android:src="@drawable/vallet_logo" />
+            android:orientation="horizontal"
+            android:gravity="center">
 
+            <RadioButton
+                android:id="@+id/euroBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="56dp"
+                android:checked="true"
+                android:button="@android:color/transparent"
+                android:background="@drawable/euro_selector"
+                android:text="@string/voucher_type_euro"/>
 
-        <TextView
-            android:id="@+id/voucherSpinnerLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/label_margin"
-            android:text="Type of voucher" />
+            <RadioButton
+                android:id="@+id/voucherBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@android:color/transparent"
+                android:background="@drawable/voucher_selector"
+                android:paddingLeft="56dp"
+                android:text="@string/voucher_type_voucher"/>
+        </RadioGroup>
 
-        <Spinner
-            android:id="@+id/voucherTypeSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/label_margin"
-            android:text="Decimal"/>
 
     </LinearLayout>
+
+
 </android.support.constraint.ConstraintLayout>

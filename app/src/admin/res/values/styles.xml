@@ -1,1 +1,7 @@
-<resources></resources>
+<resources>
+    <style name="radioText">
+        <item name="android:textColor">#ff333333</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+</resources>
