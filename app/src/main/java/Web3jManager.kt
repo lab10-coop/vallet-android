@@ -13,6 +13,7 @@ import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
+import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
 import rx.schedulers.Schedulers
 import java.math.BigInteger

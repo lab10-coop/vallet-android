@@ -21,4 +21,5 @@
     <string name="voucher_type_voucher">Voucher</string>
     <string name="message_creating_token">New voucher</string>
     <string name="message_creating_token_in_proggres">Creating new voucher ...</string>
+    <string name="circulating">Circulating</string>
 </resources>
