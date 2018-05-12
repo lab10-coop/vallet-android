@@ -71,12 +71,30 @@ class Web3jManager private constructor(){
 
     }
 
+    fun getClientBalance(context: Context, address: String, credentials: Credentials) : BigInteger {
+        val CONTRACT_ADDRESS = context.getString(R.string.token_factory_contract_address)
+        var token = Token.load(CONTRACT_ADDRESS, getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var balance = BigInteger.ZERO
+        Single.fromCallable {
+            try {
+                token.balanceOf("0x" + address).send()
+            }
+            catch (e: ContractCallException ) {
+                return@fromCallable BigInteger.ZERO;
+            }
+        }.subscribeOn(Schedulers.io())
+                .subscribe() { result ->
+                    balance = result;
+                }
+        return balance;
+    }
+
     fun generateNewToken(context: Context, credentials: Credentials, decimal: Int) {
-        val CONTRACT_ADDRESS = context.getString(R.string.artis_contract_address)
+        val CONTRACT_ADDRESS = context.getString(R.string.token_factory_contract_address)
 
         var tokenFactory = TokenFactory.load(CONTRACT_ADDRESS, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
         Single.fromCallable {
-            tokenFactory.createToken(decimal.toBigInteger()).send()
+             tokenFactory.createToken(decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
         .subscribe() { result ->
             var respons = tokenFactory.getTokenCreatedEvents(result)
@@ -91,7 +109,7 @@ class Web3jManager private constructor(){
 
     // TODO this probably won't be needed
     fun poolTokenCreateEvent(context: Context) {
-        val CONTRACT_ADDRESS = context.getString(R.string.artis_contract_address)
+        val CONTRACT_ADDRESS = context.getString(R.string.token_factory_contract_address)
         val filter = EthFilter(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST, CONTRACT_ADDRESS)
 
         //filter.addSingleTopic("TokenCreated")
