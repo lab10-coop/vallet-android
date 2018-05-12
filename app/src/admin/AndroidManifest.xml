@@ -35,9 +35,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".admin.activities.IssueVoucherActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".admin.activities.PriceListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

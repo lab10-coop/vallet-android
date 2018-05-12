@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"  android:layout_width="match_parent">
+
+    <android.support.constraint.ConstraintLayout android:id="@+id/activity_main"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".admin.activities.AdminActivity"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/home_background">
+
+            <ImageView
+                android:id="@+id/voucherTypeIcon"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginTop="80dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/euro_icon_white"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textSize="50sp"
+                android:fontFamily="@font/work_sans_bold"
+                android:textAlignment="center"
+                android:textColor="#fff"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="61dp"
+                android:fontFamily="@font/work_sans"
+                android:text="@string/circulating"
+                android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/header">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/LabelText"
+                android:layout_marginTop="45dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/label_recent_activities"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/divider_gradient" />
+
+            <TextView
+                android:id="@+id/activeVouchers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:text="Active Vouchers"
+                android:textAlignment="center" />
+
+
+
+            <Button
+                android:id="@+id/issueVouchersBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/button_margin"
+                android:background="@color/primaryButtonBg"
+                android:text="Issue Vouchers" />
+
+            <Button
+                android:id="@+id/priceListBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/button_margin"
+                android:background="@color/primaryButtonBg"
+                android:text="Price List" />
+
+
+            <Button
+                android:id="@+id/historyBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/button_margin"
+                android:background="@color/primaryButtonBg"
+                android:text="History" />
+
+
+            <Button
+                android:id="@+id/createToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/button_margin"
+                android:background="@color/primaryButtonBg"
+                android:text="Create Token" />
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
+
+

@@ -45,7 +45,7 @@
     <style
         name="LabelText"
         parent="@style/ValletFont">
-        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="android:fontFamily">@font/work_sans_medium</item>
         <item name="android:textColor">#FF0A9FFA</item>
         <item name="android:textSize">16sp</item>
     </style>

@@ -22,4 +22,9 @@
     <string name="message_creating_token">New voucher</string>
     <string name="message_creating_token_in_proggres">Creating new voucher ...</string>
     <string name="circulating">Circulating</string>
+    <string name="label_recent_activities">Recent activities</string>
+    <string name="main_menu_home">Activity</string>
+    <string name="main_menu_issue">Issue</string>
+    <string name="main_menu_price_list">Price list</string>
+
 </resources>
