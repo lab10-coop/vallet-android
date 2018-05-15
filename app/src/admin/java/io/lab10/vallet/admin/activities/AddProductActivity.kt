@@ -9,7 +9,7 @@ import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.content_add_product.*
 import android.graphics.Bitmap
 import io.lab10.vallet.admin.models.Products
-
+import kotlinx.android.synthetic.admin.content_add_product.view.*
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -42,6 +42,10 @@ class AddProductActivity : AppCompatActivity() {
             resultIntent.putExtra(PRODUCT_RETURN_STRING, product);
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
+        }
+
+        closeButton.setOnClickListener() { v ->
+            finish()
         }
     }
 

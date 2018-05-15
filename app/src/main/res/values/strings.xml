@@ -26,5 +26,8 @@
     <string name="main_menu_home">Activity</string>
     <string name="main_menu_issue">Issue</string>
     <string name="main_menu_price_list">Price list</string>
+    <string name="product_name">Name</string>
+    <string name="product_price">Price</string>
+    <string name="add_product_button">Add a product</string>
 
 </resources>

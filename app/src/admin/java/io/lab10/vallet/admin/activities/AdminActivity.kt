@@ -8,10 +8,8 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.MenuItem
-import io.lab10.vallet.admin.fragments.DiscoverUsersFragment
-import io.lab10.vallet.admin.fragments.HomeActivityFragment
-import io.lab10.vallet.admin.fragments.IssueTokenFragment
-import io.lab10.vallet.admin.fragments.IssueVoucherFragment
+import io.lab10.vallet.admin.fragments.*
+import io.lab10.vallet.admin.models.Products
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_admin.*
 import kotlinx.android.synthetic.admin.fragment_issue_voucher.*
@@ -20,7 +18,14 @@ import kotlinx.android.synthetic.admin.fragment_issue_voucher.*
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         IssueVoucherFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
-        IssueTokenFragment.OnFragmentInteractionListener {
+        IssueTokenFragment.OnFragmentInteractionListener,
+        PriceListFragment.OnFragmentInteractionListener,
+        ProductFragment.OnListFragmentInteractionListener {
+
+
+    override fun onListFragmentInteraction(item: Products.Product) {
+        TODO("not implemented")
+    }
 
     override fun onListFragmentInteraction(item: Users.User) {
         val fragmentPagerAdapter = issueVoucherViewPager.getAdapter() as FragmentPagerAdapter
@@ -57,7 +62,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                 when (item.getItemId()) {
                     R.id.action_item1 -> selectedFragment = HomeActivityFragment.newInstance()
                     R.id.action_item2 -> selectedFragment = IssueVoucherFragment.newInstance()
-                    R.id.action_item3 -> selectedFragment = HomeActivityFragment.newInstance()
+                    R.id.action_item3 -> selectedFragment = PriceListFragment.newInstance()
                 }
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.frame_layout, selectedFragment)

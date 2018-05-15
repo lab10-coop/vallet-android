@@ -14,25 +14,10 @@ import io.lab10.vallet.admin.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 
-/**
- * A fragment representing a list of products.
- *
- *
- * Activities containing this fragment MUST implement the [OnListFragmentInteractionListener]
- * interface.
- */
-/**
- * Mandatory empty constructor for the fragment manager to instantiate the
- * fragment (e.g. upon screen orientation changes).
- */
 class ProductFragment : Fragment() {
     private var mListener: OnListFragmentInteractionListener? = null
     private var adapter: ProductRecyclerViewAdapter? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,6 +31,7 @@ class ProductFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = adapter
             }
+
             return view
     }
 

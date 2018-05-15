@@ -6,20 +6,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context="io.lab10.vallet.admin.activities.PriceListActivity">
+    tools:context="io.lab10.vallet.admin.activities.AdminActivity">
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/productList"
-        android:name="io.lab10.vallet.admin.ProductFragment"
+
+    <TextView
+        android:id="@+id/label"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context="io.lab10.vallet.admin.ProductFragment"
-        tools:listitem="@layout/fragment_product" />
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu_price_list"
+        android:layout_margin="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="18dp"
+        android:textColor="#ff333333"
+        android:fontFamily="@font/work_sans_medium"
+        android:textSize="24sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/label"
+        >
+
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/productList"
+            android:name="io.lab10.vallet.admin.ProductFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager"
+            tools:context="io.lab10.vallet.admin.ProductFragment"
+            tools:listitem="@layout/fragment_product"
+            />
+
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>
