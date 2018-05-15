@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.content_add_product.*
 import android.graphics.Bitmap
+import android.os.Environment
 import io.lab10.vallet.admin.models.Products
-import kotlinx.android.synthetic.admin.content_add_product.view.*
+import java.io.*
+import android.graphics.drawable.BitmapDrawable
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -35,7 +38,10 @@ class AddProductActivity : AppCompatActivity() {
             if (priceSring != null && !priceSring.trim().equals("")) {
                 price = Integer.parseInt(priceSring)
             }
-            val image = "" // TODO implement image path
+
+            // TODO store image on ipfs
+            val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
+            val image = storeImage(name + ".jpg", bitmap)
             var product = Products.Product(id, name, price, image)
 
             var resultIntent = Intent();
@@ -60,6 +66,24 @@ class AddProductActivity : AppCompatActivity() {
     companion object {
         val PRODUCT_RETURN_CODE = 5;
         val PRODUCT_RETURN_STRING = "product"
+    }
+
+    private fun storeImage(name: String, data: Bitmap) : String {
+        val saveImage = File(filesDir, name)
+        try {
+            val outputStream = FileOutputStream(saveImage);
+            data.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (e: FileNotFoundException) {
+            // TODO handle errors
+            e.printStackTrace()
+        } catch ( e: IOException) {
+            // TODO handle errors
+            e.printStackTrace()
+        }
+
+        return saveImage.absolutePath
     }
 
 
