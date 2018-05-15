@@ -11,6 +11,7 @@
     <string name="create_voucher_hint">Welcome admin, create your own Vallet
 in three simple steps.</string>
     <string name="select_user_nearby">Select user nearby</string>
+    <string name="issue_token">Issue</string>
     <string name="token_factory_contract_address">0xb02158257c7efd6f928f93d8e5defd63bdde1487</string>
 
     <string-array name="voucher_type">

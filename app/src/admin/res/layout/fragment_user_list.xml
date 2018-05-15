@@ -23,29 +23,26 @@
         app:layout_constraintTop_toTopOf="parent"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <ImageView
-            android:id="@+id/logo"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/logo_margin"
-            android:paddingBottom="50dp"
-            android:paddingTop="50dp"
-            android:src="@drawable/vallet_logo" />
+            android:layout_marginLeft="@dimen/layout_padding"
+            android:layout_marginBottom="14dp"
+            android:layout_marginTop="42dp"
+            android:text="@string/issue_token"
+            android:fontFamily="@font/work_sans_medium"
+            android:textSize="24sp"
+            android:textColor="#ff333333"
+            tools:text="@string/issue_token" />
 
         <TextView
             android:id="@+id/selectUserLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/label_margin"
-            android:textAlignment="center"
-            android:textSize="@dimen/font_normal"
+            android:layout_marginLeft="@dimen/layout_padding"
             android:text="@string/select_user_nearby"
-            tools:text="Select user nearby" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@drawable/divider_gradient" />
+            style="@style/LabelText"
+            tools:text="@string/select_user_nearby" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -60,8 +57,6 @@
                 android:name="io.lab10.vallet.admin.DiscoverUsersFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
                 app:layoutManager="LinearLayoutManager"
                 tools:context="io.lab10.vallet.admin.fragments.DiscoverUsersFragment"
                 tools:listitem="@layout/fragment_user_item" />

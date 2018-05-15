@@ -25,7 +25,7 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, pr
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues[position]
         holder.mIdView.text = mValues[position].id
-        holder.mContentView.text = mValues[position].address
+        holder.mContentView.text = mValues[position].name
 
         holder.mView.setOnClickListener {
             val user = holder.mItem
