@@ -3,6 +3,7 @@ package io.lab10.vallet.admin.fragments
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -28,7 +29,7 @@ class ProductFragment : Fragment() {
                 val context = view.productList.getContext()
                 val recyclerView = view.productList as RecyclerView
                 adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener)
-                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.layoutManager = GridLayoutManager(context, 2)
                 recyclerView.adapter = adapter
             }
 

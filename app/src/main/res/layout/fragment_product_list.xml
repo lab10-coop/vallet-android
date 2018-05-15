@@ -37,7 +37,7 @@
             android:name="io.lab10.vallet.admin.ProductFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
             tools:context="io.lab10.vallet.admin.ProductFragment"
             tools:listitem="@layout/fragment_product"
             />

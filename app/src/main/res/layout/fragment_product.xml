@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background"
     android:orientation="horizontal">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        card_view:cardCornerRadius="5dp">
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="6dp">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -21,43 +22,63 @@
             <ImageView
                 android:id="@+id/productImage"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="#ffffff"
+                android:layout_height="wrap_content"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                android:paddingLeft="10dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/productName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
                     android:layout_weight="1"
                     android:textAppearance="?attr/textAppearanceListItem"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    card_view:layout_constraintLeft_toLeftOf="parent"
+                    card_view:layout_constraintBottom_toTopOf="@+id/euroSign"
+                    tools:text="Piwo" />
 
-                <TextView
-                    android:id="@+id/productPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    android:textColor="@color/black" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:id="@+id/euroSign"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/euro_icon_black"
+                        />
+
+                    <TextView
+                        android:id="@+id/productPrice"
+                        style="@style/RegularText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        tools:text="2" />
+                </LinearLayout>
+
             </LinearLayout>
 
-        </LinearLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
 
 
     </android.support.v7.widget.CardView>
-
-
-
-
 
 
 </LinearLayout>
