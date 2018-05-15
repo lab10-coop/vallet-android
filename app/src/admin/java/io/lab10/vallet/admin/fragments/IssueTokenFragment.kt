@@ -3,7 +3,7 @@ package io.lab10.vallet.admin.fragments
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,17 +15,8 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.io.File
 import java.math.BigInteger
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [IssueTokenFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [IssueTokenFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class IssueTokenFragment : Fragment() {
+class IssueTokenFragment : DialogFragment() {
 
-    // TODO: Rename and change types of parameters
     private var userName: String? = null
     private var userAddress: String? = null
 
@@ -37,7 +28,6 @@ class IssueTokenFragment : Fragment() {
             userName = arguments.getString(USER_NAME_PARAM)
             userAddress = arguments.getString(USER_ADDRESS_PARAM)
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -45,7 +35,9 @@ class IssueTokenFragment : Fragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_issue_token, container, false)
 
-        view.issueBtn.setOnClickListener() { v ->
+        view.issueUserName.text = userName
+
+        view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
             val amount = BigInteger(amountInput)
             val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
@@ -53,9 +45,17 @@ class IssueTokenFragment : Fragment() {
             if (walletFile != "" && userAddress != null) {
                 val walletPath = File(context.filesDir, walletFile)
                 var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
-                Web3jManager.INSTANCE.issueTokensTo(activity, credentials, userAddress!!, amount)
-                activity.finish()
+                try {
+                    Web3jManager.INSTANCE.issueTokensTo(activity, credentials, userAddress!!, amount)
+
+                } catch (e: Exception) {
+                    dialog.dismiss()
+                }
             }
+        }
+
+        view.closeButton.setOnClickListener() { v ->
+            dialog.dismiss()
         }
 
         // Inflate the layout for this fragment
@@ -70,7 +70,6 @@ class IssueTokenFragment : Fragment() {
     }
 
     fun updateUser(user: Users.User) {
-        addressLabel.text = user.name + ": " + user.address
         userAddress = user.address
         userName = user.name
     }
@@ -100,24 +99,20 @@ class IssueTokenFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onFragmentInteraction(user: Uri)
     }
 
     companion object {
+
         val USER_NAME_PARAM = "user_name"
         val USER_ADDRESS_PARAM = "user_address"
 
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param user_name Name of the user (Right now just BT device name).
-         * @param user_address ETH address of the user.
-         * @return A new instance of fragment IssueTokenFragment.
-         */
-        fun newInstance(): IssueTokenFragment {
-            val fragment = IssueTokenFragment()
-            return fragment
-        }
+        fun newInstance(user: Users.User) =
+            IssueTokenFragment().apply {
+                arguments = Bundle().apply {
+                    putString(USER_NAME_PARAM, user.name)
+                    putString(USER_ADDRESS_PARAM, user.address)
+                }
+            }
     }
-}// Required empty public constructor
+}

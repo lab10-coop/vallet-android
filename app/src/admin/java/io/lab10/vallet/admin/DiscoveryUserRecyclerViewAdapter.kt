@@ -4,16 +4,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment.OnListFragmentInteractionListener
 import io.lab10.vallet.admin.models.Users
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- */
 class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +24,7 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, pr
         holder.mIdView.text = mValues[position].id
         holder.mContentView.text = mValues[position].name
 
-        holder.mView.setOnClickListener {
+        holder.mContentView.setOnClickListener {
             val user = holder.mItem
             if (user != null) {
                 mListener?.onListFragmentInteraction(user)
@@ -42,12 +39,12 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, pr
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView
-        val mContentView: TextView
+        val mContentView: Button
         var mItem: Users.User? = null
 
         init {
             mIdView = mView.findViewById(R.id.id) as TextView
-            mContentView = mView.findViewById(R.id.content) as TextView
+            mContentView = mView.findViewById(R.id.content) as Button
         }
 
         override fun toString(): String {

@@ -8,60 +8,98 @@
     android:background="@color/background"
     tools:context=".admin.activities.AdminActivity">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="0dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/background"
+
+    <ImageButton
+        android:id="@+id/closeButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="23dp"
         app:layout_constraintTop_toTopOf="parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        android:background="@drawable/close_button"/>
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/logo_margin"
-            android:paddingBottom="50dp"
-            android:paddingTop="50dp"
-            android:src="@drawable/vallet_logo" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Issue voucher to:"
-            android:layout_margin="@dimen/label_margin"
-            android:textAlignment="center" />
+    <TextView
+        android:id="@+id/issueLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/issue_token"
+        style="@style/RegularText"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
-        <TextView
-            android:id="@+id/addressLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_margin="@dimen/label_margin"
-            tools:text="0x0"
-            android:textAlignment="center" />
+    <ImageView
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@drawable/euro_icon_black"
+        android:layout_marginTop="30dp"
+        app:layout_constraintRight_toLeftOf="@+id/voucherAmountInput"
+        app:layout_constraintTop_toBottomOf="@+id/issueLabel"/>
 
-        <EditText
-            android:id="@+id/voucherAmountInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number" />
+    <EditText
+        android:id="@+id/voucherAmountInput"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="1"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textSize="60sp"
+        android:textAlignment="center"
+        android:fontFamily="@font/work_sans_bold"
+        app:layout_constraintTop_toBottomOf="@+id/issueLabel"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@style/InputText"
+        android:textColor="#ff333333"
+        tools:text="10" />
 
-        <Button
-            android:id="@+id/issueBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryButtonBg"
-            android:text="Issue" />
+    <TextView
+        android:id="@+id/issueToLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/issue_to"
+        style="@style/RegularText"
+        android:layout_margin="38dp"
+        app:layout_constraintTop_toBottomOf="@+id/voucherAmountInput"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/issueUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/RegularText"
+        android:textSize="24dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/issueToLabel"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="Robert"
+        />
+
+    <Button
+        android:id="@+id/issueButton"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_selector"
+        android:layout_margin="20dp"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:fontFamily="@font/work_sans_medium"
+        android:textAllCaps="true"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/issueUserName"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/issue_token" />
+
 
 </android.support.constraint.ConstraintLayout>

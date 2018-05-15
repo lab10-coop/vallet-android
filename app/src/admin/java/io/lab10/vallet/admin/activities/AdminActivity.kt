@@ -6,17 +6,14 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
 import android.view.MenuItem
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.Products
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_admin.*
-import kotlinx.android.synthetic.admin.fragment_issue_voucher.*
 
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
-        IssueVoucherFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
         IssueTokenFragment.OnFragmentInteractionListener,
         PriceListFragment.OnFragmentInteractionListener,
@@ -27,22 +24,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         TODO("not implemented")
     }
 
-    override fun onListFragmentInteraction(item: Users.User) {
-        val fragmentPagerAdapter = issueVoucherViewPager.getAdapter() as FragmentPagerAdapter
-        for (i in 0 until fragmentPagerAdapter.count) {
-
-            val viewPagerFragment = issueVoucherViewPager.getAdapter().instantiateItem(issueVoucherViewPager, i) as Fragment
-            if (viewPagerFragment != null && viewPagerFragment.isAdded) {
-
-                if (viewPagerFragment is IssueTokenFragment) {
-                    val oneFragment = viewPagerFragment as IssueTokenFragment
-                    if (oneFragment != null) {
-                        oneFragment!!.updateUser(item)
-                    }
-                }
-            }
-        }
-        issueVoucherViewPager.currentItem = 2
+    override fun onListFragmentInteraction(user: Users.User) {
+        IssueTokenFragment.newInstance(user).show(supportFragmentManager, "dialog")
     }
 
     override fun onFragmentInteraction(uri: Uri) {
@@ -61,7 +44,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                 var selectedFragment: Fragment? = null
                 when (item.getItemId()) {
                     R.id.action_item1 -> selectedFragment = HomeActivityFragment.newInstance()
-                    R.id.action_item2 -> selectedFragment = IssueVoucherFragment.newInstance()
+                    R.id.action_item2 -> selectedFragment = DiscoverUsersFragment.newInstance()
                     R.id.action_item3 -> selectedFragment = PriceListFragment.newInstance()
                 }
                 val transaction = supportFragmentManager.beginTransaction()

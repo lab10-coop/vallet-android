@@ -1,5 +1,6 @@
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
 import io.lab10.vallet.admin.TokenFactory
@@ -126,11 +127,16 @@ class Web3jManager private constructor(){
         val tokenContractAddress = sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
 
         // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-        Single.fromCallable {
-            token.issue(to, amount).send()
-        }.subscribeOn(Schedulers.io()).subscribe {
-            result -> Log.i(TAG, result.toString())
+        try {
+
+            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            Single.fromCallable {
+                token.issue(to, amount).send()
+            }.subscribeOn(Schedulers.io()).subscribe {
+                result -> Log.i(TAG, result.toString())
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Cannot connect to node", Toast.LENGTH_LONG).show()
         }
     }
 
