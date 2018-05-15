@@ -19,8 +19,8 @@
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemIconTint="#ff9b9ea0"
-        app:itemTextColor="#ff0a9ffa"
+        app:itemIconTint="@color/menu_selector_color"
+        app:itemTextColor="@color/menu_selector_color"
         android:layout_alignParentBottom="true"
         app:menu="@menu/main_navigation"/>
 
