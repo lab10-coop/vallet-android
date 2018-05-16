@@ -12,7 +12,6 @@ import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
-import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
@@ -37,8 +36,15 @@ class Web3jManager private constructor(){
         val INSTANCE: Web3jManager by lazy { Holder.INSTANCE }
     }
 
-    private fun getNodeAddress(context: Context): String {
-        return context.getString(R.string.artis_node_address)
+    fun getNodeAddress(context: Context): String {
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        return sharedPref.getString(context.getString(R.string.shared_pref_artis_node_address), context.getString(R.string.artis_node_address))
+    }
+
+    fun getContractAddress(context: Context): String {
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        return sharedPref.getString(context.getString(R.string.shared_pref_factory_contract_address), context.getString(R.string.token_factory_contract_address))
+
     }
 
     fun getConnection(context: Context): Web3j{
@@ -73,8 +79,8 @@ class Web3jManager private constructor(){
     }
 
     fun getClientBalance(context: Context, address: String, credentials: Credentials) : BigInteger {
-        val CONTRACT_ADDRESS = context.getString(R.string.token_factory_contract_address)
-        var token = Token.load(CONTRACT_ADDRESS, getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        val contractAddress = getContractAddress(context)
+        var token = Token.load(contractAddress, getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         var balance = BigInteger.ZERO
         Single.fromCallable {
             try {

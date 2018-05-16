@@ -28,7 +28,6 @@ in three simple steps.</string>
     <string name="error_voucher_name_too_short">Voucher name too short. Min 3 characters.</string>
     <string name="issue_to">to</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="shared_pref_factory_contract_address">token_factory_contract_address</string>
 
 </resources>

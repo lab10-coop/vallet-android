@@ -84,5 +84,68 @@
             android:text="0" />
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/serverIp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:hint="Node IP"/>
+
+        <TextView
+            android:id="@+id/serverIpValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:text="0" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/contractAddress"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:hint="Contract address"/>
+
+        <TextView
+            android:id="@+id/contractAddressValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/label_margin"
+            android:text="0" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"/>
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restore defaults"/>
+    </LinearLayout>
 
 </LinearLayout>
