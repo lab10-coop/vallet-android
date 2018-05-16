@@ -1,11 +1,13 @@
 package io.lab10.vallet.admin
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import io.lab10.vallet.R
+import io.lab10.vallet.admin.activities.VoucherActivity
 import kotlinx.android.synthetic.admin.activity_debug.*
 
 class DebugActivity : AppCompatActivity() {
@@ -38,6 +40,11 @@ class DebugActivity : AppCompatActivity() {
             editor.remove(resources.getString(R.string.shared_pref_factory_contract_address))
             editor.commit()
             refreshAll()
+        }
+
+        generateTokenButton.setOnClickListener() { v ->
+            val intent = Intent(this, VoucherActivity::class.java)
+            startActivity(intent)
         }
 
     }

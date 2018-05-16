@@ -40,17 +40,13 @@ class IssueTokenFragment : DialogFragment() {
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
             val amount = BigInteger(amountInput)
-            val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-            val walletFile = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_file), "")
-            if (walletFile != "" && userAddress != null) {
-                val walletPath = File(context.filesDir, walletFile)
-                var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
-                try {
-                    Web3jManager.INSTANCE.issueTokensTo(activity, credentials, userAddress!!, amount)
 
-                } catch (e: Exception) {
-                    dialog.dismiss()
-                }
+            try {
+                var credentials = Web3jManager.INSTANCE.loadCredential(context)
+                Web3jManager.INSTANCE.issueTokensTo(activity, credentials!!, userAddress!!, amount)
+
+            } catch (e: Exception) {
+                dialog.dismiss()
             }
         }
 

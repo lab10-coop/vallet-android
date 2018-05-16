@@ -16,6 +16,7 @@ import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
 import rx.schedulers.Schedulers
+import java.io.File
 import java.math.BigInteger
 
 
@@ -59,10 +60,18 @@ class Web3jManager private constructor(){
         return fileName
     }
 
-    fun loadCredential(password: String, walletPath: String): Credentials {
-        return WalletUtils.loadCredentials(
-                password,
-                walletPath)
+    fun loadCredential(context: Context): Credentials? {
+        // TODO take care of it
+        val password = "123"
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val walletFile = sharedPref.getString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), "")
+        if (walletFile != "") {
+            val walletPath = File(context.filesDir, walletFile)
+            return WalletUtils.loadCredentials(password, walletPath)
+        } else {
+            return null
+        }
+
     }
 
     fun getWalletAddress(walletFileName: String): String {
@@ -97,9 +106,8 @@ class Web3jManager private constructor(){
     }
 
     fun generateNewToken(context: Context, credentials: Credentials, decimal: Int) {
-        val CONTRACT_ADDRESS = context.getString(R.string.token_factory_contract_address)
-
-        var tokenFactory = TokenFactory.load(CONTRACT_ADDRESS, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
+        val contractAddress = getContractAddress(context)
+        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
         Single.fromCallable {
              tokenFactory.createToken(decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())

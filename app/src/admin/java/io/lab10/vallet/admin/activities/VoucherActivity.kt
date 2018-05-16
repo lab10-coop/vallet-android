@@ -159,7 +159,8 @@ class VoucherActivity : AppCompatActivity() {
 
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
-                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), 12)
+                val voucherDecimal = 12;
+                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), voucherDecimal)
                 if (euroBtn.isChecked) {
                     editor.putString(resources.getString(R.string.shared_pref_voucher_type), Voucher.Type.EUR.toString())
                 } else {
@@ -169,12 +170,17 @@ class VoucherActivity : AppCompatActivity() {
                 // TODO: Manage password for the key
                 val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
                 val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-                editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
-                editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-                editor.commit()
+                if( sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), null) == null) {
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
+                    editor.commit()
+                } else {
+                    Toast.makeText(context, "Wallet exist - procceed", Toast.LENGTH_SHORT)
+                }
 
-
-
+                // TODO move that inside web3jmanager so we don't need to worry about credential everytime
+                val credential = Web3jManager.INSTANCE.loadCredential(context)
+                Web3jManager.INSTANCE.generateNewToken(context, credential!!, voucherDecimal )
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)
