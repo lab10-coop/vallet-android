@@ -28,8 +28,13 @@ class IPFSUnitTest {
         Assert.assertNotNull(ipfsServer)
         val version = ipfsServer!!.info.version() as VersionInfo
 
-        Assert.assertEquals("0.4.13", version.Version)
+        Assert.assertEquals("0.4.14", version.Version)
         Assert.assertEquals("6", version.Repo)
+
+    }
+    @Test
+    fun ipfs_testAddFile() {
+        Assert.assertNotNull(ipfsServer)
 
     }
 }

@@ -28,6 +28,8 @@ class DebugActivity : AppCompatActivity() {
                 editor.putString(resources.getString(R.string.shared_pref_artis_node_address), serverIp.text.toString())
             if(contractAddress.text.toString().length > 0)
                 editor.putString(resources.getString(R.string.shared_pref_factory_contract_address), contractAddress.text.toString())
+            if(ipfsAddressInput.text.toString().length > 0)
+                editor.putString(resources.getString(R.string.shared_pref_ipfs_address), ipfsAddressInput.text.toString())
             editor.commit()
             contractAddressValue.text = Web3jManager.INSTANCE.getContractAddress(this)
             refreshAll()
@@ -77,6 +79,11 @@ class DebugActivity : AppCompatActivity() {
         serverIpValue.text = Web3jManager.INSTANCE.getNodeAddress(this)
     }
 
+    private fun refreshIpfsAddress() {
+        ipfsAddressValue.text = sharedPref!!.getString(resources.getString(R.string.shared_pref_ipfs_address), resources.getString(R.string.ipfs_server))
+
+    }
+
     private fun refreshFactoryContractAddress() {
         contractAddressValue.text = Web3jManager.INSTANCE.getContractAddress(this)
     }
@@ -92,5 +99,6 @@ class DebugActivity : AppCompatActivity() {
         refreshNodeAddress()
         refreshFactoryContractAddress()
         refreshTokenContract()
+        refreshIpfsAddress()
     }
 }
