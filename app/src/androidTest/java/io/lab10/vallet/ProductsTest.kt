@@ -27,4 +27,12 @@ class ProductsTest {
         val product = Products.getProducts().first()
         Assert.assertEquals(product.toJson(), json)
     }
+
+    @Test
+    fun products_asJson() {
+
+        Products.addItem(Products.Product("Chips", "Chipsy", 56434, "imagePath2" ))
+        val json = "[{\"id\":\"Piwo\",\"imagePath\":\"imagePath\",\"name\":\"Piwo\",\"price\":123456},{\"id\":\"Chips\",\"imagePath\":\"imagePath2\",\"name\":\"Chipsy\",\"price\":56434}]"
+        Assert.assertEquals(Products.toJson(), json)
+    }
 }

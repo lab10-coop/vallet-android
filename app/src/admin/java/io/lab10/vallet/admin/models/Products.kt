@@ -19,6 +19,11 @@ object Products {
         return ITEMS;
     }
 
+    fun toJson(): String {
+        val gson = Gson()
+        return gson.toJson(ITEMS)
+    }
+
     fun addItem(item: Product){
         if (!isProductOnList(item)) {
             ITEMS.add(item)
