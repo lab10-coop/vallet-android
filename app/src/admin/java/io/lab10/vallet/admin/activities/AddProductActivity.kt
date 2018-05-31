@@ -36,7 +36,7 @@ class AddProductActivity : AppCompatActivity() {
             var priceSring = productPriceInput.text.toString()
             var price = 0
             if (priceSring != null && !priceSring.trim().equals("")) {
-                price = Integer.parseInt(priceSring)
+                price = priceSring.toInt()
             }
 
             // TODO store image on ipfs
