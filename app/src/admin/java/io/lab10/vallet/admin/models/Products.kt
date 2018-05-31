@@ -2,6 +2,7 @@ package io.lab10.vallet.admin.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.Gson
 
 /**
  * Created by mtfk on 11.02.18.
@@ -37,6 +38,11 @@ object Products {
 
         override fun toString(): String {
             return name
+        }
+
+        fun toJson(): String {
+            val gson = Gson()
+            return gson.toJson(this)
         }
 
 
