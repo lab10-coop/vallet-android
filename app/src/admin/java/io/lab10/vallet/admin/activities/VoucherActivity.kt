@@ -160,11 +160,15 @@ class VoucherActivity : AppCompatActivity() {
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
                 val voucherDecimal = 12;
+                val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "ATS")
+                var voucherType = Voucher.Type.EUR.toString()
+                editor.putString(resources.getString(R.string.shared_pref_voucher_name), voucherName)
                 editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), voucherDecimal)
                 if (euroBtn.isChecked) {
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), Voucher.Type.EUR.toString())
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
                 } else {
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), Voucher.Type.VOUCHER.toString())
+                    voucherType = Voucher.Type.VOUCHER.toString()
+                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
                 }
                 editor.putBoolean("FIRST_RUN", false)
                 // TODO: Manage password for the key
@@ -178,9 +182,7 @@ class VoucherActivity : AppCompatActivity() {
                     Toast.makeText(context, "Wallet exist - procceed", Toast.LENGTH_SHORT)
                 }
 
-                // TODO move that inside web3jmanager so we don't need to worry about credential everytime
-                val credential = Web3jManager.INSTANCE.loadCredential(context)
-                Web3jManager.INSTANCE.generateNewToken(context, credential!!, voucherDecimal )
+                Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal )
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)

@@ -12,7 +12,7 @@
 in three simple steps.</string>
     <string name="select_user_nearby">Select user nearby</string>
     <string name="issue_token">Issue</string>
-    <string name="token_factory_contract_address">0xb02158257c7efd6f928f93d8e5defd63bdde1487</string>
+    <string name="token_factory_contract_address">0x0fd1fa8112f205d5c2754ece65eb43deb3592214</string>
 
     <string-array name="voucher_type">
         <item>EUR</item>

@@ -8,7 +8,8 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
+import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameter
@@ -41,9 +42,15 @@ class TokenFactory : Contract {
     fun getTokenCreatedEvents(transactionReceipt: TransactionReceipt): List<TokenCreatedEventResponse> {
         val event = Event("TokenCreated",
                 Arrays.asList(),
-                Arrays.asList<TypeReference<*>>(object : TypeReference<Address>() {
+                Arrays.asList(object : TypeReference<Address>() {
 
                 }, object : TypeReference<Address>() {
+
+                }, object : TypeReference<Utf8String>() {
+
+                }, object : TypeReference<Utf8String>() {
+
+                }, object : TypeReference<Uint8>() {
 
                 }))
         val valueList = extractEventParameters(event, transactionReceipt)
@@ -52,6 +59,9 @@ class TokenFactory : Contract {
             val typedResponse = TokenCreatedEventResponse()
             typedResponse._address = eventValues.nonIndexedValues[0].value as String
             typedResponse._creator = eventValues.nonIndexedValues[1].value as String
+            typedResponse._name = eventValues.nonIndexedValues[2].value as String
+            typedResponse._symbol = eventValues.nonIndexedValues[3].value as String
+            typedResponse._decimals = eventValues.nonIndexedValues[4].value as BigInteger
             responses.add(typedResponse)
         }
         return responses
@@ -60,9 +70,15 @@ class TokenFactory : Contract {
     fun tokenCreatedEventObservable(startBlock: DefaultBlockParameter, endBlock: DefaultBlockParameter): Observable<TokenCreatedEventResponse> {
         val event = Event("TokenCreated",
                 Arrays.asList(),
-                Arrays.asList<TypeReference<*>>(object : TypeReference<Address>() {
+                Arrays.asList(object : TypeReference<Address>() {
 
                 }, object : TypeReference<Address>() {
+
+                }, object : TypeReference<Utf8String>() {
+
+                }, object : TypeReference<Utf8String>() {
+
+                }, object : TypeReference<Uint8>() {
 
                 }))
         val filter = EthFilter(startBlock, endBlock, contractAddress)
@@ -72,14 +88,19 @@ class TokenFactory : Contract {
             val typedResponse = TokenCreatedEventResponse()
             typedResponse._address = eventValues.nonIndexedValues[0].value as String
             typedResponse._creator = eventValues.nonIndexedValues[1].value as String
+            typedResponse._name = eventValues.nonIndexedValues[2].value as String
+            typedResponse._symbol = eventValues.nonIndexedValues[3].value as String
+            typedResponse._decimals = eventValues.nonIndexedValues[4].value as BigInteger
             typedResponse
         }
     }
 
-    fun createToken(decimals: BigInteger): RemoteCall<TransactionReceipt> {
+    fun createTokenContract(name: String, symbol: String, decimals: BigInteger): RemoteCall<TransactionReceipt> {
         val function = Function(
-                "createToken",
-                Arrays.asList<Type<*>>(org.web3j.abi.datatypes.generated.Uint8(decimals)),
+                "createTokenContract",
+                Arrays.asList(org.web3j.abi.datatypes.Utf8String(name),
+                        org.web3j.abi.datatypes.Utf8String(symbol),
+                        org.web3j.abi.datatypes.generated.Uint8(decimals)),
                 emptyList())
         return executeRemoteCallTransaction(function)
     }
@@ -88,17 +109,23 @@ class TokenFactory : Contract {
         var _address: String? = null
 
         var _creator: String? = null
+
+        var _name: String? = null
+
+        var _symbol: String? = null
+
+        var _decimals: BigInteger? = null
     }
 
     companion object {
         private val BINARY = ""
 
         fun deploy(web3j: Web3j, credentials: Credentials, gasPrice: BigInteger, gasLimit: BigInteger): RemoteCall<TokenFactory> {
-            return deployRemoteCall(TokenFactory::class.java, web3j, credentials, gasPrice, gasLimit, BINARY, "")
+            return Contract.deployRemoteCall(TokenFactory::class.java, web3j, credentials, gasPrice, gasLimit, BINARY, "")
         }
 
         fun deploy(web3j: Web3j, transactionManager: TransactionManager, gasPrice: BigInteger, gasLimit: BigInteger): RemoteCall<TokenFactory> {
-            return deployRemoteCall(TokenFactory::class.java, web3j, transactionManager, gasPrice, gasLimit, BINARY, "")
+            return Contract.deployRemoteCall(TokenFactory::class.java, web3j, transactionManager, gasPrice, gasLimit, BINARY, "")
         }
 
         fun load(contractAddress: String, web3j: Web3j, credentials: Credentials, gasPrice: BigInteger, gasLimit: BigInteger): TokenFactory {

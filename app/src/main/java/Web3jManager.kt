@@ -105,11 +105,13 @@ class Web3jManager private constructor(){
         return balance;
     }
 
-    fun generateNewToken(context: Context, credentials: Credentials, decimal: Int) {
+    fun generateNewToken(context: Context, name: String, symbol: String, decimal: Int) {
         val contractAddress = getContractAddress(context)
-        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials, Contract.GAS_PRICE,Contract.GAS_LIMIT)
+        val credentials = loadCredential(context)
+        // TODO take care of the case when credential will be null.
+        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE,Contract.GAS_LIMIT)
         Single.fromCallable {
-             tokenFactory.createToken(decimal.toBigInteger()).send()
+             tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
         .subscribe() { result ->
             var respons = tokenFactory.getTokenCreatedEvents(result)
