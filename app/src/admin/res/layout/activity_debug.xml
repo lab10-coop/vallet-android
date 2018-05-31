@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.DebugActivity"
+    tools:context=".admin.activities.DebugActivity"
     android:orientation="vertical">
 
     <LinearLayout
@@ -154,6 +154,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Generate token"/>
+        <Button
+            android:id="@+id/getFundsButton"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request funds"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -10,7 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.DebugActivity
+import io.lab10.vallet.admin.activities.DebugActivity
 import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 
 /**

@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet.admin.activities
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.activities.VoucherActivity
 import kotlinx.android.synthetic.admin.activity_debug.*
 
 class DebugActivity : AppCompatActivity() {
@@ -45,6 +44,12 @@ class DebugActivity : AppCompatActivity() {
         generateTokenButton.setOnClickListener() { v ->
             val intent = Intent(this, VoucherActivity::class.java)
             startActivity(intent)
+        }
+
+        getFundsButton.setOnClickListener() { v ->
+            val voucherWalletAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
+
+            FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, "0x" + voucherWalletAddress )
         }
 
     }
