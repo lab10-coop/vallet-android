@@ -182,7 +182,13 @@ class VoucherActivity : AppCompatActivity() {
                     Toast.makeText(context, "Wallet exist - procceed", Toast.LENGTH_SHORT)
                 }
 
-                Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal )
+                // TODO trigger that only if balance is lower then needed amount for creating transaction.
+                //
+                if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
+                    FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress)
+                } else {
+                    Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
+                }
 
                 val intent = Intent(view?.context, AdminActivity::class.java)
                 startActivity(intent)

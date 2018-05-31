@@ -76,12 +76,12 @@ class Web3jManager private constructor(){
 
     fun getWalletAddress(walletFileName: String): String {
         var addr = walletFileName.split("--");
-        return addr.last().split(".").first()
+        return "0x" + addr.last().split(".").first()
     }
 
     fun getBalance(context: Context, address: String) : EthGetBalance {
         // send asynchronous requests to get balance
-        return getConnection(context).ethGetBalance("0x" + address, DefaultBlockParameterName.LATEST)
+        return getConnection(context).ethGetBalance(address, DefaultBlockParameterName.LATEST)
                 .sendAsync()
                 .get()
 
@@ -93,7 +93,7 @@ class Web3jManager private constructor(){
         var balance = BigInteger.ZERO
         Single.fromCallable {
             try {
-                token.balanceOf("0x" + address).send()
+                token.balanceOf(address).send()
             }
             catch (e: ContractCallException ) {
                 return@fromCallable BigInteger.ZERO;

@@ -30,5 +30,6 @@
     <string name="product_price">Price</string>
     <string name="add_product_button">Add a product</string>
     <string name="shared_pref_artis_node_address">server_node_ip</string>
+    <string name="faucet_server">http://faucet.t1.artis.lab10.io/</string>
 
 </resources>
