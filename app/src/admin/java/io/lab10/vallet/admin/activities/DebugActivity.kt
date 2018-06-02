@@ -54,8 +54,24 @@ class DebugActivity : AppCompatActivity() {
             FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, "0x" + voucherWalletAddress )
         }
 
+        enabledDebugMode.setOnClickListener() { v ->
+            val debugMode = sharedPref!!.getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
+            val editor = sharedPref.edit()
+            editor.putBoolean(resources.getString(R.string.shared_pref_debug_mode), !debugMode)
+            editor.commit()
+            refreshDebugMode()
+        }
+
     }
 
+    private fun refreshDebugMode() {
+        val debugMode = sharedPref!!.getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
+        if(debugMode) {
+            enabledDebugMode.text = "Disable debug Mode"
+        } else {
+            enabledDebugMode.text = "Enable debug Mode"
+        }
+    }
     private fun refreshBalance() {
         val voucherWalletAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
         voucherWalletAddresLabel.text = voucherWalletAddress.toString()
@@ -100,5 +116,6 @@ class DebugActivity : AppCompatActivity() {
         refreshFactoryContractAddress()
         refreshTokenContract()
         refreshIpfsAddress()
+        refreshDebugMode()
     }
 }

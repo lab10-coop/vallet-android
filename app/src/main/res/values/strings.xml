@@ -32,5 +32,6 @@
     <string name="shared_pref_artis_node_address">server_node_ip</string>
     <string name="faucet_server">http://faucet.t1.artis.lab10.io/</string>
     <string name="shared_pref_ipfs_address">ipfs_address</string>
+    <string name="shared_pref_debug_mode">debug_mode</string>
 
 </resources>
