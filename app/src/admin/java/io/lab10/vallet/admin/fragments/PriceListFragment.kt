@@ -12,8 +12,14 @@ import android.view.ViewGroup
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.activities.AddProductActivity
+import io.lab10.vallet.admin.events.ProductsListEvent
 import io.lab10.vallet.admin.models.Products
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import org.greenrobot.eventbus.EventBus
+
+
 
 
 class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionListener {
@@ -39,6 +45,16 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
             startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
         }
 
+
+
+        // TODO we should use IntentService for all network activities
+        // to avoid potential memory leaks. In this case we also should check
+        // response and handle case where response will fail and inform user.
+        Thread(Runnable {
+            IPFSManager.INSTANCE.fetchProductList(context)
+            EventBus.getDefault().post(ProductsListEvent())
+        }).start()
+
         return view
     }
 
@@ -56,28 +72,22 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         listener = null
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode != Activity.RESULT_CANCELED){
-            if (requestCode == AddProductActivity.PRODUCT_RETURN_CODE && data != null) {
-                val product = data.getParcelableExtra<Products.Product>(AddProductActivity.PRODUCT_RETURN_STRING)
-                var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-                if(product.isValid()) {
-                    productFragment.addProduct(product)
-                }
-            }
-        }
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
     }
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductsListEvent(event: ProductsListEvent) {
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        productFragment.notifyAboutchange()
+    };
+
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)

@@ -31,7 +31,9 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mProductName.setText(mValues.get(position).name)
         holder.mProductPrice.setText(mValues.get(position).price.toString())
         // TODO load picture from IPFS
-        val bitmap = BitmapFactory.decodeFile(mValues.get(position).imagePath)
+        val imageIPFSAddress = mValues.get(position).imagePath
+        val bitmapString = IPFSManager.INSTANCE.getIPFSConnection(holder.mProductImage.context).get.cat(imageIPFSAddress)
+        val bitmap = BitmapFactory.decodeFile(bitmapString)
         holder.mProductImage.setImageBitmap(bitmap)
 
         holder.mView.setOnClickListener {

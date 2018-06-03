@@ -1,6 +1,7 @@
 package io.lab10.vallet.admin.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -8,16 +9,16 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.content_add_product.*
 import android.graphics.Bitmap
-import android.os.Environment
 import io.lab10.vallet.admin.models.Products
 import java.io.*
 import android.graphics.drawable.BitmapDrawable
-import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import android.util.Log
 
 
 class AddProductActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1;
 
+    val TAG = AddProductActivity::class.java.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +40,9 @@ class AddProductActivity : AppCompatActivity() {
                 price = priceSring.toInt()
             }
 
-            // TODO store image on ipfs
             val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
-            val image = storeImage(name + ".jpg", bitmap)
-            var product = Products.Product(id, name, price, image)
 
-            var resultIntent = Intent();
-            resultIntent.putExtra(PRODUCT_RETURN_STRING, product);
-            setResult(Activity.RESULT_OK, resultIntent);
+            storeProduct(id, name, price, bitmap)
             finish();
         }
 
@@ -68,8 +64,8 @@ class AddProductActivity : AppCompatActivity() {
         val PRODUCT_RETURN_STRING = "product"
     }
 
-    private fun storeImage(name: String, data: Bitmap) : String {
-        val saveImage = File(filesDir, name)
+    private fun storeProduct(id: String, name: String, price: Int, data: Bitmap) {
+        val saveImage = File(filesDir, name + ".jpg")
         try {
             val outputStream = FileOutputStream(saveImage);
             data.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
@@ -83,7 +79,20 @@ class AddProductActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        return saveImage.absolutePath
+        // TODO we should use IntentService for all network activities
+        // to avoid potential memory leaks. In this case we also should check
+        // response and handle case where response will fail and inform user.
+        Thread(Runnable {
+            val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(saveImage, name)
+            var product = Products.Product(id, name, price, address.Hash)
+            Products.addItem(product)
+            var addressName = IPFSManager.INSTANCE.publishProductList(this);
+            val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.putString(resources.getString(R.string.shared_pref_product_list_ipns_address), addressName)
+            editor.commit()
+            Log.d(TAG, "Address of products list: " +  addressName)
+        }).start()
     }
 
 

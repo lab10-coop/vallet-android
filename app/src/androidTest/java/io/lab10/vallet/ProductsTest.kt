@@ -35,4 +35,11 @@ class ProductsTest {
         val json = "[{\"id\":\"Piwo\",\"imagePath\":\"imagePath\",\"name\":\"Piwo\",\"price\":123456},{\"id\":\"Chips\",\"imagePath\":\"imagePath2\",\"name\":\"Chipsy\",\"price\":56434}]"
         Assert.assertEquals(Products.toJson(), json)
     }
+
+    @Test
+    fun products_fromJson() {
+        val json = "[{\"id\":\"Piwo\",\"imagePath\":\"imagePath\",\"name\":\"Piwo\",\"price\":123456},{\"id\":\"Chips\",\"imagePath\":\"imagePath2\",\"name\":\"Chipsy\",\"price\":56434}]"
+        Products.fromJson(json)
+        Assert.assertEquals(Products.getProducts().size, 2)
+    }
 }

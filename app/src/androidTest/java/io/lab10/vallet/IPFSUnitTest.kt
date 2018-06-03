@@ -4,10 +4,12 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import io.ipfs.kotlin.IPFS
 import io.ipfs.kotlin.model.VersionInfo
+import io.lab10.vallet.admin.models.Products
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 
 /**
  * Created by mtfk on 01.02.18.
@@ -35,6 +37,21 @@ class IPFSUnitTest {
     @Test
     fun ipfs_testAddFile() {
         Assert.assertNotNull(ipfsServer)
+        var hashlink = ipfsServer!!.add.file(File.createTempFile("temptestfile", null))
+        Assert.assertEquals(hashlink.toString().length, 73)
+    }
 
+    @Test
+    fun ipfs_testAddProducts() {
+            val id = "Piwo"
+            val name = "Piwo"
+            val price = 123456
+            var image = ipfsServer!!.add.file(File.createTempFile("testimage", null))
+            var product = Products.Product(id, name, price, image.Hash)
+            Products.addItem(product)
+            val appContext = InstrumentationRegistry.getTargetContext()
+
+            var address = IPFSManager.INSTANCE.publishProductList(appContext!!)
+            Assert.assertEquals(address!!.length, 46)
     }
 }

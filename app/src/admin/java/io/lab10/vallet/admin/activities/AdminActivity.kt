@@ -12,7 +12,6 @@ import io.lab10.vallet.admin.models.Products
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_admin.*
 
-
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
         IssueTokenFragment.OnFragmentInteractionListener,
@@ -21,7 +20,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
 
     override fun onListFragmentInteraction(item: Products.Product) {
-        TODO("not implemented")
+        // TODO add interaction for product
     }
 
     override fun onListFragmentInteraction(user: Users.User) {
@@ -60,4 +59,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         transaction.commit()
 
     }
+
+
 }

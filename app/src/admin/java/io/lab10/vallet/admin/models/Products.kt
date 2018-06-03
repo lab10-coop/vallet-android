@@ -24,6 +24,19 @@ object Products {
         return gson.toJson(ITEMS)
     }
 
+    fun fromJson(json: String) {
+        val gson = Gson()
+        ITEMS.clear()
+        var tmp: MutableList<Product> = ArrayList()
+        val products = gson.fromJson(json, Array<Product>::class.java)
+        products.forEach { v ->
+            // TODO add check if product is valid?
+            if (!isProductOnList(v)) {
+                ITEMS.add(v)
+            }
+        }
+    }
+
     fun addItem(item: Product){
         if (!isProductOnList(item)) {
             ITEMS.add(item)
