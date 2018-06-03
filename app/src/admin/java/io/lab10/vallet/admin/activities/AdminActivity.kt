@@ -8,7 +8,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import io.lab10.vallet.admin.fragments.*
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_admin.*
 

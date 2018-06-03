@@ -1,7 +1,7 @@
 package io.lab10.vallet
 
 import android.support.test.runner.AndroidJUnit4
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Test

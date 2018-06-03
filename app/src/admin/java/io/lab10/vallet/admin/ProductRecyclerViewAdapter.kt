@@ -9,9 +9,8 @@ import android.widget.TextView
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.fragments.ProductFragment.OnListFragmentInteractionListener
-import io.lab10.vallet.admin.models.Products
-import io.lab10.vallet.admin.models.Products.Product
-import android.graphics.BitmapFactory
+import io.lab10.vallet.models.Products
+import io.lab10.vallet.models.Products.Product
 import com.squareup.picasso.Picasso
 
 

@@ -41,19 +41,14 @@ class ClientActivity : AppCompatActivity() {
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
             editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), voucherWalletAddress)
-            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_path), walletFile)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
             editor.commit()
         }
 
         walletAddressLabel.text = voucherWalletAddress
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
-        val walletFile = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_path), "")
-        if (walletFile != "") {
-            val walletPath = File(this.filesDir, walletFile)
-            var credentials = Web3jManager.INSTANCE.loadCredential("123", walletPath.absolutePath)
-            var walletBalance = Web3jManager.INSTANCE.getClientBalance(this, voucherWalletAddress, credentials)
-            activeVouchersCount.text = walletBalance.toString()
-        }
+        var walletBalance = Web3jManager.INSTANCE.getClientBalance(this, voucherWalletAddress)
+        activeVouchersCount.text = walletBalance.toString()
     }
 
     fun startBroadcastingAddress() {
@@ -61,7 +56,8 @@ class ClientActivity : AppCompatActivity() {
         Toast.makeText(this,"Broadcasting address", Toast.LENGTH_LONG).show()
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         val address = voucherWalletAddress
-        val part1 = address.substring(0, BTUtils.SERVICE_NAME_SIZE)
+        // Address is always with 0x which we don't need to transfer
+        val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE)
         val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE)
         val uuid1 = BTUtils.encodeAddress(part1)
         val uuid2 = BTUtils.encodeAddress(part2)

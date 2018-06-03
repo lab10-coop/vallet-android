@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.content_add_product.*
 import android.graphics.Bitmap
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import java.io.*
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log

@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin.models
+package io.lab10.vallet.models
 
 import android.os.Parcel
 import android.os.Parcelable

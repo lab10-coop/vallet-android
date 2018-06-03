@@ -45,7 +45,6 @@ class Web3jManager private constructor(){
     fun getContractAddress(context: Context): String {
         val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         return sharedPref.getString(context.getString(R.string.shared_pref_factory_contract_address), context.getString(R.string.token_factory_contract_address))
-
     }
 
     fun getConnection(context: Context): Web3j{
@@ -87,21 +86,23 @@ class Web3jManager private constructor(){
 
     }
 
-    fun getClientBalance(context: Context, address: String, credentials: Credentials) : BigInteger {
+    fun getClientBalance(context: Context, address: String) : BigInteger {
         val contractAddress = getContractAddress(context)
-        var token = Token.load(contractAddress, getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        val credentials = loadCredential(context)
         var balance = BigInteger.ZERO
-        Single.fromCallable {
-            try {
-                token.balanceOf(address).send()
-            }
-            catch (e: ContractCallException ) {
-                return@fromCallable BigInteger.ZERO;
-            }
-        }.subscribeOn(Schedulers.io())
-                .subscribe() { result ->
-                    balance = result;
+        if (credentials != null) {
+            var token = Token.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            Single.fromCallable {
+                try {
+                    token.balanceOf(address).send()
+                } catch (e: ContractCallException) {
+                    return@fromCallable BigInteger.ZERO;
                 }
+            }.subscribeOn(Schedulers.io())
+                    .subscribe() { result ->
+                        balance = result;
+                    }
+        }
         return balance;
     }
 

@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import io.ipfs.kotlin.IPFS
 import io.ipfs.kotlin.model.VersionInfo
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

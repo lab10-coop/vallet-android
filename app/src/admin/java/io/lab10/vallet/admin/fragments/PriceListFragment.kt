@@ -13,7 +13,7 @@ import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.events.ProductsListEvent
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe

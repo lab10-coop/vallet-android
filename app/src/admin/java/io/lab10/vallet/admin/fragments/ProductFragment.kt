@@ -4,19 +4,17 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.ProductRecyclerViewAdapter
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
 import io.lab10.vallet.admin.events.ProductsListEvent
-import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 
 

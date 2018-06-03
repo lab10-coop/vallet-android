@@ -15,8 +15,8 @@
     <string name="shared_pref_voucher_type">voucher_type</string>
     <string name="shared_pref_voucher_decimal">voucher_decimal</string>
     <string name="shared_pref_voucher_wallet_address">voucher_wallet_address</string>
-    <string name="shared_pref_voucher_wallet_path">voucher_wallet_path</string>
     <string name="shared_pref_token_contract_address">voucher_token_contract_address</string>
+    <string name="shared_pref_voucher_wallet_file">voucher_wallet_file</string>
     <string name="voucher_type_euro">V-EUR</string>
     <string name="voucher_type_voucher">Voucher</string>
     <string name="message_creating_token">New voucher</string>
@@ -34,5 +34,10 @@
     <string name="shared_pref_ipfs_address">ipfs_address</string>
     <string name="shared_pref_debug_mode">debug_mode</string>
     <string name="shared_pref_product_list_ipns_address">product_list_ipns</string>
+
+    <!-- Admin only but since we are sharing Web3jManager we need to keep it here -->
+    <string name="shared_pref_factory_contract_address">token_factory_contract_address</string>
+    <string name="token_factory_contract_address">0x0fd1fa8112f205d5c2754ece65eb43deb3592214</string>
+
 
 </resources>

@@ -1,12 +1,10 @@
 import android.content.Context
 import io.ipfs.kotlin.IPFS
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.models.Products
+import io.lab10.vallet.models.Products
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
-import com.google.gson.Gson
-
 
 
 /**
