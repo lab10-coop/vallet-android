@@ -1,9 +1,14 @@
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
 import io.lab10.vallet.admin.TokenFactory
+import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.MessageEvent
+import io.lab10.vallet.events.RedeemVoucherEvent
+import io.lab10.vallet.events.TransferVoucherEvent
+import io.lab10.vallet.utils.ReadonlyTransactionManager
+import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.Web3j
@@ -86,6 +91,56 @@ class Web3jManager private constructor(){
 
     }
 
+    fun getCirculatingVoucher(context: Context) {
+        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val tokenContractAddress = sharedPref.getString(context.resources.getString(R.string.shared_pref_token_contract_address), "")
+        var token = Token.load(tokenContractAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                    if (log._value != null)
+                        EventBus.getDefault().post(TransferVoucherEvent(log._value as BigInteger))
+
+                }
+        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                    if (log._value != null)
+                        EventBus.getDefault().post(RedeemVoucherEvent(log._value as BigInteger))
+                }
+    }
+
+    fun getVoucherBalance(context: Context, address: String) {
+        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+        // TODO how user knows token contract address ??
+        var token = Token.load("0x33fdef0027a0e122b197ebd9a7f4113032e0897a", getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                    if (log._value != null && matchClientAddress(context, log._to))
+                        EventBus.getDefault().post(TransferVoucherEvent(log._value as BigInteger))
+
+                }
+        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                   if (log._value != null && matchClientAddress(context, log._to))
+                        EventBus.getDefault().post(RedeemVoucherEvent(log._value as BigInteger))
+                }
+
+        // TODO balance is sum of transfer Event minus redeemEvents
+    }
+
+
+    private fun matchClientAddress(context: Context, address: String?): Boolean {
+        if (address == null)
+            return false;
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val walletAddress = sharedPref!!.getString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), "")
+        return address.equals(walletAddress)
+
+    }
     fun getClientBalance(context: Context, address: String) : BigInteger {
         val contractAddress = getContractAddress(context)
         val credentials = loadCredential(context)
@@ -139,21 +194,24 @@ class Web3jManager private constructor(){
         }
     }
 
-    fun issueTokensTo(context: Context, credentials: Credentials, to: String, amount: BigInteger) {
+    fun issueTokensTo(context: Context, to: String, amount: BigInteger) {
         val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         val tokenContractAddress = sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
-
+        val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
         try {
 
-            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.issue(to, amount).send()
             }.subscribeOn(Schedulers.io()).subscribe {
                 result -> Log.i(TAG, result.toString())
+                EventBus.getDefault().post(MessageEvent(context.getString(R.string.message_voucher_issued)))
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Cannot connect to node", Toast.LENGTH_LONG).show()
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+
         }
     }
 

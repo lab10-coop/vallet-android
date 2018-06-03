@@ -6,8 +6,13 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import io.lab10.vallet.R
+import io.lab10.vallet.events.ErrorEvent
 import kotlinx.android.synthetic.admin.activity_debug.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class DebugActivity : AppCompatActivity() {
     val TAG = DebugActivity::class.java.simpleName
@@ -51,7 +56,7 @@ class DebugActivity : AppCompatActivity() {
         getFundsButton.setOnClickListener() { v ->
             val voucherWalletAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
 
-            FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, "0x" + voucherWalletAddress )
+            FaucetManager.INSTANCE.getFounds(this, voucherWalletAddress )
         }
 
         enabledDebugMode.setOnClickListener() { v ->
@@ -118,4 +123,20 @@ class DebugActivity : AppCompatActivity() {
         refreshIpfsAddress()
         refreshDebugMode()
     }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onError(event: ErrorEvent) {
+        Toast.makeText(this, "Error: " + event.message, Toast.LENGTH_LONG).show()
+    };
 }

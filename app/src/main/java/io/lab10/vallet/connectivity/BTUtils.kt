@@ -19,13 +19,15 @@ object BTUtils {
 
     // For some reason UUID is flipped we need to get it straight before extracting UUID
     private fun flipString(string: String) : String {
+        var address = string.replace("-","")
+
         var flipped = ""
-        var i = string.length
+        var i = address.length
         while (i > 0) {
-            flipped += string.substring(i-2, i)
+            flipped += address.substring(i-2, i)
             i = i - 2
         }
-        var paddedData = flipped.replace("-","")
+        var paddedData = flipped
         flipped = paddedData.substring(0, 8) + "-" +
                 paddedData.substring(8, 12) + "-" +
                 paddedData.substring(12, 16) + "-" +

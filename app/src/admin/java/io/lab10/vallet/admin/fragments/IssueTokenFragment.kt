@@ -12,7 +12,6 @@ import io.lab10.vallet.R
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
-import java.io.File
 import java.math.BigInteger
 
 class IssueTokenFragment : DialogFragment() {
@@ -42,9 +41,8 @@ class IssueTokenFragment : DialogFragment() {
             val amount = BigInteger(amountInput)
 
             try {
-                var credentials = Web3jManager.INSTANCE.loadCredential(context)
-                Web3jManager.INSTANCE.issueTokensTo(activity, credentials!!, userAddress!!, amount)
-
+                Web3jManager.INSTANCE.issueTokensTo(activity, "0x" + userAddress!!, amount)
+                dialog.dismiss()
             } catch (e: Exception) {
                 dialog.dismiss()
             }

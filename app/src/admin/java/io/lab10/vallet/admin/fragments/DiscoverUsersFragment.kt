@@ -105,6 +105,7 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         adapter!!.notifyDataSetChanged()
         val debugMode = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE).getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
         if (debugMode) {
+            // TODO replace by eventbus
             Toast.makeText(context, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
         }
     }

@@ -7,10 +7,16 @@ import io.lab10.vallet.R
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.view.MenuItem
+import android.widget.Toast
+import io.lab10.vallet.events.DebugEvent
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.activity_admin.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
@@ -57,7 +63,28 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, HomeActivityFragment.newInstance())
         transaction.commit()
+        Web3jManager.INSTANCE.getCirculatingVoucher(this)
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onError(event: ErrorEvent) {
+        Toast.makeText(this, "Error: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDebug(event: DebugEvent) {
+        Toast.makeText(this, "Debug: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
     }
 
 

@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
+import io.lab10.vallet.events.RedeemVoucherEvent
+import io.lab10.vallet.events.TransferVoucherEvent
 
 import kotlinx.android.synthetic.client.activity_client.*
-import org.web3j.tx.Contract
-import java.io.File
-import java.util.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import java.math.BigInteger
 
 
 class ClientActivity : AppCompatActivity() {
@@ -47,8 +49,8 @@ class ClientActivity : AppCompatActivity() {
 
         walletAddressLabel.text = voucherWalletAddress
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
-        var walletBalance = Web3jManager.INSTANCE.getClientBalance(this, voucherWalletAddress)
-        activeVouchersCount.text = walletBalance.toString()
+        Web3jManager.INSTANCE.getVoucherBalance(this, voucherWalletAddress)
+        activeVouchersCount.text = "0"
     }
 
     fun startBroadcastingAddress() {
@@ -57,8 +59,8 @@ class ClientActivity : AppCompatActivity() {
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         val address = voucherWalletAddress
         // Address is always with 0x which we don't need to transfer
-        val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE)
-        val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE)
+        val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE+2)
+        val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE+2)
         val uuid1 = BTUtils.encodeAddress(part1)
         val uuid2 = BTUtils.encodeAddress(part2)
         if (!mBluetoothAdapter.isEnabled) {
@@ -70,6 +72,37 @@ class ClientActivity : AppCompatActivity() {
             mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid1)
             mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid2)
         }
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe
+    fun onTransferVoucherEvent(event: TransferVoucherEvent) {
+        val voucherCount = activeVouchersCount.text as String
+        var currentValue = BigInteger.ZERO
+        if (voucherCount.length > 0) {
+            currentValue = voucherCount.toBigInteger()
+        }
+        currentValue += event.value
+        activeVouchersCount.text = currentValue.toString()
+    }
+    @Subscribe
+    fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
+        val voucherCount = activeVouchersCount.text as String
+        var currentValue = BigInteger.ZERO
+        if (voucherCount.length > 0) {
+            currentValue = voucherCount.toBigInteger()
+        }
+        currentValue -= event.value
+        activeVouchersCount.text = currentValue.toString()
     }
 
 }

@@ -11,7 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
+import io.lab10.vallet.events.RedeemVoucherEvent
+import io.lab10.vallet.events.TransferVoucherEvent
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import java.math.BigInteger
 
 /**
  * A simple [Fragment] subclass.
@@ -27,17 +33,45 @@ class HomeActivityFragment : Fragment() {
 
     private var debugCount: Int = 0
     private var debugOn: Boolean = false
+    private var viewHolder: View? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe
+    fun onTransferVoucherEvent(event: TransferVoucherEvent) {
+        val voucherSum = viewHolder!!.voucherCountLabel.text as String
+        var currentValue = BigInteger.ZERO
+        if (voucherSum.length > 0) {
+            currentValue = voucherSum.toBigInteger()
+        }
+        currentValue += event.value
+        viewHolder!!.voucherCountLabel.text = currentValue.toString()
+    }
+    @Subscribe
+    fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
+        val voucherSum = viewHolder!!.voucherCountLabel.text as String
+        var currentValue = BigInteger.ZERO
+        if (voucherSum.length > 0) {
+            currentValue = voucherSum.toBigInteger()
+        }
+        currentValue -= event.value
+        viewHolder!!.voucherCountLabel.text = currentValue.toString()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        var inflater =  inflater.inflate(R.layout.fragment_home_activity, container, false)
+        viewHolder =  inflater.inflate(R.layout.fragment_home_activity, container, false) as View
 
-        inflater.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+        viewHolder!!.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_DOWN -> {
                     debugCount += 1
@@ -55,7 +89,7 @@ class HomeActivityFragment : Fragment() {
             }
             return@OnTouchListener true
         })
-        return inflater
+        return viewHolder
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -26,9 +26,10 @@
                 android:background="@drawable/euro_icon_white"/>
 
             <TextView
+                android:id="@+id/voucherCountLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0.0"
+                android:text="0"
                 android:textSize="50sp"
                 android:fontFamily="@font/work_sans_bold"
                 android:textAlignment="center"
