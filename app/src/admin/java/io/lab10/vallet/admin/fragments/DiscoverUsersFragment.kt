@@ -103,7 +103,10 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         var user = Users.User(event.address, event.address, event.deviceName)
         Users.addItem(user)
         adapter!!.notifyDataSetChanged()
-        Toast.makeText(context, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
+        val debugMode = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE).getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
+        if (debugMode) {
+            Toast.makeText(context, event.deviceName + " " + event.address, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroy() {

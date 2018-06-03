@@ -3,12 +3,10 @@ package io.lab10.vallet.admin.recievers
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
 import android.util.Log
-import android.widget.Toast
 import io.lab10.vallet.admin.events.BTScanningActivityEvent
 import io.lab10.vallet.admin.events.NewAddressEvent
 import io.lab10.vallet.connectivity.BTUtils
