@@ -12,6 +12,7 @@ import io.lab10.vallet.admin.fragments.ProductFragment.OnListFragmentInteraction
 import io.lab10.vallet.admin.models.Products
 import io.lab10.vallet.admin.models.Products.Product
 import android.graphics.BitmapFactory
+import com.squareup.picasso.Picasso
 
 
 /**
@@ -30,11 +31,8 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
         holder.mProductPrice.setText(mValues.get(position).price.toString())
-        // TODO load picture from IPFS
         val imageIPFSAddress = mValues.get(position).imagePath
-        val bitmapString = IPFSManager.INSTANCE.getIPFSConnection(holder.mProductImage.context).get.cat(imageIPFSAddress)
-        val bitmap = BitmapFactory.decodeFile(bitmapString)
-        holder.mProductImage.setImageBitmap(bitmap)
+        Picasso.get().load("https://ipfs.io/ipfs/" + imageIPFSAddress).into(holder.mProductImage);
 
         holder.mView.setOnClickListener {
             val product = holder.mItem

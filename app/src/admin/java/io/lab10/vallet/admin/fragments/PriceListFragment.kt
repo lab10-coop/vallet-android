@@ -15,6 +15,7 @@ import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.events.ProductsListEvent
 import io.lab10.vallet.admin.models.Products
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
+import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.EventBus
@@ -29,12 +30,6 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
 
     private var listener: OnFragmentInteractionListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -45,15 +40,7 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
             startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
         }
 
-
-
-        // TODO we should use IntentService for all network activities
-        // to avoid potential memory leaks. In this case we also should check
-        // response and handle case where response will fail and inform user.
-        Thread(Runnable {
-            IPFSManager.INSTANCE.fetchProductList(context)
-            EventBus.getDefault().post(ProductsListEvent())
-        }).start()
+        refreshProducts()
 
         return view
     }
@@ -82,10 +69,20 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         EventBus.getDefault().unregister(this);
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == AddProductActivity.PRODUCT_RETURN_CODE) {
+                refreshProducts()
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.notifyAboutchange()
+        productFragment.swiperefresh.isRefreshing = false
     };
 
     interface OnFragmentInteractionListener {
@@ -96,5 +93,19 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
     companion object {
 
         fun newInstance() = PriceListFragment()
+    }
+
+    fun refreshProducts() {
+
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        productFragment.swiperefresh.isRefreshing = true;
+
+        // TODO we should use IntentService for all network activities
+        // to avoid potential memory leaks. In this case we also should check
+        // response and handle case where response will fail and inform user.
+        Thread(Runnable {
+            IPFSManager.INSTANCE.fetchProductList(context)
+            EventBus.getDefault().post(ProductsListEvent())
+        }).start()
     }
 }

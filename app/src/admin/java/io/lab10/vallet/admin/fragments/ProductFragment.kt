@@ -14,6 +14,11 @@ import io.lab10.vallet.admin.ProductRecyclerViewAdapter
 import io.lab10.vallet.admin.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
+import android.support.v4.widget.SwipeRefreshLayout
+import io.lab10.vallet.admin.events.ProductsListEvent
+import kotlinx.android.synthetic.main.fragment_product_list.*
+import org.greenrobot.eventbus.EventBus
+
 
 class ProductFragment : Fragment() {
     private var mListener: OnListFragmentInteractionListener? = null
@@ -32,6 +37,12 @@ class ProductFragment : Fragment() {
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
                 recyclerView.adapter = adapter
             }
+
+        view.swiperefresh.setOnRefreshListener(
+                SwipeRefreshLayout.OnRefreshListener {
+                    EventBus.getDefault().post(ProductsListEvent())
+                }
+        )
 
             return view
     }

@@ -43,6 +43,8 @@ class AddProductActivity : AppCompatActivity() {
             val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
 
             storeProduct(id, name, price, bitmap)
+            var resultIntent = Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
             finish();
         }
 
