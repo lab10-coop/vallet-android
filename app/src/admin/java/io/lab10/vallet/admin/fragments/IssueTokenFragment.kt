@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,11 @@ import io.lab10.vallet.admin.models.Users
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
+import android.text.InputFilter
+import io.lab10.vallet.admin.models.Voucher
+import io.lab10.vallet.admin.models.Wallet
+import io.lab10.vallet.utils.EuroInputFilter
+
 
 class IssueTokenFragment : DialogFragment() {
 
@@ -36,6 +42,10 @@ class IssueTokenFragment : DialogFragment() {
 
         view.issueUserName.text = userName
 
+        if (Wallet.isEuroType(activity)) {
+            view.voucherAmountInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+            view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
+        }
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
             val amount = BigInteger(amountInput)

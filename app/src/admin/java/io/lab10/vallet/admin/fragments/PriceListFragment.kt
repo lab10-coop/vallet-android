@@ -13,6 +13,7 @@ import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.events.ProductsListEvent
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Products
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
@@ -104,8 +105,17 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
-            IPFSManager.INSTANCE.fetchProductList(context)
-            EventBus.getDefault().post(ProductsListEvent())
+            try {
+                IPFSManager.INSTANCE.fetchProductList(context)
+                EventBus.getDefault().post(ProductsListEvent())
+            } catch(e: Exception) {
+                if(isAdded) {
+                    activity.runOnUiThread {
+                        productFragment.swiperefresh.isRefreshing = false
+                    }
+                    EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+                }
+            }
         }).start()
     }
 }

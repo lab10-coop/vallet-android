@@ -47,7 +47,7 @@
         android:ems="10"
         android:hint="1"
         android:maxLength="12"
-        android:inputType="numberDecimal"
+        android:inputType="numberSigned"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textSize="60sp"

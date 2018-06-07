@@ -12,7 +12,11 @@ import android.graphics.Bitmap
 import io.lab10.vallet.models.Products
 import java.io.*
 import android.graphics.drawable.BitmapDrawable
+import android.text.InputFilter
+import android.text.InputType
 import android.util.Log
+import io.lab10.vallet.admin.models.Wallet
+import io.lab10.vallet.utils.EuroInputFilter
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -31,13 +35,18 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
+        if (Wallet.isEuroType(this)) {
+            productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+            productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
+        }
+
         saveProductBtn.setOnClickListener() { v ->
             var id = productNameInput.text.toString()
             var name = productNameInput.text.toString()
-            var priceSring = productPriceInput.text.toString()
+            var priceString = productPriceInput.text.toString()
             var price = 0
-            if (priceSring != null && !priceSring.trim().equals("")) {
-                price = priceSring.toInt()
+            if (priceString != null && !priceString.trim().equals("")) {
+                price = Wallet.convertEUR2ATS(priceString)
             }
 
             val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
@@ -67,6 +76,7 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun storeProduct(id: String, name: String, price: Int, data: Bitmap) {
+        // TODO we should store it locally as well
         val saveImage = File(filesDir, name + ".jpg")
         try {
             val outputStream = FileOutputStream(saveImage);

@@ -47,23 +47,33 @@ class HomeActivityFragment : Fragment() {
 
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
-        val voucherSum = viewHolder!!.voucherCountLabel.text as String
-        var currentValue = BigInteger.ZERO
-        if (voucherSum.length > 0) {
-            currentValue = voucherSum.toBigInteger()
+        if (isAdded) {
+            activity.runOnUiThread {
+                val voucherSum = viewHolder!!.voucherCountLabel.text as String
+                var currentValue = BigInteger.ZERO
+                if (voucherSum.length > 0) {
+                    currentValue = voucherSum.toBigInteger()
+                }
+                currentValue += event.value
+                viewHolder!!.voucherCountLabel.text = currentValue.toString()
+            }
         }
-        currentValue += event.value
-        viewHolder!!.voucherCountLabel.text = currentValue.toString()
+
+
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
-        val voucherSum = viewHolder!!.voucherCountLabel.text as String
-        var currentValue = BigInteger.ZERO
-        if (voucherSum.length > 0) {
-            currentValue = voucherSum.toBigInteger()
+        if (isAdded) {
+            activity.runOnUiThread {
+                val voucherSum = viewHolder!!.voucherCountLabel.text as String
+                var currentValue = BigInteger.ZERO
+                if (voucherSum.length > 0) {
+                    currentValue = voucherSum.toBigInteger()
+                }
+                currentValue -= event.value
+                viewHolder!!.voucherCountLabel.text = currentValue.toString()
+            }
         }
-        currentValue -= event.value
-        viewHolder!!.voucherCountLabel.text = currentValue.toString()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -128,15 +138,6 @@ class HomeActivityFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeActivityFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
            HomeActivityFragment()
