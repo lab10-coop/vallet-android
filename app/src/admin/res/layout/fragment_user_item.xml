@@ -10,7 +10,7 @@
         android:layout_margin="20dp"
         android:textSize="20sp"
         android:textAllCaps="true"
-        android:background="@drawable/user_near_button"
+        android:background="@drawable/item_button"
         xmlns:android="http://schemas.android.com/apk/res/android" />
 
     <TextView

@@ -16,7 +16,7 @@ import io.lab10.vallet.R
 
 import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.Toast
-import io.lab10.vallet.admin.models.Voucher
+import io.lab10.vallet.models.Voucher
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_settings.*

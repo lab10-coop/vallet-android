@@ -2,6 +2,7 @@ package io.lab10.vallet.admin.models
 
 import android.content.Context
 import io.lab10.vallet.R
+import io.lab10.vallet.models.Voucher
 
 class Wallet {
     companion object Wallet {

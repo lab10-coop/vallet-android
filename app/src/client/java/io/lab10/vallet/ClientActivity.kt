@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
+import io.lab10.vallet.models.Vouchers
 
 import kotlinx.android.synthetic.client.activity_client.*
 import org.greenrobot.eventbus.EventBus
@@ -22,18 +25,31 @@ class ClientActivity : AppCompatActivity() {
     var voucherWalletAddress : String = "";
     val TAG = ClientActivity::class.java.simpleName
 
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client)
 
-        productListBtn.setOnClickListener() { v ->
-            val intent = Intent(this, ProductListActivity::class.java)
-            startActivity(intent)
+        viewManager = LinearLayoutManager(this)
+        var myDataset: MutableList<Vouchers.Voucher> = ArrayList()
+        // TODO fetch from local DB
+        val voucher = Vouchers.Voucher("Lab10", "Lab10", "0x123131232", 156)
+        val voucher2 = Vouchers.Voucher("Lab10", "Lab10", "0x123131232", 156)
+        myDataset.add(voucher)
+        myDataset.add(voucher2)
+        viewAdapter = VoucherAdapter(myDataset)
+
+        recyclerView = findViewById<RecyclerView>(R.id.voucherList).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
         }
 
-        requestTokenBtn.setOnClickListener() { v ->
-            startBroadcastingAddress()
-        }
+
 
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
@@ -47,10 +63,9 @@ class ClientActivity : AppCompatActivity() {
             editor.commit()
         }
 
-        walletAddressLabel.text = voucherWalletAddress
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
         Web3jManager.INSTANCE.getVoucherBalance(this, voucherWalletAddress)
-        activeVouchersCount.text = "0"
+        // TODO update proper voucher on the list
     }
 
     fun startBroadcastingAddress() {
@@ -77,6 +92,7 @@ class ClientActivity : AppCompatActivity() {
     public override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+        startBroadcastingAddress()
     }
 
     public override fun onStop() {
@@ -86,23 +102,23 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
-        val voucherCount = activeVouchersCount.text as String
+/*        val voucherCount = activeVouchersCount.text as String
         var currentValue = BigInteger.ZERO
         if (voucherCount.length > 0) {
             currentValue = voucherCount.toBigInteger()
         }
         currentValue += event.value
-        activeVouchersCount.text = currentValue.toString()
+        activeVouchersCount.text = currentValue.toString()*/
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
-        val voucherCount = activeVouchersCount.text as String
+/*        val voucherCount = activeVouchersCount.text as String
         var currentValue = BigInteger.ZERO
         if (voucherCount.length > 0) {
             currentValue = voucherCount.toBigInteger()
         }
         currentValue -= event.value
-        activeVouchersCount.text = currentValue.toString()
+        activeVouchersCount.text = currentValue.toString()*/
     }
 
 }

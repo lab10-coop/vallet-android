@@ -111,7 +111,7 @@ class DebugActivity : AppCompatActivity() {
 
     private fun refreshTokenContract() {
         voucherContractAddresLabel.text = sharedPref!!.getString(resources.getString(R.string.shared_pref_token_contract_address), "0x0")
-        Log.i(TAG, "Voucher contract address: " + voucherContractAddresLabel.text)
+        Log.i(TAG, "Vouchers contract address: " + voucherContractAddresLabel.text)
     }
 
     private fun refreshAll() {
