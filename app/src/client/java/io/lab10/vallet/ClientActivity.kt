@@ -18,6 +18,18 @@ import kotlinx.android.synthetic.client.activity_client.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.math.BigInteger
+import com.google.zxing.BarcodeFormat
+import android.graphics.Bitmap
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
+
+
+
+
 
 
 class ClientActivity : AppCompatActivity() {
@@ -65,12 +77,40 @@ class ClientActivity : AppCompatActivity() {
 
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
         Web3jManager.INSTANCE.getVoucherBalance(this, voucherWalletAddress)
+
+        generateWalletBarcode(voucherWalletAddress)
         // TODO update proper voucher on the list
+    }
+
+    private fun generateWalletBarcode(address: String) {
+        try {
+            val barcodeEncoder = BarcodeEncoder()
+            val bitmap = barcodeEncoder.encodeBitmap(address, BarcodeFormat.QR_CODE, 400, 400)
+            voucherQrcode.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+
+        }
+
+    }
+
+    private fun startLoaderAnimation() {
+        val anim = RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        anim.interpolator = LinearInterpolator()
+        anim.repeatCount = Animation.INFINITE
+        anim.duration = 700
+        loader.startAnimation(anim)
+    }
+
+    // TODO trigger stop when scanning will be over
+    private fun stopLoaderAnimation() {
+        loader.animation = null
+        loader.visibility = View.GONE
     }
 
     fun startBroadcastingAddress() {
         // TODO make sure that BT is on if not turn it on
         Toast.makeText(this,"Broadcasting address", Toast.LENGTH_LONG).show()
+        startLoaderAnimation()
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         val address = voucherWalletAddress
         // Address is always with 0x which we don't need to transfer

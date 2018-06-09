@@ -19,8 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="378dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+
             android:layout_marginTop="32dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/logo_margin"
-                android:paddingBottom="50dp"
+                android:paddingBottom="20dp"
                 android:src="@drawable/vallet_logo" />
 
             <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,8 +45,8 @@
 
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dip"
-                android:background="@drawable/divider_gradient" />
+                android:layout_height="1dp"
+                android:background="#ffe5e8eb" />
 
             <TextView
                 android:id="@+id/adminHint"
@@ -58,15 +57,50 @@
                 android:textColor="#ff333333"
                 android:textSize="@dimen/font_normal" />
 
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/loader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/loader"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/scanningLabel"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                <TextView
+                    android:id="@+id/scanningLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ff0a9ffa"
+                    android:textSize="@dimen/font_normal"
+                    android:text="@string/looking_for_admin"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginRight="40dp"
+                    />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
-                android:id="@+id/availableVouchers"
+                android:id="@+id/yourQRcode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/label_margin"
-                android:textColor="#ff0a9ffa"
-                android:textSize="@dimen/font_normal"
-                android:text="@string/looking_for_admin"
+                android:layout_margin="20dp"
+                android:text="@string/your_qrcode"
+                android:textColor="#ff333333"
+                android:textSize="@dimen/font_normal" />
+
+            <ImageView
+                android:id="@+id/voucherQrcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/logo_margin"
+                android:paddingBottom="50dp"
                 />
 
         </LinearLayout>

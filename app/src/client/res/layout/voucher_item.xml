@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:background="@drawable/item_button"
-    android:layout_margin="20dp">
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
