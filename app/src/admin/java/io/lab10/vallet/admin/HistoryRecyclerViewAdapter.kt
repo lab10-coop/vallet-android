@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import io.lab10.vallet.R
-import io.lab10.vallet.models.History
+import io.lab10.vallet.models.ValletTransaction
 
-class HistoryRecyclerViewAdapter(private val history: MutableList<History.Transaction>) :
+class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>) :
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mName: TextView
         val mValue: TextView
-        var mTransaction: History.Transaction? = null
+        var mTransaction: ValletTransaction? = null
 
         init {
             mName = mView.findViewById(R.id.name) as TextView

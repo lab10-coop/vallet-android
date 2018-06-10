@@ -35,7 +35,7 @@ import rx.Observable
  * [codegen module](https://github.com/web3j/web3j/tree/master/codegen) to update.
  *
  *
- * Generated with web3j version 3.2.0.
+ * Generated with web3j version 3.2.0. and modified by mtfk
  */
 class Token : Contract {
 
@@ -123,6 +123,8 @@ class Token : Contract {
             val typedResponse = RedeemEventResponse()
             typedResponse._from = eventValues.indexedValues[0].value as String
             typedResponse._value = eventValues.nonIndexedValues[0].value as BigInteger
+            typedResponse._blockNumber = log.blockNumber
+            typedResponse._transactionId = log.transactionHash
             typedResponse
         }
     }
@@ -346,6 +348,8 @@ class Token : Contract {
         var _from: String? = null
 
         var _value: BigInteger? = null
+        var _transactionId: String? = null
+        var _blockNumber: BigInteger? = null
     }
 
     class ApprovalEventResponse {

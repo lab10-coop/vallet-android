@@ -1,12 +1,11 @@
 package io.lab10.vallet.models
 
 import com.google.gson.Gson
-import java.math.BigInteger
 
 object History {
-    private val ITEMS: MutableList<Transaction> = ArrayList()
+    private val ITEMS: MutableList<ValletTransaction> = ArrayList()
 
-    fun getTransactions(): MutableList<Transaction> {
+    fun getTransactions(): MutableList<ValletTransaction> {
         return ITEMS;
     }
 
@@ -18,8 +17,8 @@ object History {
     fun fromJson(json: String) {
         val gson = Gson()
         ITEMS.clear()
-        var tmp: MutableList<Transaction> = ArrayList()
-        val products = gson.fromJson(json, Array<Transaction>::class.java)
+        var tmp: MutableList<ValletTransaction> = ArrayList()
+        val products = gson.fromJson(json, Array<ValletTransaction>::class.java)
         products.forEach { v ->
             // TODO add check if voucher is valid?
             if (!isVoucherOnList(v)) {
@@ -28,13 +27,13 @@ object History {
         }
     }
 
-    fun addItem(item: Transaction){
+    fun addItem(item: ValletTransaction){
         if (!isVoucherOnList(item)) {
             ITEMS.add(item)
         }
     }
 
-    private fun isVoucherOnList(item: Transaction): Boolean {
+    private fun isVoucherOnList(item: ValletTransaction): Boolean {
         for(voucher in ITEMS) {
             if (voucher.id.equals(item.id)) {
                 return true;
@@ -44,7 +43,4 @@ object History {
     }
 
 
-    class Transaction(val id: String, val name: String, val value: BigInteger) {
-
-    }
 }

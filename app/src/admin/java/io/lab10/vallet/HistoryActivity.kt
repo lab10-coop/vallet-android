@@ -8,11 +8,9 @@ import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
-import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
+import io.lab10.vallet.models.ValletTransaction
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.math.BigInteger
-import java.util.*
 
 class HistoryActivity : AppCompatActivity() {
 
@@ -43,7 +41,7 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
-            var transaction = History.Transaction(event.transactionId, "Transfer", event.value)
+            var transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
             History.addItem(transaction)
             viewAdapter.notifyDataSetChanged()
         }
@@ -53,7 +51,7 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         runOnUiThread {
-            var transaction = History.Transaction("TODO", "Spent", event.value)
+            var transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
             History.addItem(transaction)
             viewAdapter.notifyDataSetChanged()
         }
