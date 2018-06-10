@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import io.lab10.vallet.admin.fragments.ProductFragment.OnListFragmentInteraction
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Products.Product
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_product.view.*
 
 
 /**
@@ -39,6 +41,13 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
             if (product != null) {
                 mListener?.onListFragmentInteraction(product)
             }
+        }
+
+        // TODO move to common class
+        val sharedPref = holder.mView.context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val debugMode = sharedPref!!.getBoolean(holder.mView.context.resources.getString(R.string.shared_pref_debug_mode), false)
+        if (debugMode) {
+            holder.mView.productNfcTag.visibility = View.VISIBLE
         }
     }
 

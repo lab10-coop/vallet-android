@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.PermissionChecker.checkSelfPermission
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,6 +19,7 @@ import io.lab10.vallet.models.Products
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
 import io.lab10.vallet.admin.events.ProductsListEvent
+import kotlinx.android.synthetic.main.fragment_product.view.*
 import org.greenrobot.eventbus.EventBus
 
 
@@ -47,7 +47,6 @@ class ProductFragment : Fragment() {
                     EventBus.getDefault().post(ProductsListEvent())
                 }
         )
-
 
         setupPermissions()
             return view
