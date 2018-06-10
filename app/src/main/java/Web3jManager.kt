@@ -242,8 +242,8 @@ class Web3jManager private constructor(){
 
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse) {
-        if (log._value != null && log._from != null && log._to != null)
-            EventBus.getDefault().post(TransferVoucherEvent(log._from as String, log._to as String, log._value as BigInteger))
+        if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
+            EventBus.getDefault().post(TransferVoucherEvent(log._transactionId as String, log._to as String, log._value as BigInteger))
     }
 
 }

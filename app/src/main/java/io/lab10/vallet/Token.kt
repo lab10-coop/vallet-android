@@ -83,6 +83,8 @@ class Token : Contract {
             typedResponse._from = eventValues.indexedValues[0].value as String
             typedResponse._to = eventValues.indexedValues[1].value as String
             typedResponse._value = eventValues.nonIndexedValues[0].value as BigInteger
+            typedResponse._blockNumber = log.blockNumber
+            typedResponse._transactionId = log.transactionHash
             typedResponse
         }
     }
@@ -334,10 +336,10 @@ class Token : Contract {
 
     class TransferEventResponse {
         var _from: String? = null
-
         var _to: String? = null
-
         var _value: BigInteger? = null
+        var _transactionId: String? = null
+        var _blockNumber: BigInteger? = null
     }
 
     class RedeemEventResponse {

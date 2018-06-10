@@ -43,8 +43,7 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
-            // Since event do not have any unique value which we could use as a id we generated UUID
-            var transaction = History.Transaction(UUID.randomUUID().toString(), "Transfer", event.value)
+            var transaction = History.Transaction(event.transactionId, "Transfer", event.value)
             History.addItem(transaction)
             viewAdapter.notifyDataSetChanged()
         }
