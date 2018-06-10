@@ -3,6 +3,9 @@
     package="io.lab10.vallet">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.NFC"/>
+    <uses-feature android:name="android.hardware.nfc"
+        android:required="true"/>
 
     <application
         android:allowBackup="true"

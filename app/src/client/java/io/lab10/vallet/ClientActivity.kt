@@ -37,7 +37,6 @@ class ClientActivity : AppCompatActivity() {
     var voucherWalletAddress : String = "";
     val TAG = ClientActivity::class.java.simpleName
 
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager

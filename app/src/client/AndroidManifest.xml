@@ -13,7 +13,19 @@
             </intent-filter>
         </activity>
         <activity android:name="io.lab10.vallet.ProductListActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+
+            <!-- Define Vallet TAGS to be able to trigger the app automatically -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <data android:scheme="http" />
+
+            </intent-filter>
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+
+        </activity>
     </application>
 
 </manifest>
