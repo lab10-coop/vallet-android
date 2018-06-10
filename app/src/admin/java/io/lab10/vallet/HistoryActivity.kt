@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.math.BigInteger
+import java.util.*
 
 class HistoryActivity : AppCompatActivity() {
 
@@ -42,7 +43,8 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
-            var transaction = History.Transaction(event.to, "Transfer", event.value)
+            // Since event do not have any unique value which we could use as a id we generated UUID
+            var transaction = History.Transaction(UUID.randomUUID().toString(), "Transfer", event.value)
             History.addItem(transaction)
             viewAdapter.notifyDataSetChanged()
         }
