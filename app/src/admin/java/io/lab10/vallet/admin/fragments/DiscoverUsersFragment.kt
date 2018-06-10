@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.google.zxing.integration.android.IntentIntegrator
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 import io.lab10.vallet.admin.events.BTScanningActivityEvent
@@ -26,7 +27,9 @@ import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
-
+import com.google.zxing.integration.android.IntentResult
+import android.content.Intent
+import io.lab10.vallet.admin.models.Wallet
 
 
 /**
@@ -94,6 +97,14 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
         }
+
+        view.scanQrcodeButton.setOnClickListener { v->
+            IntentIntegrator.forSupportFragment(this).initiateScan(); // `this` is the current Fragment
+            val integrator = IntentIntegrator.forSupportFragment(this)
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan()
+        }
         return view
     }
 
@@ -147,6 +158,20 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         fun newInstance(): DiscoverUsersFragment {
             val fragment = DiscoverUsersFragment()
             return fragment
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents != null) {
+            val address = result.contents
+            if (Wallet.isValidAddress(result.contents)) {
+                var user = Users.User(address, address, "QR")
+                IssueTokenFragment.newInstance(user).show(fragmentManager, "dialog")
+            }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

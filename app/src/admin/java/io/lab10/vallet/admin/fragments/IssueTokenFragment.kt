@@ -50,7 +50,8 @@ class IssueTokenFragment : DialogFragment() {
             val amount = BigInteger(amountInput)
 
             try {
-                Web3jManager.INSTANCE.issueTokensTo(activity, "0x" + userAddress!!, amount)
+                var address = Wallet.formatAddress(userAddress)
+                Web3jManager.INSTANCE.issueTokensTo(activity, address, amount)
                 dialog.dismiss()
             } catch (e: Exception) {
                 dialog.dismiss()
