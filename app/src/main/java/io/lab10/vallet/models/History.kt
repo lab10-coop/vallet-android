@@ -1,16 +1,12 @@
 package io.lab10.vallet.models
 
 import com.google.gson.Gson
+import java.math.BigInteger
 
-object Vouchers {
+object History {
+    private val ITEMS: MutableList<Transaction> = ArrayList()
 
-    private val ITEMS: MutableList<Voucher> = ArrayList()
-
-    enum class Type {
-        EUR, VOUCHER
-    }
-
-    fun getVouchers(): MutableList<Voucher> {
+    fun getTransactions(): MutableList<Transaction> {
         return ITEMS;
     }
 
@@ -22,8 +18,8 @@ object Vouchers {
     fun fromJson(json: String) {
         val gson = Gson()
         ITEMS.clear()
-        var tmp: MutableList<Voucher> = ArrayList()
-        val products = gson.fromJson(json, Array<Voucher>::class.java)
+        var tmp: MutableList<Transaction> = ArrayList()
+        val products = gson.fromJson(json, Array<Transaction>::class.java)
         products.forEach { v ->
             // TODO add check if voucher is valid?
             if (!isVoucherOnList(v)) {
@@ -32,13 +28,13 @@ object Vouchers {
         }
     }
 
-    fun addItem(item: Voucher){
+    fun addItem(item: Transaction){
         if (!isVoucherOnList(item)) {
             ITEMS.add(item)
         }
     }
 
-    private fun isVoucherOnList(item: Voucher): Boolean {
+    private fun isVoucherOnList(item: Transaction): Boolean {
         for(voucher in ITEMS) {
             if (voucher.id.equals(item.id)) {
                 return true;
@@ -47,8 +43,8 @@ object Vouchers {
         return false;
     }
 
-    class Voucher(val id: String, val name: String, val tokenAddress: String, val balance: Int) {
+
+    class Transaction(val id: String, val name: String, val value: BigInteger) {
 
     }
-
 }

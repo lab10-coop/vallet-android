@@ -69,6 +69,17 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/divider_gradient" />
 
+            <TextView
+                android:id="@+id/view_history_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/LabelText"
+                android:layout_marginTop="45dp"
+                android:layout_marginLeft="20dp"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:text="@string/label_view_history"/>
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

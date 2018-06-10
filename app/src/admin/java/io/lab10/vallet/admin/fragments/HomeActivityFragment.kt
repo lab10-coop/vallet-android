@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import io.lab10.vallet.HistoryActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
 import io.lab10.vallet.events.RedeemVoucherEvent
@@ -99,6 +100,11 @@ class HomeActivityFragment : Fragment() {
             }
             return@OnTouchListener true
         })
+
+        viewHolder!!.view_history_label.setOnClickListener { v ->
+            val intent = Intent(activity, HistoryActivity::class.java)
+            startActivity(intent)
+        }
         return viewHolder
     }
 

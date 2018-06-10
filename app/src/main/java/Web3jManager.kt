@@ -52,6 +52,11 @@ class Web3jManager private constructor(){
         return sharedPref.getString(context.getString(R.string.shared_pref_factory_contract_address), context.getString(R.string.token_factory_contract_address))
     }
 
+    fun getTokenAddress(context: Context): String {
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        return sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "")
+    }
+
     fun getConnection(context: Context): Web3j{
        return Web3jFactory.build(HttpService(getNodeAddress(context)))
     }
@@ -99,8 +104,7 @@ class Web3jManager private constructor(){
         token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.TransferEventResponse
-                    if (log._value != null)
-                        EventBus.getDefault().post(TransferVoucherEvent(log._value as BigInteger))
+                    emitTransactionEvent(log)
 
                 }
         token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
@@ -118,8 +122,8 @@ class Web3jManager private constructor(){
         token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.TransferEventResponse
-                    if (log._value != null && matchClientAddress(context, log._to))
-                        EventBus.getDefault().post(TransferVoucherEvent(log._value as BigInteger))
+                    if (matchClientAddress(context, log._to))
+                        emitTransactionEvent(log)
 
                 }
         token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
@@ -159,6 +163,27 @@ class Web3jManager private constructor(){
                     }
         }
         return balance;
+    }
+
+    // TODO combine that with all circulating and balance as all those methods depend on same events.
+    fun fetchAllTransaction(context: Context) {
+        val tokenAddress = getTokenAddress(context)
+        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+        // TODO how user knows token contract address ??
+        var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                    emitTransactionEvent(log)
+
+                }
+        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as Token.TransferEventResponse
+                    if (log._value != null && matchClientAddress(context, log._to))
+                        EventBus.getDefault().post(RedeemVoucherEvent(log._value as BigInteger))
+                }
+
     }
 
     fun generateNewToken(context: Context, name: String, symbol: String, decimal: Int) {
@@ -213,6 +238,12 @@ class Web3jManager private constructor(){
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
         }
+    }
+
+
+    private fun emitTransactionEvent(log: Token.TransferEventResponse) {
+        if (log._value != null && log._from != null && log._to != null)
+            EventBus.getDefault().post(TransferVoucherEvent(log._from as String, log._to as String, log._value as BigInteger))
     }
 
 }

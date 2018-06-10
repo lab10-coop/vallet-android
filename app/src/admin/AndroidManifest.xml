@@ -37,7 +37,11 @@
         <activity
             android:name=".admin.activities.AddProductActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".admin.activities.DebugActivity"
+        <activity
+            android:name=".admin.activities.DebugActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".HistoryActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
