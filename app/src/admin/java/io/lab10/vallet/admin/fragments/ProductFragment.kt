@@ -1,8 +1,13 @@
 package io.lab10.vallet.admin.fragments
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.PermissionChecker.checkSelfPermission
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -22,6 +27,7 @@ class ProductFragment : Fragment() {
     private var mListener: OnListFragmentInteractionListener? = null
     private var adapter: ProductRecyclerViewAdapter? = null
 
+    private val MY_CAMERA_REQUEST_CODE = 100;
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,9 +48,21 @@ class ProductFragment : Fragment() {
                 }
         )
 
+
+        setupPermissions()
             return view
     }
 
+    private fun setupPermissions() {
+        val permission = ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.CAMERA)
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    arrayOf(Manifest.permission.CAMERA),
+                    MY_CAMERA_REQUEST_CODE)
+        }
+    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

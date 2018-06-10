@@ -1,6 +1,7 @@
 package io.lab10.vallet.admin.activities
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,9 +13,14 @@ import android.graphics.Bitmap
 import io.lab10.vallet.models.Products
 import java.io.*
 import android.graphics.drawable.BitmapDrawable
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.os.Parcelable
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
+import android.widget.Toast
 import io.lab10.vallet.admin.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 
@@ -23,10 +29,31 @@ class AddProductActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1;
 
     val TAG = AddProductActivity::class.java.name
+    private var pendingIntent: PendingIntent? = null
+    private var nfcAdapter: NfcAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_product)
+
+
+        pendingIntent = PendingIntent.getActivity(this, 0,
+                Intent(this, this.javaClass)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        // TODO move to settings to enable it
+        if(nfcAdapter == null){
+            Toast.makeText(this,
+                    "NFC NOT supported on this devices!",
+                    Toast.LENGTH_LONG).show();
+        }else if(!nfcAdapter!!.isEnabled()){
+            Toast.makeText(this,
+                    "NFC NOT Enabled!",
+                    Toast.LENGTH_LONG).show();
+            showWirelessSettings()
+            finish();
+        }
 
         productPicture.setOnClickListener() { v ->
             var takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -44,6 +71,7 @@ class AddProductActivity : AppCompatActivity() {
             var id = productNameInput.text.toString()
             var name = productNameInput.text.toString()
             var priceString = productPriceInput.text.toString()
+            var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
             if (priceString != null && !priceString.trim().equals("")) {
                 price = Wallet.convertEUR2ATS(priceString)
@@ -51,7 +79,7 @@ class AddProductActivity : AppCompatActivity() {
 
             val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
 
-            storeProduct(id, name, price, bitmap)
+            storeProduct(id, name, price, bitmap, nfcTagId)
             var resultIntent = Intent();
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
@@ -75,7 +103,7 @@ class AddProductActivity : AppCompatActivity() {
         val PRODUCT_RETURN_STRING = "product"
     }
 
-    private fun storeProduct(id: String, name: String, price: Int, data: Bitmap) {
+    private fun storeProduct(id: String, name: String, price: Int, data: Bitmap, nfcTagId: String) {
         // TODO we should store it locally as well
         val saveImage = File(filesDir, name + ".jpg")
         try {
@@ -96,7 +124,7 @@ class AddProductActivity : AppCompatActivity() {
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(saveImage, name)
-            var product = Products.Product(id, name, price, address.Hash)
+            var product = Products.Product(id, name, price, address.Hash, nfcTagId)
             Products.addItem(product)
             var addressName = IPFSManager.INSTANCE.publishProductList(this);
             val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
@@ -105,6 +133,48 @@ class AddProductActivity : AppCompatActivity() {
             editor.commit()
             Log.d(TAG, "Address of products list: " +  addressName)
         }).start()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        setIntent(intent)
+        resolveIntent(intent)
+    }
+
+    private fun showWirelessSettings() {
+        Toast.makeText(this, "You need to enable NFC", Toast.LENGTH_SHORT).show()
+        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        startActivity(intent)
+    }
+
+    private fun resolveIntent(intent: Intent) {
+        val action = intent.action
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED == action
+                || NfcAdapter.ACTION_TECH_DISCOVERED == action
+                || NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
+
+            val tag = intent.getParcelableExtra<Parcelable>(NfcAdapter.EXTRA_TAG) as Tag
+            var result = ""
+            for (b in tag.id) {
+                val st = String.format("%02X", b)
+                result += st
+            }
+            productNfcTagInput.setText(result)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (nfcAdapter != null) {
+            if (!nfcAdapter!!.isEnabled())
+                showWirelessSettings();
+
+            nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
+        }
+
     }
 
 

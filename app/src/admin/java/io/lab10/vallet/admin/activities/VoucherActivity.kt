@@ -16,11 +16,11 @@ import io.lab10.vallet.R
 
 import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.Toast
-import io.lab10.vallet.models.Voucher
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_settings.*
 import android.view.WindowManager
+import io.lab10.vallet.models.Vouchers
 
 
 class VoucherActivity : AppCompatActivity() {
@@ -161,13 +161,13 @@ class VoucherActivity : AppCompatActivity() {
                 val editor = sharedPref.edit()
                 val voucherDecimal = 12;
                 val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "ATS")
-                var voucherType = Voucher.Type.EUR.toString()
+                var voucherType = Vouchers.Type.EUR.toString()
                 editor.putString(resources.getString(R.string.shared_pref_voucher_name), voucherName)
                 editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), voucherDecimal)
                 if (euroBtn.isChecked) {
                     editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
                 } else {
-                    voucherType = Voucher.Type.VOUCHER.toString()
+                    voucherType = Vouchers.Type.VOUCHER.toString()
                     editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
                 }
                 editor.putBoolean("FIRST_RUN", false)

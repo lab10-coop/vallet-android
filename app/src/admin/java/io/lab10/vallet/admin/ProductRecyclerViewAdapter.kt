@@ -30,6 +30,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
         holder.mProductPrice.setText(mValues.get(position).price.toString())
+        holder.mProductNfcTagId.setText(mValues.get(position).nfcTagId.toString())
         val imageIPFSAddress = mValues.get(position).imagePath
         Picasso.get().load("https://ipfs.io/ipfs/" + imageIPFSAddress).into(holder.mProductImage);
 
@@ -49,12 +50,14 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         val mProductName: TextView
         val mProductImage: ImageView
         val mProductPrice: TextView
+        val mProductNfcTagId: TextView
         var mItem: Products.Product? = null
 
         init {
             mProductName = mView.findViewById(R.id.productName) as TextView
             mProductImage = mView.findViewById(R.id.productImage) as ImageView
             mProductPrice = mView.findViewById(R.id.productPrice) as TextView
+            mProductNfcTagId = mView.findViewById(R.id.productNfcTag) as TextView
 
         }
 

@@ -52,7 +52,7 @@ object Products {
         return false;
     }
 
-    class Product(val id: String, val name: String, val price: Int, val imagePath: String) : Parcelable {
+    class Product(val id: String, val name: String, val price: Int, val imagePath: String, val nfcTagId: String) : Parcelable {
 
         override fun toString(): String {
             return name
@@ -68,13 +68,16 @@ object Products {
                 id = p.readString(),
                 name = p.readString(),
                 price = p.readInt(),
-                imagePath = p.readString())
+                imagePath = p.readString(),
+                nfcTagId = p.readString()
+        )
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             dest.writeString(id)
             dest.writeString(name)
             dest.writeInt(price)
             dest.writeString(imagePath)
+            dest.writeString(nfcTagId)
         }
 
         override fun describeContents() = 0

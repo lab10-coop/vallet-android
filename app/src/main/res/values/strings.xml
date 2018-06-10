@@ -42,6 +42,7 @@
     <string name="scanningHint">Let the admin find you via bluetooth or show them your QR code to add money to your vallet.</string>
     <string name="looking_for_admin">Looking for a nearby admin</string>
     <string name="your_qrcode">Your QR-Code:</string>
+    <string name="product_nfc_placeholder">Scan NFC tag</string>
 
 
 </resources>

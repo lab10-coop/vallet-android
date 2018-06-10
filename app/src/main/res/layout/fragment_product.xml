@@ -70,6 +70,17 @@
                         android:textSize="20sp"
                         tools:text="2" />
                 </LinearLayout>
+                <TextView
+                    android:id="@+id/productNfcTag"
+                    style="@style/RegularText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    tools:text="004573283" />
 
             </LinearLayout>
 

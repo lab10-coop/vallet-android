@@ -60,6 +60,22 @@
         android:textColor="#ff333333"
         tools:text="@string/product_price" />
 
+    <EditText
+        android:id="@+id/productNfcTagInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/product_price"
+        android:inputType="numberSigned"
+        android:selectAllOnFocus="true"
+        android:maxLength="12"
+        android:singleLine="true"
+        android:layout_margin="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/productPriceInput"
+        style="@style/InputText"
+        android:textColor="#ff333333"
+        tools:text="@string/product_nfc_placeholder" />
+
     <Button
         android:id="@+id/saveProductBtn"
         android:layout_width="match_parent"
