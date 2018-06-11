@@ -253,12 +253,12 @@ class Web3jManager private constructor(){
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
-            EventBus.getDefault().post(TransferVoucherEvent(log._transactionId as String, log._to as String, log._blockNumber as BigInteger, log._value as BigInteger))
+            EventBus.getDefault().post(TransferVoucherEvent(log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse) {
         if (log._value != null)
-            EventBus.getDefault().post(RedeemVoucherEvent(log._transactionId as String, log._from as String, log._blockNumber as BigInteger, log._value as BigInteger))
+            EventBus.getDefault().post(RedeemVoucherEvent(log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
 }
