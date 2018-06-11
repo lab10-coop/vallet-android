@@ -44,14 +44,18 @@ class IssueTokenFragment : DialogFragment() {
         if (Wallet.isEuroType(activity)) {
             view.voucherAmountInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
+            voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
-            val amount = BigInteger(amountInput)
 
             try {
+                var amount = BigInteger(amountInput)
                 var address = Wallet.formatAddress(userAddress)
-                Web3jManager.INSTANCE.issueTokensTo(activity, address, amount)
+                if (Wallet.isEuroType(activity)) {
+                    amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amount.toString()).toLong())
+                }
+                    Web3jManager.INSTANCE.issueTokensTo(activity, address, amount)
                 dialog.dismiss()
             } catch (e: Exception) {
                 dialog.dismiss()
