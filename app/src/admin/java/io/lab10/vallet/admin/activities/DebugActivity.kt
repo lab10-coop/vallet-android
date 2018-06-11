@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.google.zxing.BarcodeFormat
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import io.lab10.vallet.R
 import io.lab10.vallet.events.ErrorEvent
 import kotlinx.android.synthetic.admin.activity_debug.*
@@ -65,6 +67,15 @@ class DebugActivity : AppCompatActivity() {
             editor.putBoolean(resources.getString(R.string.shared_pref_debug_mode), !debugMode)
             editor.commit()
             refreshDebugMode()
+        }
+
+        try {
+            val barcodeEncoder = BarcodeEncoder()
+            val address = sharedPref!!.getString(resources.getString(R.string.shared_pref_token_contract_address), "0x0")
+            val bitmap = barcodeEncoder.encodeBitmap(address, BarcodeFormat.QR_CODE, 400, 400)
+            voucherQrcode.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+
         }
 
     }

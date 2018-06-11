@@ -197,6 +197,15 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:text="Enable debug Mode" />
+
+
+            <ImageView
+                android:id="@+id/voucherQrcode"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="@dimen/logo_margin"
+                android:paddingBottom="50dp"
+                />
         </LinearLayout>
 
     </LinearLayout>
