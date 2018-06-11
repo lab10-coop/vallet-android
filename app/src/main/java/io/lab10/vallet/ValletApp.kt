@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet
 
 import android.app.Application
 import io.lab10.vallet.models.MyObjectBox

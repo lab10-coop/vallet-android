@@ -1,7 +1,7 @@
 package io.lab10.vallet.models
 
 import com.google.gson.Gson
-import io.lab10.vallet.admin.ValletApp
+import io.lab10.vallet.ValletApp
 
 object History {
     private val ITEMS: MutableList<ValletTransaction> = ArrayList()

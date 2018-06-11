@@ -17,8 +17,7 @@ import io.lab10.vallet.events.TransferVoucherEvent
 import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.math.BigInteger
-import io.lab10.vallet.admin.ValletApp
+import io.lab10.vallet.ValletApp
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.objectbox.android.AndroidScheduler
