@@ -55,7 +55,7 @@ class AddProductActivity : AppCompatActivity() {
             finish();
         }
 
-        productPicture.setOnClickListener() { v ->
+        productPicture.setOnClickListener() {
             var takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -67,13 +67,13 @@ class AddProductActivity : AppCompatActivity() {
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
         }
 
-        saveProductBtn.setOnClickListener() { v ->
+        saveProductBtn.setOnClickListener() {
             var id = productNameInput.text.toString()
             var name = productNameInput.text.toString()
             var priceString = productPriceInput.text.toString()
             var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
-            if (priceString != null && !priceString.trim().equals("")) {
+            if (!priceString.trim().equals("")) {
                 price = Wallet.convertEUR2ATS(priceString)
             }
 
@@ -85,7 +85,7 @@ class AddProductActivity : AppCompatActivity() {
             finish();
         }
 
-        closeButton.setOnClickListener() { v ->
+        closeButton.setOnClickListener() {
             finish()
         }
     }

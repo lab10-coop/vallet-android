@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import android.widget.Toast
+import io.lab10.vallet.admin.ValletApp
 import io.lab10.vallet.events.DebugEvent
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.admin.fragments.*
@@ -17,6 +18,9 @@ import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import io.lab10.vallet.models.MyObjectBox
+import io.objectbox.BoxStore
+
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
@@ -38,7 +42,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     val TAG = AdminActivity::class.java.simpleName
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +66,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, HomeActivityFragment.newInstance())
         transaction.commit()
+        // TODO move to home fragment
         Web3jManager.INSTANCE.getCirculatingVoucher(this)
 
     }

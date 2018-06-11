@@ -1,9 +1,10 @@
-package io.lab10.vallet
+package io.lab10.vallet.admin.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import io.lab10.vallet.R
 import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent

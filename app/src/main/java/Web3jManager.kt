@@ -180,7 +180,6 @@ class Web3jManager private constructor(){
                     var log = event as Token.RedeemEventResponse
                     emitRedeemEvent(log)
                 }
-
     }
 
     fun generateNewToken(context: Context, name: String, symbol: String, decimal: Int) {

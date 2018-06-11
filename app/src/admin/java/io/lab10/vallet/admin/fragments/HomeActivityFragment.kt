@@ -9,16 +9,19 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import io.lab10.vallet.HistoryActivity
+import io.lab10.vallet.admin.activities.HistoryActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
-import kotlinx.android.synthetic.admin.fragment_home_activity.*
 import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.math.BigInteger
+import io.lab10.vallet.admin.ValletApp
+import io.lab10.vallet.models.ValletTransaction
+import io.lab10.vallet.models.ValletTransaction_
+import io.objectbox.android.AndroidScheduler
 
 /**
  * A simple [Fragment] subclass.
@@ -39,6 +42,14 @@ class HomeActivityFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+        val query = valletTransactionBox.query().build()
+        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
+        .observer { sum ->
+            viewHolder!!.voucherCountLabel.text = sum.toString()
+        }
+
+
     }
 
     override fun onStop() {
@@ -49,14 +60,13 @@ class HomeActivityFragment : Fragment() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         if (isAdded) {
-            activity.runOnUiThread {
-                val voucherSum = viewHolder!!.voucherCountLabel.text as String
-                var currentValue = BigInteger.ZERO
-                if (voucherSum.length > 0) {
-                    currentValue = voucherSum.toBigInteger()
-                }
-                currentValue += event.value
-                viewHolder!!.voucherCountLabel.text = currentValue.toString()
+            val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+            val builder = valletTransactionBox.query();
+            builder.equal(ValletTransaction_.transactionId, event.transactionId)
+            var transaction = builder.build().findUnique()
+            if (transaction == null) {
+                transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+                valletTransactionBox.put(transaction)
             }
         }
 
@@ -65,14 +75,13 @@ class HomeActivityFragment : Fragment() {
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         if (isAdded) {
-            activity.runOnUiThread {
-                val voucherSum = viewHolder!!.voucherCountLabel.text as String
-                var currentValue = BigInteger.ZERO
-                if (voucherSum.length > 0) {
-                    currentValue = voucherSum.toBigInteger()
-                }
-                currentValue -= event.value
-                viewHolder!!.voucherCountLabel.text = currentValue.toString()
+            val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+            val builder = valletTransactionBox.query();
+            builder.equal(ValletTransaction_.transactionId, event.transactionId)
+            var transaction = builder.build().findUnique()
+            if (transaction == null) {
+                transaction = ValletTransaction(0, "Redeem", -event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+                valletTransactionBox.put(transaction)
             }
         }
     }

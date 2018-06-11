@@ -1,12 +1,14 @@
 package io.lab10.vallet.models
 
 import com.google.gson.Gson
+import io.lab10.vallet.admin.ValletApp
 
 object History {
     private val ITEMS: MutableList<ValletTransaction> = ArrayList()
 
     fun getTransactions(): MutableList<ValletTransaction> {
-        return ITEMS;
+        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+        return valletTransactionBox.query().build().find()
     }
 
     fun toJson(): String {

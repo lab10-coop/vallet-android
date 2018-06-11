@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="io.lab10.vallet.HistoryActivity">
+    tools:context="io.lab10.vallet.admin.activities.HistoryActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/historyRecycler"
