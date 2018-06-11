@@ -21,7 +21,7 @@ import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import android.widget.Toast
-import io.lab10.vallet.admin.models.Wallet
+import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 
 

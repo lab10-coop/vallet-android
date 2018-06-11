@@ -27,9 +27,8 @@ import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
-import com.google.zxing.integration.android.IntentResult
 import android.content.Intent
-import io.lab10.vallet.admin.models.Wallet
+import io.lab10.vallet.models.Wallet
 
 
 /**

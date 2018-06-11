@@ -3,10 +3,8 @@ import android.util.Log
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
 import io.lab10.vallet.admin.TokenFactory
-import io.lab10.vallet.events.ErrorEvent
-import io.lab10.vallet.events.MessageEvent
-import io.lab10.vallet.events.RedeemVoucherEvent
-import io.lab10.vallet.events.TransferVoucherEvent
+import io.lab10.vallet.models.Wallet
+import io.lab10.vallet.events.*
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -96,22 +94,38 @@ class Web3jManager private constructor(){
 
     }
 
+    fun getTokenContractAddress(context: Context) {
+        val voucherWalletAddress = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE).getString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
+
+        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+        val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    var log = event as TokenFactory.TokenCreatedEventResponse
+                    if (log._address != null && log._creator.equals(getWalletAddress(voucherWalletAddress)))
+                        EventBus.getDefault().post(TokenCreateEvent(log._address as String))
+
+                }
+    }
+
     fun getCirculatingVoucher(context: Context) {
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
         val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         val tokenContractAddress = sharedPref.getString(context.resources.getString(R.string.shared_pref_token_contract_address), "")
-        var token = Token.load(tokenContractAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.TransferEventResponse
-                    emitTransactionEvent(log)
+        if (Wallet.isValidAddress(tokenContractAddress)) {
+            var token = Token.load(tokenContractAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.TransferEventResponse
+                        emitTransactionEvent(log)
 
-                }
-        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.RedeemEventResponse
-                    emitRedeemEvent(log)
-                }
+                    }
+            token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.RedeemEventResponse
+                        emitRedeemEvent(log)
+                    }
+        }
     }
 
     fun getVoucherBalance(context: Context, address: String) {

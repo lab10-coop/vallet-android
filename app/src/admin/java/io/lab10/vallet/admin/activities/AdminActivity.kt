@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,6 +15,7 @@ import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.events.TokenCreateEvent
 import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -46,6 +48,9 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+
+        Web3jManager.INSTANCE.getTokenContractAddress(this)
+
 
         navigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -81,6 +86,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         Toast.makeText(this, "Debug: " + event.message, Toast.LENGTH_LONG).show()
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTokenCreated(event: TokenCreateEvent) {
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putString(getString(R.string.shared_pref_token_contract_address), event.address)
+        editor.commit()
+    }
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this);

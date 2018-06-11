@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
 import android.text.InputFilter
-import io.lab10.vallet.admin.models.Wallet
+import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 
 

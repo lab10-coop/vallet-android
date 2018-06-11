@@ -1,8 +1,7 @@
-package io.lab10.vallet.admin.models
+package io.lab10.vallet.models
 
 import android.content.Context
 import io.lab10.vallet.R
-import io.lab10.vallet.models.Vouchers
 
 class Wallet {
     companion object Wallet {
