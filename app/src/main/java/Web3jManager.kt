@@ -239,8 +239,7 @@ class Web3jManager private constructor(){
             var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.issue(to, amount).send()
-            }.subscribeOn(Schedulers.io()).subscribe {
-                result -> Log.i(TAG, result.toString())
+            }.subscribeOn(Schedulers.io()).subscribe { 
                 EventBus.getDefault().post(MessageEvent(context.getString(R.string.message_voucher_issued)))
             }
         } catch (e: Exception) {
