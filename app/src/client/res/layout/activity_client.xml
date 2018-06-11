@@ -98,7 +98,7 @@
             <ImageView
                 android:id="@+id/voucherQrcode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 android:layout_margin="@dimen/logo_margin"
                 android:paddingBottom="50dp"
                 />
