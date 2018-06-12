@@ -217,15 +217,13 @@ class Web3jManager private constructor(){
         token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.TransferEventResponse
-                    // TODO add tokenAddress to be able to support multiple vouchers
-                    emitTransactionEvent(log, "")
+                    emitTransactionEvent(log, tokenAddress)
 
                 }
         token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.RedeemEventResponse
-                    // TODO add tokenAddress to be able to support multiple vouchers
-                    emitRedeemEvent(log, "")
+                    emitRedeemEvent(log, tokenAddress)
                 }
     }
 

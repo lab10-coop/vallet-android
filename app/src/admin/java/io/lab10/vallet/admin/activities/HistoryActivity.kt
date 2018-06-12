@@ -36,7 +36,8 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun fetchHistory() {
-        Web3jManager.INSTANCE.fetchAllTransaction(this)
+        // TODO add tokenAddress to be able to support multiple vouchers
+        Web3jManager.INSTANCE.fetchAllTransaction(this, "")
     }
 
     @Subscribe
