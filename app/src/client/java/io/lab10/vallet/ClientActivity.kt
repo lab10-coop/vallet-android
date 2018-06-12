@@ -17,12 +17,9 @@ import io.lab10.vallet.models.Vouchers
 import kotlinx.android.synthetic.client.activity_client.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.math.BigInteger
 import com.google.zxing.BarcodeFormat
-import android.graphics.Bitmap
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
@@ -64,7 +61,22 @@ class ClientActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        fetchVouchers()
+        observeVouchers()
+
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucherBox.query().build().forEach { voucher ->
+            if (voucher.name.equals("Fetching ...")) {
+                Web3jManager.INSTANCE.getTokenName(this, voucher.tokenAddress)
+            }
+
+            // TODO this should not be check like that as both states are very likely
+            if (voucher.balance == 0) {
+                Web3jManager.INSTANCE.getVoucherBalance(this, voucher.tokenAddress)
+            }
+            if (voucher.type == 0) {
+                Web3jManager.INSTANCE.getTokenType(this, voucher.tokenAddress)
+            }
+        }
 
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
@@ -184,7 +196,7 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchVouchers() {
+    private fun observeVouchers() {
         val voucherBox = ValletApp.getBoxStore()
         voucherBox.subscribe(Voucher::class.java).observer {
             viewAdapter.notifyDataSetChanged()
@@ -195,9 +207,11 @@ class ClientActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents != null) {
-            val address = result.contents
-            if (Wallet.isValidAddress(address)) {
-                storeTokenAddress(address)
+            val data = result.contents
+            val tokenAddress = data.split(";")[0]
+            val ipfsAddress = data.split(";")[1]
+            if (Wallet.isValidAddress(tokenAddress)) {
+                storeTokenAddress(tokenAddress, ipfsAddress)
            }
 
         } else {
@@ -205,12 +219,12 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun storeTokenAddress(address: String) {
+    private fun storeTokenAddress(address: String, ipfsAddress: String) {
         Web3jManager.INSTANCE.getTokenName(this, address)
         Web3jManager.INSTANCE.getTokenType(this, address)
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        val voucher = Voucher(0,"Fetching ...", address, 0, 0)
+        val voucher = Voucher(0,"Fetching ...", address, 0, 0, ipfsAddress)
         voucherBox.put(voucher)
     }
 
