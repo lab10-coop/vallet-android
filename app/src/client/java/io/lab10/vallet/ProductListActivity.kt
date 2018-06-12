@@ -12,17 +12,52 @@ import android.app.PendingIntent
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.Tag
+import android.support.v4.app.FragmentActivity
+import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.ProductsListEvent
+import io.lab10.vallet.fragments.ProductFragment
+import io.lab10.vallet.models.MyObjectBox
+import io.lab10.vallet.models.Products
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Voucher_
+import kotlinx.android.synthetic.main.fragment_product_list.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import java.math.BigInteger
 import kotlin.experimental.and
 
 
-class ProductListActivity : AppCompatActivity() {
+class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(item: Products.Product) {
+
+        // TODO add confirmation
+        Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
+    }
 
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
+    private var tokenAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_list)
+
+        val extras = intent.extras
+        if (extras != null) {
+            tokenAddress = extras.getString("EXTRA_TOKEN_ADDRESS")
+            val vouchersBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+            var voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
+            if (voucher != null && voucher.ipfsAdddress.length > 0) {
+                fetchProducts(voucher.ipfsAdddress)
+            } else {
+                EventBus.getDefault().post(ErrorEvent("Missing ipns address"))
+            }
+
+        } else {
+            EventBus.getDefault().post(ErrorEvent("Missing token address"))
+            finish()
+        }
 
 
         pendingIntent = PendingIntent.getActivity(this, 0,
@@ -41,7 +76,34 @@ class ProductListActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG).show();
             finish();
         }
+
+
     }
+
+
+    private fun fetchProducts(priceListIPNSAddress: String) {
+        // TODO we should use IntentService for all network activities
+        // to avoid potential memory leaks. In this case we also should check
+        // response and handle case where response will fail and inform user.
+        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        productFragment.swiperefresh.isRefreshing = true;
+        Thread(Runnable {
+            try {
+                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress)
+                EventBus.getDefault().post(ProductsListEvent())
+            } catch (e: Exception) {
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+                productFragment.swiperefresh.isRefreshing = false;
+            }
+        }).start()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductsListEvent(event: ProductsListEvent) {
+        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        productFragment.notifyAboutchange()
+        productFragment.swiperefresh.isRefreshing = false
+    };
 
     override fun onResume() {
         super.onResume()
@@ -58,6 +120,16 @@ class ProductListActivity : AppCompatActivity() {
             nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
     }
 
     override fun onNewIntent(intent: Intent) {

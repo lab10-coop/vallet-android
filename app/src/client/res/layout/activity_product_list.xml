@@ -8,18 +8,12 @@
     android:background="@color/background"
     tools:context="io.lab10.vallet.ProductListActivity">
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/productList"
-        android:name="io.lab10.vallet.ProductListActivity"
+
+    <fragment android:name="io.lab10.vallet.fragments.ProductFragment"
+        android:id="@+id/product_fragment"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context="io.lab10.vallet.ProductListActivity"
-        tools:listitem="@layout/fragment_product" />
+        android:layout_height="match_parent"/>
 
 
 </android.support.constraint.ConstraintLayout>

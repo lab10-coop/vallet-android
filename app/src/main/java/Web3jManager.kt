@@ -280,6 +280,23 @@ class Web3jManager private constructor(){
         }
     }
 
+    fun redeemToken(context: Context, amount: BigInteger, tokenContractAddress: String) {
+        val credentials = loadCredential(context)
+        // TODO validate if address is valid if not throw exception.
+        try {
+
+            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            Single.fromCallable {
+                token.redeem(amount).send()
+            }.subscribeOn(Schedulers.io()).subscribe {
+                EventBus.getDefault().post(TokenRedeemEvent(tokenContractAddress))
+            }
+        } catch (e: Exception) {
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+
+        }
+    }
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)

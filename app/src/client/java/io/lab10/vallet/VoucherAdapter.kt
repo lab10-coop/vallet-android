@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
+import kotlinx.android.synthetic.client.voucher_item.view.*
 
 class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
         RecyclerView.Adapter<VoucherAdapter.ViewHolder>() {
@@ -19,16 +20,19 @@ class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
         override fun onClick(v: View?) {
             val intent = Intent(mView.context, ProductListActivity::class.java)
             intent.action = "Start"
+            intent.putExtra("EXTRA_TOKEN_ADDRESS", mView.voucherTokenAddress.text);
             mView.context.startActivity(intent)
         }
 
         val mVoucherName: TextView
         val mVoucherBalance: TextView
         var mItem: Vouchers? = null
+        val mVoucherTokenAddress: TextView
 
         init {
             mVoucherName = mView.findViewById(R.id.voucherName) as TextView
             mVoucherBalance = mView.findViewById(R.id.voucherBalance) as TextView
+            mVoucherTokenAddress = mView.findViewById(R.id.voucherTokenAddress) as TextView
             mView.setOnClickListener(this)
         }
 
@@ -47,6 +51,7 @@ class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mVoucherBalance.text = myDataset[position].balance.toString()
         holder.mVoucherName.text = myDataset[position].name
+        holder.mVoucherTokenAddress.text = myDataset[position].tokenAddress
     }
 
     override fun getItemCount() = myDataset.size

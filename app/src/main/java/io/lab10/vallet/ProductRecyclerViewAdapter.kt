@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import io.lab10.vallet.R
 
-import io.lab10.vallet.admin.fragments.ProductFragment.OnListFragmentInteractionListener
+import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Products.Product
 import com.squareup.picasso.Picasso

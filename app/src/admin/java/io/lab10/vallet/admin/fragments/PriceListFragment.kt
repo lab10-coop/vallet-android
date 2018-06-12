@@ -12,8 +12,9 @@ import android.view.ViewGroup
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.activities.AddProductActivity
-import io.lab10.vallet.admin.events.ProductsListEvent
 import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.ProductsListEvent
+import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Products
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
@@ -101,12 +102,15 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
 
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val priceListIPNSAddress = sharedPref.getString(context.resources.getString(R.string.shared_pref_product_list_ipns_address), "")
+
         // TODO we should use IntentService for all network activities
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             try {
-                IPFSManager.INSTANCE.fetchProductList(context)
+                IPFSManager.INSTANCE.fetchProductList(context, priceListIPNSAddress)
                 EventBus.getDefault().post(ProductsListEvent())
             } catch(e: Exception) {
                 if(isAdded) {

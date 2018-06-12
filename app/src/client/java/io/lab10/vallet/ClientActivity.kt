@@ -209,9 +209,9 @@ class ClientActivity : AppCompatActivity() {
         if (result != null && result.contents != null) {
             val data = result.contents
             val tokenAddress = data.split(";")[0]
-            val ipfsAddress = data.split(";")[1]
+            val ipnsAddress = data.split(";")[1]
             if (Wallet.isValidAddress(tokenAddress)) {
-                storeTokenAddress(tokenAddress, ipfsAddress)
+                storeTokenAddress(tokenAddress, ipnsAddress)
            }
 
         } else {

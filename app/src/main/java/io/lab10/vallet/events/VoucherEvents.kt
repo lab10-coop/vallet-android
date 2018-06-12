@@ -7,3 +7,5 @@ class RedeemVoucherEvent(val address: String, val transactionId: String, val to:
 class TokenCreateEvent(val address: String)
 class TokenNameEvent(val name: String, val address: String)
 class TokenTypeEvent(val name: String, val address: String)
+class ProductsListEvent
+class TokenRedeemEvent(val address: String)

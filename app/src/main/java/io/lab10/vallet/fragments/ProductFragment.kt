@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin.fragments
+package io.lab10.vallet.fragments
 
 import android.Manifest
 import android.content.Context
@@ -13,13 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.ProductRecyclerViewAdapter
+import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
-import io.lab10.vallet.admin.events.ProductsListEvent
-import kotlinx.android.synthetic.main.fragment_product.view.*
+import io.lab10.vallet.events.ProductsListEvent
 import org.greenrobot.eventbus.EventBus
 
 

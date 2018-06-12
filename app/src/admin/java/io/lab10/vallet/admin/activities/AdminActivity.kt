@@ -15,6 +15,7 @@ import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.events.TokenCreateEvent
+import io.lab10.vallet.fragments.ProductFragment
 import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

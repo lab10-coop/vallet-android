@@ -40,9 +40,7 @@ class IPFSManager private constructor() {
         return getIPFSConnection(context).name.publish(address.Hash)
     }
 
-    fun fetchProductList(context: Context): String {
-        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val priceListIPNSAddress = sharedPref.getString(context.resources.getString(R.string.shared_pref_product_list_ipns_address), "")
+    fun fetchProductList(context: Context, priceListIPNSAddress: String): String {
         if (priceListIPNSAddress.length > 0) {
             val priceListIPFSAddress = getIPFSConnection(context).name.resolve(priceListIPNSAddress)
             if (priceListIPFSAddress != null) {
