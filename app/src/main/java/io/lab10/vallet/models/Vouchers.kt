@@ -1,6 +1,7 @@
 package io.lab10.vallet.models
 
 import com.google.gson.Gson
+import io.lab10.vallet.ValletApp
 
 object Vouchers {
 
@@ -11,7 +12,8 @@ object Vouchers {
     }
 
     fun getVouchers(): MutableList<Voucher> {
-        return ITEMS;
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        return voucherBox.query().build().find()
     }
 
     fun toJson(): String {
@@ -47,8 +49,5 @@ object Vouchers {
         return false;
     }
 
-    class Voucher(val id: String, val name: String, val tokenAddress: String, val balance: Int) {
-
-    }
 
 }

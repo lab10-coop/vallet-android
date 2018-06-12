@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
+        android:name="io.lab10.vallet.ValletApp"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="preloaded_fonts"

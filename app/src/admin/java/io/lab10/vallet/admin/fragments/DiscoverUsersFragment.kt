@@ -98,7 +98,6 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         view.scanQrcodeButton.setOnClickListener { v->
-            IntentIntegrator.forSupportFragment(this).initiateScan(); // `this` is the current Fragment
             val integrator = IntentIntegrator.forSupportFragment(this)
             integrator.setBeepEnabled(false);
             integrator.setBarcodeImageEnabled(true);

@@ -44,6 +44,7 @@
     <string name="your_qrcode">Your QR-Code:</string>
     <string name="product_nfc_placeholder">Scan NFC tag</string>
     <string name="label_view_history"><![CDATA[View history >]]></string>
+    <string name="label_scan_token"><![CDATA[Scan voucher >]]></string>
 
 
 </resources>

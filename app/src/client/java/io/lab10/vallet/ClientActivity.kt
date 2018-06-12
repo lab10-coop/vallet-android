@@ -26,11 +26,8 @@ import android.view.animation.AnimationUtils
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
-
-
-
-
-
+import com.google.zxing.integration.android.IntentIntegrator
+import io.lab10.vallet.models.Wallet
 
 class ClientActivity : AppCompatActivity() {
 
@@ -46,13 +43,20 @@ class ClientActivity : AppCompatActivity() {
         setContentView(R.layout.activity_client)
 
         viewManager = LinearLayoutManager(this)
-        var myDataset: MutableList<Vouchers.Voucher> = ArrayList()
-        // TODO fetch from local DB
-        val voucher = Vouchers.Voucher("Lab10", "Lab10", "0x123131232", 156)
-        val voucher2 = Vouchers.Voucher("Lab10", "Lab10", "0x123131232", 156)
-        myDataset.add(voucher)
-        myDataset.add(voucher2)
-        viewAdapter = VoucherAdapter(myDataset)
+
+        var myVouchers = Vouchers.getVouchers()
+        viewAdapter = VoucherAdapter(myVouchers)
+        if(myVouchers.size == 0) {
+            scanTokenContract.visibility = View.VISIBLE
+            scanTokenContract.setOnClickListener {
+                val integrator = IntentIntegrator(this)
+                integrator.setBeepEnabled(false);
+                integrator.setBarcodeImageEnabled(true);
+                integrator.initiateScan()
+            }
+        } else {
+            scanTokenContract.visibility = View.GONE
+        }
 
         recyclerView = findViewById<RecyclerView>(R.id.voucherList).apply {
             setHasFixedSize(true)
@@ -75,7 +79,7 @@ class ClientActivity : AppCompatActivity() {
         }
 
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
-        Web3jManager.INSTANCE.getVoucherBalance(this, voucherWalletAddress)
+        Web3jManager.INSTANCE.getVoucherBalance(this)
 
         generateWalletBarcode(voucherWalletAddress)
         // TODO update proper voucher on the list
@@ -158,6 +162,28 @@ class ClientActivity : AppCompatActivity() {
         }
         currentValue -= event.value
         activeVouchersCount.text = currentValue.toString()*/
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null && result.contents != null) {
+            val address = result.contents
+            if (Wallet.isValidAddress(address)) {
+                storeTokenAddress(address)
+                Web3jManager.INSTANCE.getVoucherBalance(this)
+           }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    private fun storeTokenAddress(address: String) {
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putString(getString(R.string.shared_pref_token_contract_address), address)
+        editor.commit()
     }
 
 }

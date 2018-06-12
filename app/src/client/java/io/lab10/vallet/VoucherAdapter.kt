@@ -8,9 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
 
-class VoucherAdapter(private val myDataset: MutableList<Vouchers.Voucher>) :
+class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
         RecyclerView.Adapter<VoucherAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView), View.OnClickListener {

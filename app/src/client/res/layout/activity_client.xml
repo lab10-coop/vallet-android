@@ -34,6 +34,20 @@
                 android:paddingBottom="20dp"
                 android:src="@drawable/vallet_logo" />
 
+            <TextView
+                android:id="@+id/scanTokenContract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/LabelText"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:text="@string/label_scan_token"/>
+
             <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"

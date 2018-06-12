@@ -128,24 +128,24 @@ class Web3jManager private constructor(){
         }
     }
 
-    fun getVoucherBalance(context: Context, address: String) {
+    fun getVoucherBalance(context: Context) {
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        // TODO how user knows token contract address ??
-        var token = Token.load("0x33fdef0027a0e122b197ebd9a7f4113032e0897a", getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.TransferEventResponse
-                    if (matchClientAddress(context, log._to))
-                        emitTransactionEvent(log)
+        val tokenAddress = getTokenAddress(context)
+        if (Wallet.isValidAddress(tokenAddress)) {
+            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.TransferEventResponse
+                        if (matchClientAddress(context, log._to))
+                            emitTransactionEvent(log)
 
-                }
-        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.RedeemEventResponse
-                    emitRedeemEvent(log)
-                }
-
-        // TODO balance is sum of transfer Event minus redeemEvents
+                    }
+            token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.RedeemEventResponse
+                        emitRedeemEvent(log)
+                    }
+        }
     }
 
 
