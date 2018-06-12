@@ -27,6 +27,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import com.google.zxing.integration.android.IntentIntegrator
+import io.lab10.vallet.events.TokenNameEvent
+import io.lab10.vallet.events.TokenTypeEvent
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Voucher_
 import io.lab10.vallet.models.Wallet
 
 class ClientActivity : AppCompatActivity() {
@@ -46,7 +50,6 @@ class ClientActivity : AppCompatActivity() {
 
         var myVouchers = Vouchers.getVouchers()
         viewAdapter = VoucherAdapter(myVouchers)
-        if(myVouchers.size == 0) {
             scanTokenContract.visibility = View.VISIBLE
             scanTokenContract.setOnClickListener {
                 val integrator = IntentIntegrator(this)
@@ -54,9 +57,6 @@ class ClientActivity : AppCompatActivity() {
                 integrator.setBarcodeImageEnabled(true);
                 integrator.initiateScan()
             }
-        } else {
-            scanTokenContract.visibility = View.GONE
-        }
 
         recyclerView = findViewById<RecyclerView>(R.id.voucherList).apply {
             setHasFixedSize(true)
@@ -64,7 +64,7 @@ class ClientActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-
+        fetchVouchers()
 
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
@@ -79,10 +79,8 @@ class ClientActivity : AppCompatActivity() {
         }
 
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
-        Web3jManager.INSTANCE.getVoucherBalance(this)
 
         generateWalletBarcode(voucherWalletAddress)
-        // TODO update proper voucher on the list
     }
 
     private fun generateWalletBarcode(address: String) {
@@ -145,23 +143,52 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
-/*        val voucherCount = activeVouchersCount.text as String
-        var currentValue = BigInteger.ZERO
-        if (voucherCount.length > 0) {
-            currentValue = voucherCount.toBigInteger()
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        if (voucher != null) {
+            voucher.balance = voucher.balance + event.value.toInt()
+            voucherBox.put(voucher)
         }
-        currentValue += event.value
-        activeVouchersCount.text = currentValue.toString()*/
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
-/*        val voucherCount = activeVouchersCount.text as String
-        var currentValue = BigInteger.ZERO
-        if (voucherCount.length > 0) {
-            currentValue = voucherCount.toBigInteger()
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        if (voucher != null) {
+            voucher.balance = voucher.balance - event.value.toInt()
+            voucherBox.put(voucher)
         }
-        currentValue -= event.value
-        activeVouchersCount.text = currentValue.toString()*/
+    }
+
+    @Subscribe
+    fun onTokenNameEvent(event: TokenNameEvent) {
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        if (voucher != null) {
+            voucher.name = event.name
+            voucherBox.put(voucher)
+        }
+    }
+
+    @Subscribe
+    fun onTokenTypeEvent(event: TokenTypeEvent) {
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        if (voucher != null) {
+            if (event.name.equals("EUR")) {
+                voucher.type = 0
+            } else {
+                voucher.type = 1
+            }
+            voucherBox.put(voucher)
+        }
+    }
+
+    private fun fetchVouchers() {
+        val voucherBox = ValletApp.getBoxStore()
+        voucherBox.subscribe(Voucher::class.java).observer {
+            viewAdapter.notifyDataSetChanged()
+        }
     }
 
 
@@ -171,7 +198,6 @@ class ClientActivity : AppCompatActivity() {
             val address = result.contents
             if (Wallet.isValidAddress(address)) {
                 storeTokenAddress(address)
-                Web3jManager.INSTANCE.getVoucherBalance(this)
            }
 
         } else {
@@ -180,10 +206,12 @@ class ClientActivity : AppCompatActivity() {
     }
 
     private fun storeTokenAddress(address: String) {
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putString(getString(R.string.shared_pref_token_contract_address), address)
-        editor.commit()
+        Web3jManager.INSTANCE.getTokenName(this, address)
+        Web3jManager.INSTANCE.getTokenType(this, address)
+        Web3jManager.INSTANCE.getVoucherBalance(this, address)
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        val voucher = Voucher(0,"Fetching ...", address, 0, 0)
+        voucherBox.put(voucher)
     }
 
 }

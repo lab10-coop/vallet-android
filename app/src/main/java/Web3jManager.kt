@@ -50,11 +50,6 @@ class Web3jManager private constructor(){
         return sharedPref.getString(context.getString(R.string.shared_pref_factory_contract_address), context.getString(R.string.token_factory_contract_address))
     }
 
-    fun getTokenAddress(context: Context): String {
-        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        return sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "")
-    }
-
     fun getConnection(context: Context): Web3j{
        return Web3jFactory.build(HttpService(getNodeAddress(context)))
     }
@@ -117,37 +112,74 @@ class Web3jManager private constructor(){
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).subscribe() { event ->
                         var log = event as Token.TransferEventResponse
-                        emitTransactionEvent(log)
+                        // TODO add address to support multiple vouchers
+                        emitTransactionEvent(log, "")
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log)
+                        // TODO add address to support multiple vouchers
+                        emitRedeemEvent(log, "")
                     }
         }
     }
 
-    fun getVoucherBalance(context: Context) {
+    fun getVoucherBalance(context: Context, tokenAddress: String) {
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        val tokenAddress = getTokenAddress(context)
         if (Wallet.isValidAddress(tokenAddress)) {
             var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).subscribe() { event ->
                         var log = event as Token.TransferEventResponse
                         if (matchClientAddress(context, log._to))
-                            emitTransactionEvent(log)
+                            emitTransactionEvent(log, tokenAddress)
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log)
+                        emitRedeemEvent(log, tokenAddress)
                     }
         }
     }
 
+    fun getTokenName(context: Context, tokenAddress: String) {
+        // NOTE: For some reason to get name of the token it is required to pass credentials, can not be done with readonlytransactionmanager
+        // as the web3j will fail. Not fully understand why, if this is a bug in web3j or the readonlytransactionmanager is missing something.
+        // TODO find out why ^
+        val credentials = loadCredential(context)
+        try {
+
+            var token = Token.Companion.load(tokenAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            Single.fromCallable {
+                token.name().send()
+            }.subscribeOn(Schedulers.io()).subscribe { result ->
+                EventBus.getDefault().post(TokenNameEvent(result, tokenAddress))
+            }
+        } catch (e: Exception) {
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+
+        }
+    }
+
+    fun getTokenType(context: Context, tokenAddress: String) {
+        val credentials = loadCredential(context)
+        try {
+
+            var token = Token.Companion.load(tokenAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            Single.fromCallable {
+                token.symbol().send()
+            }.subscribeOn(Schedulers.io()).subscribe { result ->
+                EventBus.getDefault().post(TokenTypeEvent(result, tokenAddress))
+            }
+        } catch (e: Exception) {
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+
+        }
+    }
 
     private fun matchClientAddress(context: Context, address: String?): Boolean {
         if (address == null)
@@ -178,21 +210,22 @@ class Web3jManager private constructor(){
     }
 
     // TODO combine that with all circulating and balance as all those methods depend on same events.
-    fun fetchAllTransaction(context: Context) {
-        val tokenAddress = getTokenAddress(context)
+    fun fetchAllTransaction(context: Context, tokenAddress: String) {
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
         // TODO how user knows token contract address ??
         var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.TransferEventResponse
-                    emitTransactionEvent(log)
+                    // TODO add tokenAddress to be able to support multiple vouchers
+                    emitTransactionEvent(log, "")
 
                 }
         token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as Token.RedeemEventResponse
-                    emitRedeemEvent(log)
+                    // TODO add tokenAddress to be able to support multiple vouchers
+                    emitRedeemEvent(log, "")
                 }
     }
 
@@ -250,14 +283,14 @@ class Web3jManager private constructor(){
     }
 
 
-    private fun emitTransactionEvent(log: Token.TransferEventResponse) {
+    private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
-            EventBus.getDefault().post(TransferVoucherEvent(log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
+            EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
-    private fun emitRedeemEvent(log: Token.RedeemEventResponse) {
+    private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
         if (log._value != null)
-            EventBus.getDefault().post(RedeemVoucherEvent(log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
+            EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
 }
