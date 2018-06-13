@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -36,8 +37,10 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun fetchHistory() {
-        // TODO add tokenAddress to be able to support multiple vouchers
-        Web3jManager.INSTANCE.fetchAllTransaction(this, "")
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val tokenAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_token_contract_address), "0x0")
+
+        Web3jManager.INSTANCE.fetchAllTransaction(this, tokenAddress)
     }
 
     @Subscribe
