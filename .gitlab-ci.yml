@@ -26,7 +26,7 @@ stages:
 releaseStagingClient:
   stage: release
   script:
-    - ./gradlew publishApkClientStagingRelease
+    - ./gradlew assembleClientStaging
   artifacts:
     paths:
     - app/clientStaging/
@@ -34,7 +34,7 @@ releaseStagingClient:
 releaseStagingAdmin:
   stage: release
   script:
-    - ./gradlew publishApkAdminStagingRelease
+    - ./gradlew assembleAdminStaging
   artifacts:
     paths:
     - app/adminStaging/
