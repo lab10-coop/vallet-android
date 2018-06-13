@@ -4,14 +4,13 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
-import io.lab10.vallet.events.RedeemVoucherEvent
-import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.Vouchers
 
 import kotlinx.android.synthetic.client.activity_client.*
@@ -24,11 +23,11 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import com.google.zxing.integration.android.IntentIntegrator
-import io.lab10.vallet.events.TokenNameEvent
-import io.lab10.vallet.events.TokenTypeEvent
+import io.lab10.vallet.events.*
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Voucher_
 import io.lab10.vallet.models.Wallet
+import org.greenrobot.eventbus.ThreadMode
 
 class ClientActivity : AppCompatActivity() {
 
@@ -93,6 +92,10 @@ class ClientActivity : AppCompatActivity() {
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
         generateWalletBarcode(voucherWalletAddress)
+
+        logo.setOnClickListener {
+            FaucetManager.INSTANCE.getFounds(this, voucherWalletAddress )
+        }
     }
 
     private fun generateWalletBarcode(address: String) {
@@ -182,6 +185,21 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onError(event: ErrorEvent) {
+        Toast.makeText(this, "Error: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDebug(event: DebugEvent) {
+        Toast.makeText(this, "Debug: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessage(event: MessageEvent) {
+        Toast.makeText(this, "Message: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
     @Subscribe
     fun onTokenTypeEvent(event: TokenTypeEvent) {
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
@@ -224,8 +242,14 @@ class ClientActivity : AppCompatActivity() {
         Web3jManager.INSTANCE.getTokenType(this, address)
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        val voucher = Voucher(0,"Fetching ...", address, 0, 0, ipfsAddress)
-        voucherBox.put(voucher)
+        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, address).build().findFirst()
+        if (voucher == null) {
+            voucher = Voucher(0, "Fetching ...", address, 0, 0, ipfsAddress)
+            voucherBox.put(voucher)
+        } else {
+            voucher.ipfsAdddress = ipfsAddress
+            voucherBox.put(voucher)
+        }
     }
 
 }

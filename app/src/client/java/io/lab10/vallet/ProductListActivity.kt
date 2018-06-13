@@ -30,7 +30,6 @@ import kotlin.experimental.and
 
 class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Products.Product) {
-
         // TODO add confirmation
         Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
     }
@@ -52,6 +51,7 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
                 fetchProducts(voucher.ipfsAdddress)
             } else {
                 EventBus.getDefault().post(ErrorEvent("Missing ipns address"))
+                finish()
             }
 
         } else {
