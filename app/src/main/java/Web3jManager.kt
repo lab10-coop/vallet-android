@@ -211,20 +211,26 @@ class Web3jManager private constructor(){
 
     // TODO combine that with all circulating and balance as all those methods depend on same events.
     fun fetchAllTransaction(context: Context, tokenAddress: String) {
-        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        // TODO how user knows token contract address ??
-        var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-        token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.TransferEventResponse
-                    emitTransactionEvent(log, tokenAddress)
+        try {
+            val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.TransferEventResponse
+                        emitTransactionEvent(log, tokenAddress)
 
-                }
-        token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
-                    var log = event as Token.RedeemEventResponse
-                    emitRedeemEvent(log, tokenAddress)
-                }
+                    }
+            token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.RedeemEventResponse
+                        emitRedeemEvent(log, tokenAddress)
+                    }
+
+        } catch (e: Exception) {
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+
+        }
     }
 
     fun generateNewToken(context: Context, name: String, symbol: String, decimal: Int) {
@@ -269,7 +275,15 @@ class Web3jManager private constructor(){
 
             var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
+                try {
                 token.issue(to, amount).send()
+                } catch (e: Exception) {
+                    if (e.message != null) {
+                        EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+                    } else {
+                        EventBus.getDefault().post(ErrorEvent("Unknown error"))
+                    }
+                }
             }.subscribeOn(Schedulers.io()).subscribe {
                 EventBus.getDefault().post(MessageEvent(context.getString(R.string.message_voucher_issued)))
             }
