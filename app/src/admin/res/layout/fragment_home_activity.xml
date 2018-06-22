@@ -71,6 +71,7 @@
                 android:fontFamily="@font/work_sans"
                 android:textColor="@color/cardview_shadow_start_color"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
                 android:text="@string/placeholder_no_recent_activities"/>
 
             <android.support.v7.widget.RecyclerView
