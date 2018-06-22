@@ -25,17 +25,7 @@ import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.objectbox.android.AndroidScheduler
-import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [HomeActivityFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [HomeActivityFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
 
