@@ -15,6 +15,9 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
 import android.text.InputFilter
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 
@@ -23,6 +26,7 @@ class IssueTokenFragment : DialogFragment() {
 
     private var userName: String? = null
     private var userAddress: String? = null
+    private var voucher: Voucher? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -32,6 +36,8 @@ class IssueTokenFragment : DialogFragment() {
             userName = arguments.getString(USER_NAME_PARAM)
             userAddress = arguments.getString(USER_ADDRESS_PARAM)
         }
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucher = voucherBox.query().build().findFirst()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -41,7 +47,7 @@ class IssueTokenFragment : DialogFragment() {
 
         view.issueUserName.text = userName
 
-        if (Wallet.isEuroType(activity)) {
+        if (voucher!!.type == 0) {
             view.voucherAmountInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
             view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
@@ -52,10 +58,11 @@ class IssueTokenFragment : DialogFragment() {
             try {
                 var amount = BigInteger(amountInput)
                 var address = Wallet.formatAddress(userAddress)
-                if (Wallet.isEuroType(activity)) {
+                if (voucher!!.type == 0) {
                     amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amount.toString()).toLong())
                 }
-                    Web3jManager.INSTANCE.issueTokensTo(activity, address, amount)
+
+                Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
                 dialog.dismiss()
             } catch (e: Exception) {
                 dialog.dismiss()

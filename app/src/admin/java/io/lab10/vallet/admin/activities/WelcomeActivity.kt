@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import io.lab10.vallet.R
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.Voucher
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -13,13 +15,15 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        val sharedPreferences = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val firstRun = sharedPreferences.getBoolean("FIRST_RUN", true)
-        if (firstRun) {
-            val intent = Intent(this, VoucherActivity::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().build().find()
+
+        // TODO try to fetch from network
+        if (voucher.size > 0) {
+            val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         } else {
-            val intent = Intent(this, AdminActivity::class.java)
+            val intent = Intent(this, VoucherActivity::class.java)
             startActivity(intent)
         }
     }

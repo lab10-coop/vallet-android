@@ -21,6 +21,8 @@ import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import android.widget.Toast
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 
@@ -31,11 +33,14 @@ class AddProductActivity : AppCompatActivity() {
     val TAG = AddProductActivity::class.java.name
     private var pendingIntent: PendingIntent? = null
     private var nfcAdapter: NfcAdapter? = null
+    private var voucher: Voucher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_product)
 
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucher = voucherBox.query().build().findFirst()
 
         pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, this.javaClass)
@@ -62,7 +67,7 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
-        if (Wallet.isEuroType(this)) {
+        if (voucher!!.type == 0) {
             productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
         }

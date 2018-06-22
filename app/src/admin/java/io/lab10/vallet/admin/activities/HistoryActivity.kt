@@ -6,11 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import io.lab10.vallet.R
+import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
+import io.lab10.vallet.models.Voucher
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -19,12 +21,12 @@ class HistoryActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    var voucher: Voucher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
-        fetchHistory()
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions())
@@ -34,13 +36,15 @@ class HistoryActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucher = voucherBox.query().build().findFirst()
+
+        fetchHistory()
     }
 
     private fun fetchHistory() {
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val tokenAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_token_contract_address), "0x0")
-
-        Web3jManager.INSTANCE.fetchAllTransaction(this, tokenAddress)
+        Web3jManager.INSTANCE.fetchAllTransaction(this, voucher!!.tokenAddress)
     }
 
     @Subscribe

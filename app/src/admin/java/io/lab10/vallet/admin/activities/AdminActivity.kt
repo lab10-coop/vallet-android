@@ -9,13 +9,17 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import android.widget.Toast
+import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.DebugEvent
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.events.MessageEvent
 import io.lab10.vallet.events.TokenCreateEvent
 import io.lab10.vallet.fragments.ProductFragment
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Vouchers
 import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -42,6 +46,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     val TAG = AdminActivity::class.java.simpleName
+    var voucher: Voucher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +54,15 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucher = voucherBox.query().build().findFirst()
 
         navigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null
                 when (item.getItemId()) {
                     R.id.action_item1 -> selectedFragment = HomeActivityFragment.newInstance()
+                    // TODO Disabled if none voucher is present
                     R.id.action_item2 -> selectedFragment = DiscoverUsersFragment.newInstance()
                     R.id.action_item3 -> selectedFragment = PriceListFragment.newInstance()
                 }
@@ -70,7 +78,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         transaction.replace(R.id.frame_layout, HomeActivityFragment.newInstance())
         transaction.commit()
         // TODO move to home fragment
-        Web3jManager.INSTANCE.getCirculatingVoucher(this)
+        if (voucher?.tokenAddress != null)
+            Web3jManager.INSTANCE.getCirculatingVoucher(this, voucher!!.tokenAddress)
 
     }
 
@@ -85,12 +94,24 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTokenCreated(event: TokenCreateEvent) {
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putString(getString(R.string.shared_pref_token_contract_address), event.address)
-        editor.commit()
+    fun onMessage(event: MessageEvent) {
+        Toast.makeText(this, "Info: " + event.message, Toast.LENGTH_LONG).show()
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTokenCreated(event: TokenCreateEvent) {
+        var tokenContractaddress = event.address
+        var voucherName = event.name
+        var voucherType = 0
+        if (event.type.equals(Vouchers.Type.VOUCHER) ) {
+            voucherType = 1
+        }
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        // TODO generate ipfs address
+        val voucher = Voucher(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true)
+        voucherBox.put(voucher)
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this);

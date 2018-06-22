@@ -7,4 +7,10 @@ import io.objectbox.annotation.Id
 // Voucher type 0 = EUR, 1 = VOUCHER
 // TODO use enum
 @Entity
-data class Voucher(@Id var id: Long, var name: String, val tokenAddress: String, var balance: Int, var type: Int, var ipfsAdddress: String)
+data class Voucher(@Id var id: Long = 0,
+                   var name: String = "",
+                   val tokenAddress: String = "",
+                   var balance: Int = 0,
+                   var type: Int = 0,
+                   var ipfsAdddress: String = "",
+                   var default: Boolean = true)

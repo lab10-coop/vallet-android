@@ -2,9 +2,12 @@ import android.content.Context
 import android.util.Log
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
+import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -98,15 +101,13 @@ class Web3jManager private constructor(){
                 .subscribeOn(Schedulers.io()).subscribe() { event ->
                     var log = event as TokenFactory.TokenCreatedEventResponse
                     if (log._address != null && log._creator.equals(getWalletAddress(voucherWalletAddress)))
-                        EventBus.getDefault().post(TokenCreateEvent(log._address as String))
+                        EventBus.getDefault().post(TokenCreateEvent(log._address as String, log._name as String, log._symbol as String, log._decimals as BigInteger))
 
                 }
     }
 
-    fun getCirculatingVoucher(context: Context) {
+    fun getCirculatingVoucher(context: Context, tokenContractAddress: String) {
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val tokenContractAddress = sharedPref.getString(context.resources.getString(R.string.shared_pref_token_contract_address), "")
         if (Wallet.isValidAddress(tokenContractAddress)) {
             var token = Token.load(tokenContractAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
@@ -244,11 +245,8 @@ class Web3jManager private constructor(){
         .subscribe() { result ->
             var respons = tokenFactory.getTokenCreatedEvents(result)
             // TODO check if I am the owner and how many events can get back, how to choose proper one?
-            var tokenContractaddress = respons.last()._address
-            val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            editor.putString(context.getString(R.string.shared_pref_token_contract_address), tokenContractaddress)
-            editor.commit()
+            EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
+
         }
     }
 
@@ -266,9 +264,7 @@ class Web3jManager private constructor(){
         }
     }
 
-    fun issueTokensTo(context: Context, to: String, amount: BigInteger) {
-        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val tokenContractAddress = sharedPref.getString(context.getString(R.string.shared_pref_token_contract_address), "0x0")
+    fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
         try {

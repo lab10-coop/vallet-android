@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import kotlinx.android.synthetic.admin.fragment_voucher_settings.*
 import android.view.WindowManager
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
 
 
@@ -34,6 +36,7 @@ class VoucherActivity : AppCompatActivity() {
      * [android.support.v4.app.FragmentStatePagerAdapter].
      */
     private var mStepsPagerAdapter: StepsPagerAdapter? = null
+    var voucherName: String = "ATS"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,10 +111,7 @@ class VoucherActivity : AppCompatActivity() {
                     if (inputVoucherName.text.toString().length < 3) {
                         Toast.makeText(activity, resources.getString(R.string.error_voucher_name_too_short), Toast.LENGTH_SHORT).show()
                     } else {
-                        val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-                        val editor = sharedPref.edit()
-                        editor.putString(resources.getString(R.string.shared_pref_voucher_name), inputVoucherName.text.toString())
-                        editor.commit()
+                        (activity as VoucherActivity).voucherName = inputVoucherName.text.toString()
                         voucherViewPager?.currentItem = 1
                     }
                 }
@@ -157,35 +157,27 @@ class VoucherActivity : AppCompatActivity() {
                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
 
+                val voucherName = (activity as VoucherActivity).voucherName
+                val voucherDecimal = 12;
+
                 val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
-                val voucherDecimal = 12;
-                val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "ATS")
+
                 var voucherType = Vouchers.Type.EUR.toString()
-                editor.putString(resources.getString(R.string.shared_pref_voucher_name), voucherName)
-                editor.putInt(resources.getString(R.string.shared_pref_voucher_decimal), voucherDecimal)
-                if (euroBtn.isChecked) {
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
-                } else {
+                if (!euroBtn.isChecked) {
                     voucherType = Vouchers.Type.VOUCHER.toString()
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_type), voucherType)
                 }
-                editor.putBoolean("FIRST_RUN", false)
                 // TODO: Manage password for the key
                 val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
                 val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-                if( sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), null) == null) {
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
-                    editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-                    editor.commit()
-                } else {
-                    Toast.makeText(context, "Wallet exist - procceed", Toast.LENGTH_SHORT)
-                }
+                editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
+                editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+                editor.commit()
 
                 // TODO trigger that only if balance is lower then needed amount for creating transaction.
                 //
                 if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
-                    FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress)
+                    FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress, voucherName, voucherType, voucherDecimal)
                 } else {
                     Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
                 }
