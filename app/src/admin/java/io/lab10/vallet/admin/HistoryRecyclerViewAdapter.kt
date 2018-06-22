@@ -42,4 +42,9 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
     }
 
     override fun getItemCount() = history.size
+
+    fun setTransaction(transactons: MutableList<ValletTransaction>) {
+        history.clear()
+        history.addAll(transactons)
+    }
 }

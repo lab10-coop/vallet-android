@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -18,9 +20,12 @@ import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
+import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.objectbox.android.AndroidScheduler
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
 /**
  * A simple [Fragment] subclass.
@@ -38,17 +43,25 @@ class HomeActivityFragment : Fragment() {
     private var debugOn: Boolean = false
     private var viewHolder: View? = null
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
         val query = valletTransactionBox.query().build()
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
-        .observer { sum ->
-            viewHolder!!.voucherCountLabel.text = sum.toString()
-        }
+            .observer { sum ->
+                viewHolder!!.voucherCountLabel.text = sum.toString()
+            }
 
-
+        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,2)}
+                .observer { recent ->
+                    (viewAdapter as HistoryRecyclerViewAdapter).setTransaction(recent)
+                    viewAdapter.notifyDataSetChanged()
+                }
     }
 
     override fun onStop() {
@@ -89,6 +102,20 @@ class HomeActivityFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         viewHolder =  inflater.inflate(R.layout.fragment_home_activity, container, false) as View
+
+
+        viewManager = LinearLayoutManager(activity)
+        var recentTransaction = History.getRecent()
+        if (recentTransaction.size > 0) {
+            viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
+        }
+        viewAdapter = HistoryRecyclerViewAdapter(recentTransaction)
+
+        recyclerView = viewHolder!!.historyRecycler.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
 
         viewHolder!!.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action){
