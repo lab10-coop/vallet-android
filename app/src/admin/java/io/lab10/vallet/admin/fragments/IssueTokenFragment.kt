@@ -44,7 +44,7 @@ class IssueTokenFragment : DialogFragment() {
         if (Wallet.isEuroType(activity)) {
             view.voucherAmountInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
-            voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+            view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
