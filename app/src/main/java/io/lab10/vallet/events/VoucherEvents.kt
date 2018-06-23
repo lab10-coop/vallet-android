@@ -10,3 +10,4 @@ class TokenNameEvent(val name: String, val address: String)
 class TokenTypeEvent(val name: String, val address: String)
 class ProductsListEvent
 class TokenRedeemEvent(val address: String)
+class TokenIPFSAddressEvent(val voucherId: Long, val ipfsAddress: String)

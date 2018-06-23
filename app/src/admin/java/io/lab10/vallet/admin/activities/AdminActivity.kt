@@ -7,18 +7,17 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.events.DebugEvent
-import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
-import io.lab10.vallet.events.MessageEvent
-import io.lab10.vallet.events.TokenCreateEvent
+import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Voucher_
 import io.lab10.vallet.models.Vouchers
 import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
@@ -99,6 +98,17 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTokenIPFSAddressEvent(event: TokenIPFSAddressEvent) {
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucher = voucherBox.query().equal(Voucher_.id, event.voucherId).build().findFirst()
+        if (voucher != null) {
+            voucher.ipfsAdddress = event.ipfsAddress
+            voucherBox.put(voucher)
+            Toast.makeText(this, "Ipfs address created", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
         var voucherName = event.name
@@ -107,9 +117,16 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             voucherType = 1
         }
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        // TODO generate ipfs address
         val voucher = Voucher(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true)
-        voucherBox.put(voucher)
+        val voucherId = voucherBox.put(voucher)
+        // Generate IPFS address
+        Thread(Runnable {
+            var addressName = IPFSManager.INSTANCE.publishProductList(this);
+            if (addressName != null) {
+                Log.d(TAG, "Address of products list: " + addressName)
+                EventBus.getDefault().post(TokenIPFSAddressEvent(voucherId, addressName))
+            }
+        }).start()
     }
 
     override fun onStart() {
