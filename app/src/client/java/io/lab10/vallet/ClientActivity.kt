@@ -27,6 +27,8 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Voucher_
 import io.lab10.vallet.models.Wallet
+import io.objectbox.android.AndroidScheduler
+import io.objectbox.reactive.DataSubscription
 import org.greenrobot.eventbus.ThreadMode
 
 class ClientActivity : AppCompatActivity() {
@@ -37,6 +39,8 @@ class ClientActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var subscription: DataSubscription
+    val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +48,8 @@ class ClientActivity : AppCompatActivity() {
 
         viewManager = LinearLayoutManager(this)
 
-        var myVouchers = Vouchers.getVouchers()
-        viewAdapter = VoucherAdapter(myVouchers)
+        Vouchers.refresh()
+        viewAdapter = VoucherAdapter(Vouchers.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
             scanTokenContract.setOnClickListener {
                 val integrator = IntentIntegrator(this)
@@ -60,9 +64,9 @@ class ClientActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
+
         observeVouchers()
 
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         voucherBox.query().build().forEach { voucher ->
             if (voucher.name.equals("Fetching ...")) {
                 Web3jManager.INSTANCE.getTokenName(this, voucher.tokenAddress)
@@ -156,9 +160,13 @@ class ClientActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        subscription.cancel()
+    }
+
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             voucher.balance = voucher.balance + event.value.toInt()
@@ -167,7 +175,6 @@ class ClientActivity : AppCompatActivity() {
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             voucher.balance = voucher.balance - event.value.toInt()
@@ -177,12 +184,13 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe
     fun onTokenNameEvent(event: TokenNameEvent) {
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             voucher.name = event.name
             voucherBox.put(voucher)
         }
+        Vouchers.refresh()
+        viewAdapter.notifyDataSetChanged()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -202,7 +210,6 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe
     fun onTokenTypeEvent(event: TokenTypeEvent) {
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             if (event.name.equals("EUR")) {
@@ -215,8 +222,8 @@ class ClientActivity : AppCompatActivity() {
     }
 
     private fun observeVouchers() {
-        val voucherBox = ValletApp.getBoxStore()
-        voucherBox.subscribe(Voucher::class.java).observer {
+        voucherBox.query().orderDesc(Voucher_.name).build().subscribe().on(AndroidScheduler.mainThread()).observer { vouchers ->
+            Vouchers.refresh()
             viewAdapter.notifyDataSetChanged()
         }
     }
@@ -237,19 +244,20 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun storeTokenAddress(address: String, ipfsAddress: String) {
+    private fun storeTokenAddress(address: String, ipnsAddress: String) {
         Web3jManager.INSTANCE.getTokenName(this, address)
         Web3jManager.INSTANCE.getTokenType(this, address)
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, address).build().findFirst()
         if (voucher == null) {
-            voucher = Voucher(0, "Fetching ...", address, 0, 0, ipfsAddress)
+            voucher = Voucher(0, "Fetching ...", address, 0, 0, ipnsAddress)
             voucherBox.put(voucher)
         } else {
-            voucher.ipfsAdddress = ipfsAddress
+            voucher.ipnsAdddress = ipnsAddress
             voucherBox.put(voucher)
         }
+        Vouchers.refresh()
+        viewAdapter.notifyDataSetChanged()
     }
 
 }

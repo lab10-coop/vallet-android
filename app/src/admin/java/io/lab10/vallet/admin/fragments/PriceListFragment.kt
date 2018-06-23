@@ -86,6 +86,9 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        if ((activity as AdminActivity).voucher != null) {
+            productFragment.voucherType = (activity as AdminActivity).voucher!!.type
+        }
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     };

@@ -16,10 +16,7 @@ import android.support.v4.app.FragmentActivity
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.ProductsListEvent
 import io.lab10.vallet.fragments.ProductFragment
-import io.lab10.vallet.models.MyObjectBox
-import io.lab10.vallet.models.Products
-import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Voucher_
+import io.lab10.vallet.models.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -29,7 +26,7 @@ import kotlin.experimental.and
 
 
 class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
-    override fun onListFragmentInteraction(item: Products.Product) {
+    override fun onListFragmentInteraction(item: Product) {
         // TODO add confirmation
         Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
     }
@@ -47,8 +44,8 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
             tokenAddress = extras.getString("EXTRA_TOKEN_ADDRESS")
             val vouchersBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
             var voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
-            if (voucher != null && voucher.ipfsAdddress.length > 0) {
-                fetchProducts(voucher.ipfsAdddress)
+            if (voucher != null && voucher.ipnsAdddress.length > 0) {
+                fetchProducts(voucher.ipnsAdddress)
             } else {
                 EventBus.getDefault().post(ErrorEvent("Missing ipns address"))
                 finish()

@@ -18,7 +18,6 @@ import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
-import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.events.ProductsListEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
@@ -29,6 +28,7 @@ class ProductFragment : Fragment() {
     private var adapter: ProductRecyclerViewAdapter? = null
 
     private val MY_CAMERA_REQUEST_CODE = 100;
+    var voucherType = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,10 +38,6 @@ class ProductFragment : Fragment() {
             if (view.productList is RecyclerView) {
                 val context = view.productList.getContext()
                 val recyclerView = view.productList as RecyclerView
-                var voucherType = 0
-                if ((activity as AdminActivity).voucher != null) {
-                    voucherType = (activity as AdminActivity).voucher!!.type
-                }
                 adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener, voucherType)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
                 recyclerView.adapter = adapter
@@ -99,10 +95,4 @@ class ProductFragment : Fragment() {
         fun onListFragmentInteraction(item: Product)
     }
 
-    companion object {
-        fun newInstance(): ProductFragment {
-            val fragment = ProductFragment()
-            return fragment
-        }
-    }
 }

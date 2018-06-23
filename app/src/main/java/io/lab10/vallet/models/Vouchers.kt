@@ -12,8 +12,13 @@ object Vouchers {
     }
 
     fun getVouchers(): MutableList<Voucher> {
+        return ITEMS
+    }
+
+    fun refresh() {
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        return voucherBox.query().build().find()
+        ITEMS.clear()
+        ITEMS.addAll(voucherBox.query().build().find())
     }
 
     fun toJson(): String {
