@@ -98,7 +98,7 @@ class AddProductActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             } else {
-                Toast.makeText(this, "Fill name nad price", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Fill the name nad the price", Toast.LENGTH_SHORT).show()
             }
         }
 

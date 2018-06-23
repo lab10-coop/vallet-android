@@ -49,6 +49,7 @@
         android:hint="1"
         android:maxLength="12"
         android:inputType="numberSigned"
+        android:digits="0123456789."
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textSize="60sp"

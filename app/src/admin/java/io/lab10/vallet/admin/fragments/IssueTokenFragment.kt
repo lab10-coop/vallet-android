@@ -1,6 +1,7 @@
 package io.lab10.vallet.admin.fragments
 
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
 import android.text.InputFilter
+import android.view.KeyEvent
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Voucher
@@ -22,6 +24,10 @@ import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+
+
 
 
 class IssueTokenFragment : DialogFragment() {
@@ -50,27 +56,34 @@ class IssueTokenFragment : DialogFragment() {
         view.issueUserName.text = userName
 
         if (voucher!!.type == 0) {
-            view.voucherAmountInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-            view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
+            view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(4, 2)))
             view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }
+
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()
 
-            try {
-                var address = Wallet.formatAddress(userAddress)
-                var amount = BigInteger.ZERO
-                if (voucher!!.type == 0) {
-                    amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amountInput).toLong())
-                } else {
-                    amount = BigInteger(amountInput)
-                }
+            if (amountInput.isBlank()) {
+                EventBus.getDefault().post(ErrorEvent("Value must be present"))
+            } else {
 
-                Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
-                dialog.dismiss()
-            } catch (e: Exception) {
-                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-                dialog.dismiss()
+                try {
+                    var address = Wallet.formatAddress(userAddress)
+                    var amount = BigInteger.ZERO
+                    if (voucher!!.type == 0) {
+                        amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amountInput).toLong())
+                    } else {
+                        amount = BigInteger(amountInput)
+                    }
+                    if (amount > BigInteger.ZERO) {
+                        Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
+                        dialog.dismiss()
+                    } else {
+                        EventBus.getDefault().post(ErrorEvent("Value must be positive"))
+                    }
+                } catch (e: Exception) {
+                    EventBus.getDefault().post(ErrorEvent(e.message.toString()))
+                }
             }
         }
 
