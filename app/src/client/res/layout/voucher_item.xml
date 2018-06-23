@@ -32,6 +32,7 @@
             android:visibility="gone" />
 
         <ImageView
+            android:id="@+id/voucherTypeIcon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:background="@drawable/euro_icon_black"

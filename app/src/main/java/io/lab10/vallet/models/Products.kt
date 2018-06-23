@@ -23,9 +23,9 @@ object Products {
         return ITEMS
     }
 
-    fun refresh() {
+    fun refresh(tokenAddress: String) {
         ITEMS.clear()
-        ITEMS.addAll(productBox.query().build().find())
+        ITEMS.addAll(productBox.query().equal(Product_.token, tokenAddress).build().find())
     }
 
     fun toJson(): String {
@@ -33,10 +33,11 @@ object Products {
         return gson.toJson(getProducts())
     }
 
-    fun fromJson(json: String, tokenAddress: String) {
+    fun fromJson(json: String, tokenAddress: String, clean: Boolean = false) {
         val gson = Gson()
         val products = gson.fromJson(json, Array<Product>::class.java)
-        productBox.query().equal(Product_.token, tokenAddress).build().remove()
+        if (clean)
+            productBox.query().equal(Product_.token, tokenAddress).build().remove()
         products.forEach { v ->
             // TODO add check if product is valid?
             v.token = tokenAddress

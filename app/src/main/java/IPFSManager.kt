@@ -40,13 +40,13 @@ class IPFSManager private constructor() {
         return getIPFSConnection(context).name.publish(address.Hash)
     }
 
-    fun fetchProductList(context: Context, priceListIPNSAddress: String, tokenAddress: String): String {
+    fun fetchProductList(context: Context, priceListIPNSAddress: String, tokenAddress: String, clean: Boolean = false): String {
         if (priceListIPNSAddress.length > 0) {
             val priceListIPFSAddress = getIPFSConnection(context).name.resolve(priceListIPNSAddress)
             if (priceListIPFSAddress != null) {
                 val hash = priceListIPFSAddress.split("/")[2]
                 val productListJson = getIPFSConnection(context).get.cat(hash)
-                Products.fromJson(productListJson, tokenAddress)
+                Products.fromJson(productListJson, tokenAddress, clean)
             }
         }
         return ""

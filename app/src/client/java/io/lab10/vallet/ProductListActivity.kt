@@ -25,20 +25,25 @@ import android.support.v7.app.AlertDialog
 
 class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Product) {
-        AlertDialog.Builder(this)
-                .setTitle("Pay")
-                .setMessage("Are you confirm to pay for that product?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
-                    Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
-                    Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
-                })
-                .setNegativeButton(android.R.string.no, null).show()
+        if (item.price > voucher!!.balance) {
+            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
+        } else {
+            AlertDialog.Builder(this)
+                    .setTitle("Pay")
+                    .setMessage("Are you confirm to pay for that product?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
+                        Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
+                        Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
+                    })
+                    .setNegativeButton(android.R.string.no, null).show()
+        }
     }
 
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
     private var tokenAddress: String? = null
+    private var voucher: Voucher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +53,9 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
         if (extras != null) {
             tokenAddress = extras.getString("EXTRA_TOKEN_ADDRESS")
             val vouchersBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-            var voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
-            if (voucher != null && voucher.ipnsAdddress.length > 0) {
-                fetchProducts(voucher.ipnsAdddress)
+            voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
+            if (voucher != null && voucher is Voucher && voucher!!.ipnsAdddress.length > 0) {
+                fetchProducts(voucher!!.ipnsAdddress)
             } else {
                 EventBus.getDefault().post(ErrorEvent("Missing ipns address"))
                 finish()
@@ -89,13 +94,13 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
         // response and handle case where response will fail and inform user.
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
-        //Load from local if exists
-        Products.refresh()
+        //Load from local if exists for given token
+        Products.refresh(tokenAddress!!)
         EventBus.getDefault().post(ProductsListEvent())
 
         Thread(Runnable {
             try {
-                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress, tokenAddress!!)
+                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress, tokenAddress!!, true)
                 EventBus.getDefault().post(ProductsListEvent())
             } catch (e: Exception) {
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
@@ -107,7 +112,7 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-        Products.refresh()
+        Products.refresh(tokenAddress!!)
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     };

@@ -48,6 +48,10 @@ class ClientActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
 
         Vouchers.refresh()
+        // Trigger balance check for each token
+        Vouchers.getVouchers().forEach { e ->
+            Web3jManager.INSTANCE.getVoucherBalance(this, e.tokenAddress)
+        }
         viewAdapter = VoucherAdapter(Vouchers.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
             scanTokenContract.setOnClickListener {
@@ -66,17 +70,6 @@ class ClientActivity : AppCompatActivity() {
 
         observeVouchers()
 
-        voucherBox.query().build().forEach { voucher ->
-            if (voucher.name.equals("Fetching ...")) {
-                Web3jManager.INSTANCE.getTokenName(this, voucher.tokenAddress)
-            }
-
-            // TODO this should not be check like that as both states are very likely
-            if (voucher.balance == 0) {
-                Web3jManager.INSTANCE.getVoucherBalance(this, voucher.tokenAddress)
-            }
-        }
-
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
 
@@ -92,10 +85,6 @@ class ClientActivity : AppCompatActivity() {
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
         generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
-
-        logo.setOnClickListener {
-            FaucetManager.INSTANCE.getFounds(this, voucherWalletAddress )
-        }
     }
 
     private fun generateWalletBarcode(address: String) {
@@ -168,6 +157,8 @@ class ClientActivity : AppCompatActivity() {
             voucher.balance = voucher.balance + event.value.toInt()
             voucherBox.put(voucher)
         }
+        Vouchers.refresh()
+        viewAdapter.notifyDataSetChanged()
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
@@ -176,6 +167,8 @@ class ClientActivity : AppCompatActivity() {
             voucher.balance = voucher.balance - event.value.toInt()
             voucherBox.put(voucher)
         }
+        Vouchers.refresh()
+        viewAdapter.notifyDataSetChanged()
     }
 
     @Subscribe
