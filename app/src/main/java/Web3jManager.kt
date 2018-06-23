@@ -15,7 +15,9 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
+import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.tx.Contract
@@ -138,6 +140,25 @@ class Web3jManager private constructor(){
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.RedeemEventResponse
+                        emitRedeemEvent(log, tokenAddress)
+                    }
+        }
+    }
+
+    fun getVoucherBalanceFrom(context: Context, tokenAddress: String, blockNumber: Long) {
+        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+        if (Wallet.isValidAddress(tokenAddress)) {
+            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            token.transferEventObservable(DefaultBlockParameterNumber(BigInteger.valueOf(blockNumber)), DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                        var log = event as Token.TransferEventResponse
+                        if (matchClientAddress(context, log._to))
+                            emitTransactionEvent(log, tokenAddress)
+
+                    }
+            token.redeemEventObservable(DefaultBlockParameterNumber(BigInteger.valueOf(blockNumber)), DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
                         emitRedeemEvent(log, tokenAddress)

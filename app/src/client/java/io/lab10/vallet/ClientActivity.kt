@@ -50,7 +50,7 @@ class ClientActivity : AppCompatActivity() {
         Vouchers.refresh()
         // Trigger balance check for each token
         Vouchers.getVouchers().forEach { e ->
-            Web3jManager.INSTANCE.getVoucherBalance(this, e.tokenAddress)
+            Web3jManager.INSTANCE.getVoucherBalanceFrom(this, e.tokenAddress, e.lastBlockNumber)
         }
         viewAdapter = VoucherAdapter(Vouchers.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
@@ -153,8 +153,9 @@ class ClientActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
-        if (voucher != null) {
+        if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
             voucher.balance = voucher.balance + event.value.toInt()
+            voucher.lastBlockNumber = event.blockNumber.toLong()
             voucherBox.put(voucher)
         }
         Vouchers.refresh()
@@ -163,8 +164,9 @@ class ClientActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
-        if (voucher != null) {
+        if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
             voucher.balance = voucher.balance - event.value.toInt()
+            voucher.lastBlockNumber = event.blockNumber.toLong()
             voucherBox.put(voucher)
         }
         Vouchers.refresh()
@@ -240,7 +242,7 @@ class ClientActivity : AppCompatActivity() {
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, address).build().findFirst()
         if (voucher == null) {
-            voucher = Voucher(0, voucherName, address, 0, voucherType, ipnsAddress)
+            voucher = Voucher(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
             voucherBox.put(voucher)
         } else {
             voucher.ipnsAdddress = ipnsAddress

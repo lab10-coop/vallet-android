@@ -13,4 +13,5 @@ data class Voucher(@Id var id: Long = 0,
                    var balance: Int = 0,
                    var type: Int = 0,
                    var ipnsAdddress: String = "",
-                   var default: Boolean = true)
+                   var default: Boolean = true,
+                   var lastBlockNumber: Long = 0)
