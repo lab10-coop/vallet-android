@@ -47,7 +47,7 @@ class HomeActivityFragment : Fragment() {
         val query = valletTransactionBox.query().build()
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
             .observer { sum ->
-                if ((activity as AdminActivity).voucher!!.type == 0) {
+                if ((activity as AdminActivity).voucher?.type == 0) {
                     viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
                 } else {
                     viewHolder!!.voucherCountLabel.text = sum.toString()
@@ -107,7 +107,13 @@ class HomeActivityFragment : Fragment() {
         if (recentTransaction.size > 0) {
             viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
         }
-        viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, (activity as AdminActivity).voucher!!.type)
+        if ((activity as AdminActivity).voucher?.type == 0) {
+            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
+            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
+        } else {
+            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
+            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
+        }
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)

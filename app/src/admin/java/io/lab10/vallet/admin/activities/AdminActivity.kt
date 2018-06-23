@@ -103,7 +103,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         var tokenContractaddress = event.address
         var voucherName = event.name
         var voucherType = 0
-        if (event.type.equals(Vouchers.Type.VOUCHER) ) {
+        if (event.type.equals(Vouchers.Type.VOUCHER.toString()) ) {
             voucherType = 1
         }
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)

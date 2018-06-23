@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import io.lab10.vallet.R
 import io.lab10.vallet.models.ValletTransaction
@@ -15,11 +16,13 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mName: TextView
         val mValue: TextView
+        val mVoucherTypeIcon: ImageView
         var mTransaction: ValletTransaction? = null
 
         init {
             mName = mView.findViewById(R.id.name) as TextView
             mValue = mView.findViewById(R.id.value) as TextView
+            mVoucherTypeIcon = mView.findViewById(R.id.voucherTypeIcon) as ImageView
         }
 
         override fun toString(): String {
@@ -43,6 +46,7 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
             holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString()
         } else {
             holder.mValue.text = history[position].value.toString()
+            holder.mVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         }
 
     }

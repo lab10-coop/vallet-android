@@ -23,7 +23,7 @@
         android:fontFamily="@font/work_sans"
         app:layout_constraintTop_toBottomOf="@+id/separator"/>
     <ImageView
-        android:id="@+id/euroSign"
+        android:id="@+id/voucherTypeIcon"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginRight="5dp"
