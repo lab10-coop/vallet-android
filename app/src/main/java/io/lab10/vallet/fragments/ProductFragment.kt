@@ -28,7 +28,6 @@ class ProductFragment : Fragment() {
     private var adapter: ProductRecyclerViewAdapter? = null
 
     private val MY_CAMERA_REQUEST_CODE = 100;
-    var voucherType = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,7 +37,7 @@ class ProductFragment : Fragment() {
             if (view.productList is RecyclerView) {
                 val context = view.productList.getContext()
                 val recyclerView = view.productList as RecyclerView
-                adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener, voucherType)
+                adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
                 recyclerView.adapter = adapter
             }

@@ -85,9 +85,6 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-        if ((activity as AdminActivity).voucher != null) {
-            productFragment.voucherType = (activity as AdminActivity).voucher!!.type
-        }
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     };
@@ -109,13 +106,11 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         productFragment.swiperefresh.isRefreshing = true;
         val voucher = (activity as AdminActivity).voucher
 
-        // Load first from local storage
-        Products.refresh(voucher!!.tokenAddress)
-        productFragment.notifyAboutchange()
-        productFragment.swiperefresh.isRefreshing = false
-
-
         if (voucher != null) {
+            // Load first from local storage
+            Products.refresh(voucher!!.tokenAddress)
+            productFragment.notifyAboutchange()
+            productFragment.swiperefresh.isRefreshing = false
 
             // TODO we should use IntentService for all network activities
             // to avoid potential memory leaks. In this case we also should check

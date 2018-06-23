@@ -12,6 +12,8 @@ import android.widget.TextView
 import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.models.Product
+import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Voucher_
 import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.main.fragment_product.view.*
 
@@ -20,12 +22,20 @@ import kotlinx.android.synthetic.main.fragment_product.view.*
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?, private val voucherType: Int) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ViewHolder>() {
+class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ViewHolder>() {
+
+
+    private var voucher: Voucher? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_product, parent, false)
-        if (voucherType != 0) {
+        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        // Fetch voucher base on the first product (all products are from the same
+        // voucher so does not matter which one we will pick
+        voucher = voucherBox.query().equal(Voucher_.tokenAddress, mValues.first().token).build().findFirst()
+
+        if (voucher!!.type != 0) {
             view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         }
         return ViewHolder(view)
@@ -35,9 +45,8 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
 
-        if (voucherType != 0) {
+        if (voucher!!.type != 0) {
             holder.mProductPrice.setText(mValues.get(position).price.toString())
-
         } else {
             holder.mProductPrice.setText(Wallet.convertATS2EUR(mValues.get(position).price).toString())
         }

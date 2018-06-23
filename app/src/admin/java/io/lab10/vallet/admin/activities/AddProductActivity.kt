@@ -49,6 +49,7 @@ class AddProductActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_product)
 
         var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        // TODO add multi voucher capabilities
         voucher = voucherBox.query().build().findFirst()
 
         pendingIntent = PendingIntent.getActivity(this, 0,
@@ -87,7 +88,11 @@ class AddProductActivity : AppCompatActivity() {
             var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
             if (!priceString.trim().equals("")) {
-                price = Wallet.convertEUR2ATS(priceString)
+                if (voucher!!.type == 0) {
+                    price = Wallet.convertEUR2ATS(priceString)
+                } else {
+                    price = priceString.toInt()
+                }
             }
 
             if (price > 0 && name.isNotEmpty()) {
