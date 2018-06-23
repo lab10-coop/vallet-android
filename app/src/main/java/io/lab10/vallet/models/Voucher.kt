@@ -12,5 +12,5 @@ data class Voucher(@Id var id: Long = 0,
                    val tokenAddress: String = "",
                    var balance: Int = 0,
                    var type: Int = 0,
-                   var ipfsAdddress: String = "",
+                   var ipnsAdddress: String = "",
                    var default: Boolean = true)

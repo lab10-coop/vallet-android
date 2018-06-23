@@ -22,9 +22,13 @@ import android.text.InputType
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
+import android.content.ContextWrapper
+
+
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -73,7 +77,6 @@ class AddProductActivity : AppCompatActivity() {
         }
 
         saveProductBtn.setOnClickListener() {
-            var id = productNameInput.text.toString()
             var name = productNameInput.text.toString()
             var priceString = productPriceInput.text.toString()
             var nfcTagId = productNfcTagInput.text.toString()
@@ -82,12 +85,16 @@ class AddProductActivity : AppCompatActivity() {
                 price = Wallet.convertEUR2ATS(priceString)
             }
 
-            val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
+            if (price > 0 && name.isNotEmpty()) {
+                val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
 
-            storeProduct(id, name, price, bitmap, nfcTagId)
-            var resultIntent = Intent();
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
+                storeProduct(name, price, bitmap, nfcTagId)
+                var resultIntent = Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+            } else {
+                Toast.makeText(this, "Fill name nad price", Toast.LENGTH_SHORT).show()
+            }
         }
 
         closeButton.setOnClickListener() {
@@ -108,11 +115,14 @@ class AddProductActivity : AppCompatActivity() {
         val PRODUCT_RETURN_STRING = "product"
     }
 
-    private fun storeProduct(id: String, name: String, price: Int, data: Bitmap, nfcTagId: String) {
-        // TODO we should store it locally as well
-        val saveImage = File(filesDir, name + ".jpg")
+    private fun storeProduct(name: String, price: Int, data: Bitmap, nfcTagId: String) {
+
+        val cw = ContextWrapper(applicationContext)
+        // path to /data/data/yourapp/app_data/imageDir
+        val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
+        val image = File(directory, name + ".jpg")
         try {
-            val outputStream = FileOutputStream(saveImage);
+            val outputStream = FileOutputStream(image);
             data.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
             outputStream.flush();
             outputStream.close();
@@ -124,18 +134,17 @@ class AddProductActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
+        val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
+
+
         // TODO we should use IntentService for all network activities
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
-            val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(saveImage, name)
-            var product = Products.Product(id, name, price, address.Hash, nfcTagId)
-            Products.addItem(product)
+            val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
+            var product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId)
+            productBox.put(product)
             var addressName = IPFSManager.INSTANCE.publishProductList(this);
-            val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            editor.putString(resources.getString(R.string.shared_pref_product_list_ipns_address), addressName)
-            editor.commit()
             Log.d(TAG, "Address of products list: " +  addressName)
         }).start()
     }

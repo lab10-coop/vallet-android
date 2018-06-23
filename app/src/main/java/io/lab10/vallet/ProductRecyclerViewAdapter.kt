@@ -1,6 +1,7 @@
 package io.lab10.vallet
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 
 import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
-import io.lab10.vallet.models.Products
-import io.lab10.vallet.models.Products.Product
 import com.squareup.picasso.Picasso
+import io.lab10.vallet.models.Product
 import kotlinx.android.synthetic.main.fragment_product.view.*
 
 
@@ -19,11 +19,14 @@ import kotlinx.android.synthetic.main.fragment_product.view.*
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ViewHolder>() {
+class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?, private val voucherType: Int) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_product, parent, false)
+        if (voucherType != 0) {
+            view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+        }
         return ViewHolder(view)
     }
 
@@ -33,6 +36,8 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mProductPrice.setText(mValues.get(position).price.toString())
         holder.mProductNfcTagId.setText(mValues.get(position).nfcTagId.toString())
         val imageIPFSAddress = mValues.get(position).imagePath
+        // First load cached local file
+        Picasso.get().load(mValues.get(position).localImagePath).into(holder.mProductImage)
         Picasso.get().load("https://ipfs.io/ipfs/" + imageIPFSAddress).into(holder.mProductImage);
 
         holder.mView.setOnClickListener {
@@ -59,7 +64,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         val mProductImage: ImageView
         val mProductPrice: TextView
         val mProductNfcTagId: TextView
-        var mItem: Products.Product? = null
+        var mItem: Product? = null
 
         init {
             mProductName = mView.findViewById(R.id.productName) as TextView

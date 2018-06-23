@@ -1,6 +1,5 @@
 package io.lab10.vallet.admin.activities
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,13 +11,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
-import io.lab10.vallet.models.Products
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
-import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Voucher_
-import io.lab10.vallet.models.Vouchers
+import io.lab10.vallet.models.*
 import kotlinx.android.synthetic.admin.activity_admin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -32,7 +28,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         ProductFragment.OnListFragmentInteractionListener {
 
 
-    override fun onListFragmentInteraction(item: Products.Product) {
+    override fun onListFragmentInteraction(item: Product) {
         // TODO add interaction for product
     }
 
@@ -98,11 +94,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTokenIPFSAddressEvent(event: TokenIPFSAddressEvent) {
+    fun onTokenIPFSAddressEvent(event: TokenIPNSAddressEvent) {
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
-            voucher.ipfsAdddress = event.ipfsAddress
+            voucher.ipnsAdddress = event.ipnsAddress
             voucherBox.put(voucher)
             Toast.makeText(this, "Ipfs address created", Toast.LENGTH_SHORT).show()
         }
@@ -124,7 +120,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             var addressName = IPFSManager.INSTANCE.publishProductList(this);
             if (addressName != null) {
                 Log.d(TAG, "Address of products list: " + addressName)
-                EventBus.getDefault().post(TokenIPFSAddressEvent(voucherId, addressName))
+                EventBus.getDefault().post(TokenIPNSAddressEvent(voucherId, addressName))
             }
         }).start()
     }

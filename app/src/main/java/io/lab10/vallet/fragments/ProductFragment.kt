@@ -18,7 +18,9 @@ import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
+import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.events.ProductsListEvent
+import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
 
 
@@ -36,7 +38,11 @@ class ProductFragment : Fragment() {
             if (view.productList is RecyclerView) {
                 val context = view.productList.getContext()
                 val recyclerView = view.productList as RecyclerView
-                adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener)
+                var voucherType = 0
+                if ((activity as AdminActivity).voucher != null) {
+                    voucherType = (activity as AdminActivity).voucher!!.type
+                }
+                adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener, voucherType)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
                 recyclerView.adapter = adapter
             }
@@ -76,11 +82,6 @@ class ProductFragment : Fragment() {
         mListener = null
     }
 
-    fun addProduct(product: Products.Product) {
-        Products.addItem(product)
-        adapter!!.notifyDataSetChanged()
-    }
-
     fun notifyAboutchange() {
         adapter!!.notifyDataSetChanged()
     }
@@ -95,7 +96,7 @@ class ProductFragment : Fragment() {
      * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Products.Product)
+        fun onListFragmentInteraction(item: Product)
     }
 
     companion object {
