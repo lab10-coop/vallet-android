@@ -10,6 +10,11 @@ class Wallet {
             val value = price.toFloat()
             return (value * 100).toInt()
         }
+
+        fun convertATS2EUR(ats: Long): Float {
+            // 1 ATS = 1 cent
+            return (ats / 100.0).toFloat()
+        }
         fun isValidAddress(address: String): Boolean {
             if (address.length == 42) {
                 return true

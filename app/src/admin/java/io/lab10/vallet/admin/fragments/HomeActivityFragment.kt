@@ -21,10 +21,13 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
+import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
+import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
+import org.web3j.protocol.admin.Admin
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -44,7 +47,12 @@ class HomeActivityFragment : Fragment() {
         val query = valletTransactionBox.query().build()
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
             .observer { sum ->
-                viewHolder!!.voucherCountLabel.text = sum.toString()
+                if ((activity as AdminActivity).voucher!!.type == 0) {
+                    viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
+                } else {
+                    viewHolder!!.voucherCountLabel.text = sum.toString()
+                }
+
             }
 
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,2)}
@@ -99,7 +107,7 @@ class HomeActivityFragment : Fragment() {
         if (recentTransaction.size > 0) {
             viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
         }
-        viewAdapter = HistoryRecyclerViewAdapter(recentTransaction)
+        viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, (activity as AdminActivity).voucher!!.type)
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)

@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import io.lab10.vallet.R
 import io.lab10.vallet.models.ValletTransaction
+import io.lab10.vallet.models.Wallet
 
-class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>) :
+class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>, val voucherType: Int) :
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
@@ -37,8 +38,13 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mName.text = history[position].name
-        holder.mValue.text = history[position].value.toString()
         holder.mTransaction = history[position]
+        if (voucherType == 0) {
+            holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString()
+        } else {
+            holder.mValue.text = history[position].value.toString()
+        }
+
     }
 
     override fun getItemCount() = history.size

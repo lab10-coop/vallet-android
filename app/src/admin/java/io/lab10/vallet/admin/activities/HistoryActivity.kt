@@ -27,9 +27,11 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
+        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        voucher = voucherBox.query().build().findFirst()
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions())
+        viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), voucher!!.type)
 
         recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {
             setHasFixedSize(true)
@@ -37,8 +39,6 @@ class HistoryActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        voucher = voucherBox.query().build().findFirst()
 
         fetchHistory()
     }

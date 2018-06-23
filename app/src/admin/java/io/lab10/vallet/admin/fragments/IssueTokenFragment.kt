@@ -16,10 +16,12 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
+import org.greenrobot.eventbus.EventBus
 
 
 class IssueTokenFragment : DialogFragment() {
@@ -56,15 +58,18 @@ class IssueTokenFragment : DialogFragment() {
             val amountInput = voucherAmountInput.text.toString()
 
             try {
-                var amount = BigInteger(amountInput)
                 var address = Wallet.formatAddress(userAddress)
+                var amount = BigInteger.ZERO
                 if (voucher!!.type == 0) {
-                    amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amount.toString()).toLong())
+                    amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amountInput).toLong())
+                } else {
+                    amount = BigInteger(amountInput)
                 }
 
                 Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
                 dialog.dismiss()
             } catch (e: Exception) {
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
                 dialog.dismiss()
             }
         }
