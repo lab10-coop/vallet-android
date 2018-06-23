@@ -24,8 +24,7 @@ import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.EventBus
-
-
+import org.web3j.protocol.admin.Admin
 
 
 class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionListener {
@@ -108,13 +107,13 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
+        val voucher = (activity as AdminActivity).voucher
 
         // Load first from local storage
-        Products.refresh()
+        Products.refresh(voucher!!.tokenAddress)
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
 
-        val voucher = (activity as AdminActivity).voucher
 
         if (voucher != null) {
 

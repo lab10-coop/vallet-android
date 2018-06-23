@@ -31,7 +31,9 @@ class HistoryActivity : AppCompatActivity() {
         voucher = voucherBox.query().build().findFirst()
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), voucher!!.type)
+        if (voucher?.type != null) {
+            viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), voucher!!.type)
+        }
 
         recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {
             setHasFixedSize(true)
