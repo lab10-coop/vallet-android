@@ -77,6 +77,9 @@ class IssueTokenFragment : DialogFragment() {
                     }
                     if (amount > BigInteger.ZERO) {
                         Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
+                        // Request funds for user to be able to consume tokens
+                        // TODO calculate how much we should request base on the amount
+                        FaucetManager.INSTANCE.getFounds(context, address)
                         dialog.dismiss()
                     } else {
                         EventBus.getDefault().post(ErrorEvent("Value must be positive"))

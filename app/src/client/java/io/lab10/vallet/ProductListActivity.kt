@@ -1,16 +1,12 @@
 package io.lab10.vallet
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.nfc.NfcAdapter
 import android.widget.Toast
 import android.os.Parcelable
-import android.provider.Settings.ACTION_WIRELESS_SETTINGS
 import android.content.Intent
 import android.provider.Settings
 import android.app.PendingIntent
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.Tag
 import android.support.v4.app.FragmentActivity
 import io.lab10.vallet.events.ErrorEvent
@@ -21,14 +17,23 @@ import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.math.BigInteger
-import kotlin.experimental.and
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+
+
 
 
 class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Product) {
-        // TODO add confirmation
-        Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
+        AlertDialog.Builder(this)
+                .setTitle("Pay")
+                .setMessage("Are you confirm to pay for that product?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
+                    Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), tokenAddress!!)
+                    Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
+                })
+                .setNegativeButton(android.R.string.no, null).show()
     }
 
     private var nfcAdapter: NfcAdapter? = null
@@ -84,9 +89,13 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
         // response and handle case where response will fail and inform user.
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
+        //Load from local if exists
+        Products.refresh()
+        EventBus.getDefault().post(ProductsListEvent())
+
         Thread(Runnable {
             try {
-                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress)
+                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress, tokenAddress!!)
                 EventBus.getDefault().post(ProductsListEvent())
             } catch (e: Exception) {
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
@@ -98,6 +107,7 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        Products.refresh()
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     };

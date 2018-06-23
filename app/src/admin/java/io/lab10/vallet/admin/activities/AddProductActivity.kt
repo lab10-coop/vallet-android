@@ -146,7 +146,7 @@ class AddProductActivity : AppCompatActivity() {
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
-            var product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId)
+            var product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId, voucher!!.tokenAddress)
             productBox.put(product)
             var addressName = IPFSManager.INSTANCE.publishProductList(this);
             Log.d(TAG, "Address of products list: " +  addressName)

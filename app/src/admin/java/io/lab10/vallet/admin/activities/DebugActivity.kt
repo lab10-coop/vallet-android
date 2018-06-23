@@ -77,8 +77,8 @@ class DebugActivity : AppCompatActivity() {
         try {
             val barcodeEncoder = BarcodeEncoder()
             val address = voucher!!.tokenAddress
-            val priceListIPNSAddress = sharedPref.getString(resources.getString(R.string.shared_pref_product_list_ipns_address), "")
-            val data = address + ";" + priceListIPNSAddress
+            val priceListIPNSAddress = voucher!!.ipnsAdddress
+            val data = voucher!!.name + ";" + voucher!!.type + ";" + address + ";" + priceListIPNSAddress
             val bitmap = barcodeEncoder.encodeBitmap(data, BarcodeFormat.QR_CODE, 400, 400)
             voucherQrcode.setImageBitmap(bitmap)
         } catch (e: Exception) {

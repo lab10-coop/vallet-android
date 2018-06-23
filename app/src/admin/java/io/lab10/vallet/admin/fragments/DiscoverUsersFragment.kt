@@ -28,6 +28,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
 import android.content.Intent
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Wallet
 
 
@@ -162,10 +163,13 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents != null) {
-            val address = result.contents
-            if (Wallet.isValidAddress(result.contents)) {
-                var user = Users.User(address, address, "QR")
-                IssueTokenFragment.newInstance(user).show(fragmentManager, "dialog")
+            val address = result.contents.split(";")[0]
+            val userName = result.contents.split(";")[1]
+            if (Wallet.isValidAddress(address)) {
+                var user = Users.User(address, address, userName)
+                IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
+            } else {
+                EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
             }
 
         } else {

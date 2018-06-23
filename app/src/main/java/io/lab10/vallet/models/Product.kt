@@ -7,7 +7,13 @@ import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 
 @Entity
-data class Product(@Id var id: Long, var name: String, var price: Long, var imagePath: String, var localImagePath: String, var nfcTagId: String)  {
+data class Product(@Id var id: Long,
+                   var name: String,
+                   var price: Long,
+                   var imagePath: String,
+                   var localImagePath: String,
+                   var nfcTagId: String,
+                   var token: String)  {
 
     override fun toString(): String {
         return name

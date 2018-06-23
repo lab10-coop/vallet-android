@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -76,9 +75,6 @@ class ClientActivity : AppCompatActivity() {
             if (voucher.balance == 0) {
                 Web3jManager.INSTANCE.getVoucherBalance(this, voucher.tokenAddress)
             }
-            if (voucher.type == 0) {
-                Web3jManager.INSTANCE.getTokenType(this, voucher.tokenAddress)
-            }
         }
 
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
@@ -95,7 +91,7 @@ class ClientActivity : AppCompatActivity() {
 
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
-        generateWalletBarcode(voucherWalletAddress)
+        generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
 
         logo.setOnClickListener {
             FaucetManager.INSTANCE.getFounds(this, voucherWalletAddress )
@@ -233,10 +229,13 @@ class ClientActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents != null) {
             val data = result.contents
-            val tokenAddress = data.split(";")[0]
-            val ipnsAddress = data.split(";")[1]
+            val splitData = data.split(";")
+            val voucherName = splitData[0]
+            val voucherType = splitData[1]
+            val tokenAddress = splitData[2]
+            val ipnsAddress = splitData[3]
             if (Wallet.isValidAddress(tokenAddress)) {
-                storeTokenAddress(tokenAddress, ipnsAddress)
+                storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
            }
 
         } else {
@@ -244,20 +243,25 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun storeTokenAddress(address: String, ipnsAddress: String) {
-        Web3jManager.INSTANCE.getTokenName(this, address)
-        Web3jManager.INSTANCE.getTokenType(this, address)
+    private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, address).build().findFirst()
         if (voucher == null) {
-            voucher = Voucher(0, "Fetching ...", address, 0, 0, ipnsAddress)
+            voucher = Voucher(0, voucherName, address, 0, voucherType, ipnsAddress)
             voucherBox.put(voucher)
         } else {
             voucher.ipnsAdddress = ipnsAddress
+            voucher.name = voucherName
+            voucher.type = voucherType
             voucherBox.put(voucher)
         }
         Vouchers.refresh()
         viewAdapter.notifyDataSetChanged()
+    }
+
+    fun getPhoneName(): String {
+        val myDevice = BluetoothAdapter.getDefaultAdapter()
+        return myDevice.name
     }
 
 }

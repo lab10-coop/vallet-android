@@ -17,14 +17,13 @@ object Products {
      */
 
     private val ITEMS: MutableList<Product> = ArrayList()
-
+    private val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
 
     fun getProducts(): MutableList<Product> {
         return ITEMS
     }
 
     fun refresh() {
-        val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
         ITEMS.clear()
         ITEMS.addAll(productBox.query().build().find())
     }
@@ -34,12 +33,14 @@ object Products {
         return gson.toJson(getProducts())
     }
 
-    fun fromJson(json: String) {
+    fun fromJson(json: String, tokenAddress: String) {
         val gson = Gson()
-        var tmp: MutableList<Product> = ArrayList()
         val products = gson.fromJson(json, Array<Product>::class.java)
+        productBox.query().equal(Product_.token, tokenAddress).build().remove()
         products.forEach { v ->
             // TODO add check if product is valid?
+            v.token = tokenAddress
+            v.id = 0
             if (!isProductOnList(v)) {
                 val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
                 productBox.put(v)
@@ -49,7 +50,7 @@ object Products {
 
     private fun isProductOnList(item: Product): Boolean {
         val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-        val product = productBox.query().equal(Product_.id, item.id).build().findFirst()
+        val product = productBox.query().equal(Product_.name, item.name).equal(Product_.token, item.token).build().findFirst()
         return product != null
     }
 }

@@ -114,15 +114,17 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
 
-        if ((activity as AdminActivity).voucher != null) {
+        val voucher = (activity as AdminActivity).voucher
+
+        if (voucher != null) {
 
             // TODO we should use IntentService for all network activities
             // to avoid potential memory leaks. In this case we also should check
             // response and handle case where response will fail and inform user.
             Thread(Runnable {
                 try {
-                    val priceListIPNSAddress = (activity as AdminActivity).voucher!!.ipnsAdddress
-                    IPFSManager.INSTANCE.fetchProductList(context, priceListIPNSAddress)
+                    val priceListIPNSAddress = voucher!!.ipnsAdddress
+                    IPFSManager.INSTANCE.fetchProductList(context, priceListIPNSAddress, voucher.tokenAddress)
                     EventBus.getDefault().post(ProductsListEvent())
                 } catch (e: Exception) {
                     if (isAdded) {
