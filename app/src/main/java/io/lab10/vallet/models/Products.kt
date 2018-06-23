@@ -15,9 +15,18 @@ object Products {
      * An array of product items.
      * TODO: add tests
      */
+
+    private val ITEMS: MutableList<Product> = ArrayList()
+
+
     fun getProducts(): MutableList<Product> {
+        return ITEMS
+    }
+
+    fun refresh() {
         val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-        return productBox.query().build().find()
+        ITEMS.clear()
+        ITEMS.addAll(productBox.query().build().find())
     }
 
     fun toJson(): String {

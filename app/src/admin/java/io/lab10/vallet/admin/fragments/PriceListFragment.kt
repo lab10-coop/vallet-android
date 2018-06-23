@@ -100,16 +100,16 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         fun newInstance() = PriceListFragment()
     }
 
-    fun refreshProducts() {
+    private fun refreshProducts() {
 
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
 
         // Load first from local storage
-        val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-        var products = productBox.query().build().find()
-        EventBus.getDefault().post(ProductsListEvent())
+        Products.refresh()
+        productFragment.notifyAboutchange()
+        productFragment.swiperefresh.isRefreshing = false
 
         if ((activity as AdminActivity).voucher != null) {
 

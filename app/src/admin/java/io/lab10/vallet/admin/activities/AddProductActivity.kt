@@ -117,7 +117,6 @@ class AddProductActivity : AppCompatActivity() {
 
     companion object {
         val PRODUCT_RETURN_CODE = 5;
-        val PRODUCT_RETURN_STRING = "product"
     }
 
     private fun storeProduct(name: String, price: Long, data: Bitmap, nfcTagId: String) {
@@ -201,9 +200,9 @@ class AddProductActivity : AppCompatActivity() {
         if (drawable is BitmapDrawable) {
             return drawable.bitmap
         } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
-            val bitmap = Bitmap.createBitmap (drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            val bitmap = Bitmap.createBitmap (drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
             val canvas = Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.setBounds(0, 0, canvas.width, canvas.height);
             drawable.draw(canvas);
 
             return bitmap;
