@@ -35,6 +35,8 @@ class FaucetManager private constructor() {
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
+                // After creating new token we need to request more funds to be able to start using it
+                FaucetManager.INSTANCE.getFounds(context, addr)
             }
         }).start()
     }
