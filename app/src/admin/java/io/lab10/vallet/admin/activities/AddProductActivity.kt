@@ -27,8 +27,13 @@ import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import android.content.ContextWrapper
-
-
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.VectorDrawable
+import android.os.Build
+import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -86,9 +91,9 @@ class AddProductActivity : AppCompatActivity() {
             }
 
             if (price > 0 && name.isNotEmpty()) {
-                val bitmap = (productPicture.getDrawable() as BitmapDrawable).bitmap
+                val bitmap = getBitmapFromDrawable(productPicture.getDrawable())
 
-                storeProduct(name, price, bitmap, nfcTagId)
+                storeProduct(name, price.toLong(), bitmap, nfcTagId)
                 var resultIntent = Intent();
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
@@ -115,7 +120,7 @@ class AddProductActivity : AppCompatActivity() {
         val PRODUCT_RETURN_STRING = "product"
     }
 
-    private fun storeProduct(name: String, price: Int, data: Bitmap, nfcTagId: String) {
+    private fun storeProduct(name: String, price: Long, data: Bitmap, nfcTagId: String) {
 
         val cw = ContextWrapper(applicationContext)
         // path to /data/data/yourapp/app_data/imageDir
@@ -191,5 +196,19 @@ class AddProductActivity : AppCompatActivity() {
 
     }
 
+    fun getBitmapFromDrawable(drawable: Drawable): Bitmap {
 
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
+            val bitmap = Bitmap.createBitmap (drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            val canvas = Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+
+            return bitmap;
+        } else {
+            throw IllegalArgumentException ("unsupported drawable type");
+        }
+    }
 }

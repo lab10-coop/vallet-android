@@ -12,6 +12,7 @@ import android.widget.TextView
 import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.models.Product
+import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.main.fragment_product.view.*
 
 
@@ -33,7 +34,14 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
-        holder.mProductPrice.setText(mValues.get(position).price.toString())
+
+        if (voucherType != 0) {
+            holder.mProductPrice.setText(mValues.get(position).price.toString())
+
+        } else {
+            holder.mProductPrice.setText(Wallet.convertATS2EUR(mValues.get(position).price).toString())
+        }
+
         holder.mProductNfcTagId.setText(mValues.get(position).nfcTagId.toString())
         val imageIPFSAddress = mValues.get(position).imagePath
         // First load cached local file
