@@ -8,7 +8,6 @@ import android.content.Intent
 import android.provider.Settings
 import android.app.PendingIntent
 import android.nfc.Tag
-import android.support.v4.app.FragmentActivity
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.ProductsListEvent
 import io.lab10.vallet.fragments.ProductFragment
@@ -19,11 +18,11 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import kotlinx.android.synthetic.client.activity_product_list.*
 
-
-
-
-class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentInteractionListener {
+class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Product) {
         if (item.price > voucher!!.balance) {
             Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
@@ -43,15 +42,30 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
     private var tokenAddress: String? = null
+    private var tokenBalance: String? = null
+    private var tokenType: Int? = null
     private var voucher: Voucher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_list)
-
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
+        toolbar.setNavigationOnClickListener() {
+            finish()
+        }
         val extras = intent.extras
         if (extras != null) {
             tokenAddress = extras.getString("EXTRA_TOKEN_ADDRESS")
+            tokenBalance = extras.getString("EXTRA_TOKEN_BALANCE")
+            tokenType = extras.getInt("EXTRA_TOKEN_TYPE")
+            if (tokenType != 0) {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+            } else {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+            }
+            toolbarBalance.text = tokenBalance
             val vouchersBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
             voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
             if (voucher != null && voucher is Voucher && voucher!!.ipnsAdddress.length > 0) {
@@ -87,6 +101,11 @@ class ProductListActivity : FragmentActivity(), ProductFragment.OnListFragmentIn
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
 
     private fun fetchProducts(priceListIPNSAddress: String) {
         // TODO we should use IntentService for all network activities

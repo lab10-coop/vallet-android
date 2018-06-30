@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Vallet</string>
     <string name="title_activity_client">Vallet</string>
-    <string name="menu_get_voucher">Get voucher</string>
 </resources>

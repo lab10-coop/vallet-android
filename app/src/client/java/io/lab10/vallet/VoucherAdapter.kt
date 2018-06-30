@@ -23,20 +23,23 @@ class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
         override fun onClick(v: View?) {
             val intent = Intent(mView.context, ProductListActivity::class.java)
             intent.action = "Start"
-            intent.putExtra("EXTRA_TOKEN_ADDRESS", mView.voucherTokenAddress.text);
+            intent.putExtra("EXTRA_TOKEN_ADDRESS", mView.voucherTokenAddress.text)
+            intent.putExtra("EXTRA_TOKEN_BALANCE", mView.voucherBalance.text)
+            intent.putExtra("EXTRA_TOKEN_TYPE", mVoucherType)
             mView.context.startActivity(intent)
         }
 
         val mVoucherName: TextView
         val mVoucherBalance: TextView
         val mVoucherTokenAddress: TextView
-        val mVoucherType: ImageView
+        val mVoucherTypeImage: ImageView
+        var mVoucherType: Int = 0
 
         init {
             mVoucherName = mView.findViewById(R.id.voucherName) as TextView
             mVoucherBalance = mView.findViewById(R.id.voucherBalance) as TextView
             mVoucherTokenAddress = mView.findViewById(R.id.voucherTokenAddress) as TextView
-            mVoucherType = mView.findViewById(R.id.voucherTypeIcon) as ImageView
+            mVoucherTypeImage = mView.findViewById(R.id.voucherTypeIcon) as ImageView
             mView.setOnClickListener(this)
         }
 
@@ -56,11 +59,12 @@ class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
         holder.mVoucherName.text = myDataset[position].name
         holder.mVoucherTokenAddress.text = myDataset[position].tokenAddress
         if (myDataset[position].type != 0) {
-            holder.mVoucherType.setBackgroundResource(R.drawable.voucher_icon)
+            holder.mVoucherTypeImage.setBackgroundResource(R.drawable.voucher_icon)
             holder.mVoucherBalance.text = myDataset[position].balance.toString()
         } else {
             holder.mVoucherBalance.text = Wallet.convertATS2EUR(myDataset[position].balance.toLong()).toString()
         }
+        holder.mVoucherType = myDataset[position].type
     }
 
     override fun getItemCount() = myDataset.size
