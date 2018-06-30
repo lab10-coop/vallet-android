@@ -40,12 +40,13 @@
     <string name="token_factory_contract_address">0x0fd1fa8112f205d5c2754ece65eb43deb3592214</string>
     <string name="message_voucher_issued">Voucher issued.</string>
     <string name="scanningHint">Let the admin find you via bluetooth or show them your QR code to add money to your vallet.</string>
-    <string name="looking_for_admin">Looking for a nearby admin</string>
+    <string name="broadcasting_wallet_address">Broadcasting wallet address via BT</string>
     <string name="your_qrcode">Your QR-Code:</string>
     <string name="product_nfc_placeholder">Scan NFC tag</string>
     <string name="label_view_history"><![CDATA[View history >]]></string>
     <string name="label_scan_token"><![CDATA[Scan voucher >]]></string>
     <string name="placeholder_no_recent_activities">No recent activities</string>
     <string name="history">History</string>
+    <string name="tap_to_search_for_admin">Tap to start scanning admin</string>
 
 </resources>

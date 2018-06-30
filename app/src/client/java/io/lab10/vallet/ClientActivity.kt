@@ -80,6 +80,13 @@ class ClientActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
+        loader.setOnClickListener() {
+            startBroadcastingAddress()
+        }
+
+        scanningLabel.setOnClickListener() {
+            startBroadcastingAddress()
+        }
 
         observeVouchers()
 
@@ -127,31 +134,39 @@ class ClientActivity : AppCompatActivity() {
     }
 
     fun startBroadcastingAddress() {
-        // TODO make sure that BT is on if not turn it on
-        Toast.makeText(this,"Broadcasting address", Toast.LENGTH_LONG).show()
-        startLoaderAnimation()
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        val address = voucherWalletAddress
-        // Address is always with 0x which we don't need to transfer
-        val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE+2)
-        val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE+2)
-        val uuid1 = BTUtils.encodeAddress(part1)
-        val uuid2 = BTUtils.encodeAddress(part2)
-        if (!mBluetoothAdapter.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            this.startActivityForResult(enableBtIntent, 1)
-            // TODO handle turn on off in activity
-            // see https://developer.android.com/guide/topics/connectivity/bluetooth.html
-        } else {
-            mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid1)
-            mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid2)
+        if (!scanningInProgress) {
+            // TODO make sure that BT is on if not turn it on
+
+            val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter == null) {
+               Toast.makeText(this, "This devices does not support BT please use QR code instead", Toast.LENGTH_SHORT).show()
+            } else {
+                val address = voucherWalletAddress
+                // Address is always with 0x which we don't need to transfer
+                val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE + 2)
+                val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE + 2)
+                val uuid1 = BTUtils.encodeAddress(part1)
+                val uuid2 = BTUtils.encodeAddress(part2)
+                if (!mBluetoothAdapter.isEnabled) {
+                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    this.startActivityForResult(enableBtIntent, REQUEST_BT_ENABLE)
+                } else {
+                    scanningInProgress = true
+                    if (debugMode)
+                        Toast.makeText(this, "Broadcasting address", Toast.LENGTH_LONG).show()
+                    startLoaderAnimation()
+                    loader.setBackgroundResource(R.drawable.loader)
+                    scanningLabel.text = resources.getString(R.string.broadcasting_wallet_address)
+                    mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid1)
+                    mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid2)
+                }
+            }
         }
     }
 
     public override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
-        startBroadcastingAddress()
     }
 
     public override fun onStop() {
@@ -235,22 +250,31 @@ class ClientActivity : AppCompatActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents != null) {
-            val data = result.contents
-            val splitData = data.split(";")
-            if (splitData.size == 4) {
-                val voucherName = splitData[0]
-                val voucherType = splitData[1]
-                val tokenAddress = splitData[2]
-                val ipnsAddress = splitData[3]
-                if (Wallet.isValidAddress(tokenAddress)) {
-                    storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
+        // Return from QR code scanning
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents != null) {
+                val data = result.contents
+                val splitData = data.split(";")
+                if (splitData.size == 4) {
+                    val voucherName = splitData[0]
+                    val voucherType = splitData[1]
+                    val tokenAddress = splitData[2]
+                    val ipnsAddress = splitData[3]
+                    if (Wallet.isValidAddress(tokenAddress)) {
+                        storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
+                    }
+                } else {
+                    Toast.makeText(this, "Invalid qr code, try different", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Invalid qr code, try different", Toast.LENGTH_SHORT ).show()
-            }
 
+            }
+        }
+
+        if (requestCode == REQUEST_BT_ENABLE) {
+            if (resultCode == Activity.RESULT_OK) {
+                startBroadcastingAddress()
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
