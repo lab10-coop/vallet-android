@@ -110,6 +110,11 @@ class DebugActivity : AppCompatActivity() {
 
     }
 
+    private fun refreshIPNSAddress() {
+        if (voucher?.ipnsAdddress != null)
+            ipnsAddresLabel.text = voucher!!.ipnsAdddress
+    }
+
     private fun refreshName() {
         if (voucher?.name != null)
             voucherNameLabel.text = voucher!!.name
@@ -143,6 +148,7 @@ class DebugActivity : AppCompatActivity() {
         refreshTokenContract()
         refreshIpfsAddress()
         refreshDebugMode()
+        refreshIPNSAddress()
     }
 
     override fun onStart() {
