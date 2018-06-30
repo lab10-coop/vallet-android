@@ -1,5 +1,6 @@
 package io.lab10.vallet
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -39,7 +40,11 @@ class ClientActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var subscription: DataSubscription
+    private var scanningInProgress: Boolean = false
     val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+    val REQUEST_BT_ENABLE = 100
+    var debugMode: Boolean = false
+    var debugModeCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +56,14 @@ class ClientActivity : AppCompatActivity() {
         // Trigger balance check for each token
         Vouchers.getVouchers().forEach { e ->
             Web3jManager.INSTANCE.getVoucherBalanceFrom(this, e.tokenAddress, e.lastBlockNumber)
+        }
+
+        logo.setOnClickListener() {
+            if (debugModeCount < 7)
+                debugModeCount +1
+            else
+                debugMode = true
+                Toast.makeText(this, "Debug mode on", Toast.LENGTH_SHORT).show()
         }
         viewAdapter = VoucherAdapter(Vouchers.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
@@ -82,7 +95,8 @@ class ClientActivity : AppCompatActivity() {
             editor.commit()
         }
 
-        Log.i(TAG, "Wallet address: " + voucherWalletAddress)
+        if (debugMode)
+            Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
         generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
     }
