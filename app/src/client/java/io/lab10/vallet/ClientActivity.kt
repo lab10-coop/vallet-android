@@ -225,13 +225,17 @@ class ClientActivity : AppCompatActivity() {
         if (result != null && result.contents != null) {
             val data = result.contents
             val splitData = data.split(";")
-            val voucherName = splitData[0]
-            val voucherType = splitData[1]
-            val tokenAddress = splitData[2]
-            val ipnsAddress = splitData[3]
-            if (Wallet.isValidAddress(tokenAddress)) {
-                storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
-           }
+            if (splitData.size == 4) {
+                val voucherName = splitData[0]
+                val voucherType = splitData[1]
+                val tokenAddress = splitData[2]
+                val ipnsAddress = splitData[3]
+                if (Wallet.isValidAddress(tokenAddress)) {
+                    storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
+                }
+            } else {
+                Toast.makeText(this, "Invalid qr code, try different", Toast.LENGTH_SHORT ).show()
+            }
 
         } else {
             super.onActivityResult(requestCode, resultCode, data)
