@@ -94,7 +94,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTokenIPFSAddressEvent(event: TokenIPNSAddressEvent) {
+    fun onProductListPublishedEvent(event: ProductListPublishedEvent) {
         val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         var voucher = voucherBox.query().equal(Voucher_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
@@ -120,7 +120,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             var addressName = IPFSManager.INSTANCE.publishProductList(this);
             if (addressName != null) {
                 Log.d(TAG, "Address of products list: " + addressName)
-                EventBus.getDefault().post(TokenIPNSAddressEvent(voucherId, addressName))
+                EventBus.getDefault().post(ProductListPublishedEvent(voucherId, addressName))
             }
         }).start()
     }

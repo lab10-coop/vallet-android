@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import kotlinx.android.synthetic.admin.content_add_product.*
 import android.graphics.Bitmap
-import io.lab10.vallet.models.Products
 import java.io.*
 import android.graphics.drawable.BitmapDrawable
 import android.nfc.NfcAdapter
@@ -30,10 +29,10 @@ import android.content.ContextWrapper
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
-import android.os.Build
 import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
+import io.lab10.vallet.events.ProductAddedEvent
+import io.lab10.vallet.events.ProductListPublishedEvent
+import org.greenrobot.eventbus.EventBus
 
 
 class AddProductActivity : AppCompatActivity() {
@@ -153,7 +152,10 @@ class AddProductActivity : AppCompatActivity() {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
             var product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId, voucher!!.tokenAddress)
             productBox.put(product)
-            var addressName = IPFSManager.INSTANCE.publishProductList(this);
+            EventBus.getDefault().post(ProductAddedEvent())
+            var addressName = IPFSManager.INSTANCE.publishProductList(this)
+            if (addressName != null && addressName.isNotBlank())
+                EventBus.getDefault().post(ProductListPublishedEvent(voucher!!.id, addressName))
             Log.d(TAG, "Address of products list: " +  addressName)
         }).start()
     }

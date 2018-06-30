@@ -15,10 +15,13 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.ProductAddedEvent
+import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.events.ProductsListEvent
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Products
+import io.lab10.vallet.models.Voucher
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
@@ -87,7 +90,22 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
-    };
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductAdded(event: ProductAddedEvent) {
+        refreshProducts()
+    }
+
+    @Subscribe
+    fun onProductListPublished(event: ProductListPublishedEvent) {
+        val voucher = (activity as AdminActivity).voucher
+        if (voucher != null && voucher.ipnsAdddress != null && voucher.ipnsAdddress.isBlank()) {
+            voucher.ipnsAdddress = event.ipnsAddress
+            val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+            voucherBox.put(voucher)
+        }
+    }
 
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
