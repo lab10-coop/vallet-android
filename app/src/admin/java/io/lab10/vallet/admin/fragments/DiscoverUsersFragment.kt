@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.fragments
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
@@ -45,6 +46,7 @@ import io.lab10.vallet.models.Wallet
  */
 class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
+    private val REQUEST_BT_SCAN = 100
     private var mListener: OnListFragmentInteractionListener? = null
     private var bluetoothReceiver: BluetoothBroadcastReceiver? = BluetoothBroadcastReceiver()
     private var adapter: DiscoveryUserRecyclerViewAdapter? = null
@@ -81,7 +83,6 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onResume() {
         super.onResume()
-        BTUtils.startScanningForAddresses(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -103,6 +104,10 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             integrator.setBeepEnabled(false);
             integrator.setBarcodeImageEnabled(true);
             integrator.initiateScan()
+        }
+
+        view.scanBTButton.setOnClickListener() {
+            BTUtils.startScanningForAddresses(activity)
         }
         return view
     }
@@ -161,19 +166,26 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null && result.contents != null) {
-            val address = result.contents.split(";")[0]
-            val userName = result.contents.split(";")[1]
-            if (Wallet.isValidAddress(address)) {
-                var user = Users.User(address, address, userName)
-                IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
-            } else {
-                EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
-            }
 
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents != null) {
+                val address = result.contents.split(";")[0]
+                val userName = result.contents.split(";")[1]
+                if (Wallet.isValidAddress(address)) {
+                    var user = Users.User(address, address, userName)
+                    IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
+                } else {
+                    EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
+                }
+
+            }
+        }
+
+        if (requestCode == REQUEST_BT_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                BTUtils.startScanningForAddresses(activity)
+            }
         }
     }
 }

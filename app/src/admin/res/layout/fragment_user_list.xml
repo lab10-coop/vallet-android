@@ -19,6 +19,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scanBTButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="160dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/fab_bt_button"
+        android:background="@drawable/fab_bt_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="0dp"
         xmlns:app="http://schemas.android.com/apk/res-auto"

@@ -74,15 +74,14 @@ object BTUtils {
         if (!mBluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             activity.startActivityForResult(enableBtIntent, 1)
-            // TODO handle turn on off in activity
-            // see https://developer.android.com/guide/topics/connectivity/bluetooth.html
-        }
-        // TODO find out what will happen if the scanning is ongoing
-        val btStarted = mBluetoothAdapter.startDiscovery()
-        if(btStarted) {
-            Toast.makeText(activity, "Start scanning for addresses nearby", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(activity,"Something went wrong", Toast.LENGTH_SHORT).show()
+            // TODO find out what will happen if the scanning is ongoing
+            val btStarted = mBluetoothAdapter.startDiscovery()
+            if (btStarted) {
+                Toast.makeText(activity, "Start scanning for addresses nearby", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
