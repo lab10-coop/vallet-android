@@ -187,12 +187,6 @@ class AddProductActivity : AppCompatActivity() {
         resolveIntent(intent)
     }
 
-    private fun showWirelessSettings() {
-        Toast.makeText(this, "You need to enable NFC", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-        startActivity(intent)
-    }
-
     private fun resolveIntent(intent: Intent) {
         val action = intent.action
 
