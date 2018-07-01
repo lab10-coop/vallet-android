@@ -213,7 +213,7 @@ class AddProductActivity : AppCompatActivity() {
             if (!nfcAdapter!!.isEnabled())
                 Toast.makeText(this,
                         "To use NFC you have to enabled it!",
-                        Toast.LENGTH_LONG).show()
+                        Toast.LENGTH_SHORT).show()
 
             nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }
