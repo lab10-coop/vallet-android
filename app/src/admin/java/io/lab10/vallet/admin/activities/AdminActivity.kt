@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -29,7 +30,9 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
 
     override fun onListFragmentInteraction(item: Product) {
-        // TODO add interaction for product
+        val intent = Intent(this, AddProductActivity::class.java)
+        intent.putExtra("PRODUCT_ID", item.id)
+        startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
     }
 
     override fun onListFragmentInteraction(user: Users.User) {

@@ -26,12 +26,14 @@ import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import android.content.ContextWrapper
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.events.ProductListPublishedEvent
+import io.lab10.vallet.models.Product_
 import org.greenrobot.eventbus.EventBus
 
 class AddProductActivity : AppCompatActivity() {
@@ -41,11 +43,17 @@ class AddProductActivity : AppCompatActivity() {
     private var pendingIntent: PendingIntent? = null
     private var nfcAdapter: NfcAdapter? = null
     private var voucher: Voucher? = null
+    private var product: Product? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_product)
 
+        if (intent.hasExtra("PRODUCT_ID")) {
+            var productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
+            var productID = intent.getLongExtra("PRODUCT_ID",0)
+            product = productBox.query().equal(Product_.id, productID).build().findFirst()
+        }
         var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
         // TODO add multi voucher capabilities
         voucher = voucherBox.query().build().findFirst()
@@ -79,6 +87,14 @@ class AddProductActivity : AppCompatActivity() {
         if (voucher!!.type == 0) {
             productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
+        }
+
+        if (product != null) {
+            productPriceInput.setText((product as Product).price.toString())
+            productNameInput.setText((product as Product).name)
+            productNfcTagInput.setText((product as Product).nfcTagId)
+            var bmImg = BitmapFactory.decodeFile((product as Product).localImagePath);
+            productPicture.setImageBitmap(bmImg);
         }
 
         saveProductBtn.setOnClickListener() {
@@ -150,7 +166,13 @@ class AddProductActivity : AppCompatActivity() {
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
-            var product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId, voucher!!.tokenAddress)
+            if (product == null) {
+                product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId, voucher!!.tokenAddress)
+            } else {
+                (product as Product).name = name
+                (product as Product).price = price
+                (product as Product).nfcTagId = nfcTagId
+            }
             productBox.put(product)
             EventBus.getDefault().post(ProductAddedEvent())
             var addressName = IPFSManager.INSTANCE.publishProductList(this)

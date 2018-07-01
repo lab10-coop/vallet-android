@@ -9,15 +9,13 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.activities.AdminActivity
-import io.lab10.vallet.events.ErrorEvent
-import io.lab10.vallet.events.ProductAddedEvent
-import io.lab10.vallet.events.ProductListPublishedEvent
-import io.lab10.vallet.events.ProductsListEvent
+import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Products
@@ -30,10 +28,7 @@ import org.greenrobot.eventbus.EventBus
 import org.web3j.protocol.admin.Admin
 
 
-class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionListener {
-    override fun onListFragmentInteraction(item: Product) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+class PriceListFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -94,6 +89,11 @@ class PriceListFragment : Fragment(), ProductFragment.OnListFragmentInteractionL
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductAdded(event: ProductAddedEvent) {
+        refreshProducts()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefresh(event: ProductRefreshEvent){
         refreshProducts()
     }
 
