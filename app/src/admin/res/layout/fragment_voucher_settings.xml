@@ -49,9 +49,9 @@
 
             <RadioButton
                 android:id="@+id/euroBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="160dp"
                 android:paddingLeft="56dp"
+                android:layout_height="56dp"
                 android:checked="true"
                 android:button="@android:color/transparent"
                 android:background="@drawable/euro_selector"
@@ -59,11 +59,12 @@
 
             <RadioButton
                 android:id="@+id/voucherBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="160dp"
+                android:layout_height="56dp"
                 android:button="@android:color/transparent"
                 android:background="@drawable/voucher_selector"
                 android:paddingLeft="56dp"
+                android:layout_marginLeft="20dp"
                 android:text="@string/voucher_type_voucher"/>
         </RadioGroup>
 

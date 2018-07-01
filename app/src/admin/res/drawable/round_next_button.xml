@@ -9,5 +9,5 @@
             </size>
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_arrow_forward_blue_24dp" android:height="40dp" android:width="40dp" android:gravity="center"/>
+    <item android:drawable="@drawable/ic_arrow_forward_blue_24dp" android:height="24dp" android:width="24dp" android:gravity="center"/>
 </layer-list>

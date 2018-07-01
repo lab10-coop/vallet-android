@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/background"
     tools:context="io.lab10.vallet.admin.activities.VoucherActivity">
 
     <android.support.v4.view.ViewPager

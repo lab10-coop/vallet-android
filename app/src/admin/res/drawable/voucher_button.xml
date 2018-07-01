@@ -4,13 +4,11 @@
         <shape android:shape="rectangle">
             <corners android:radius="40dp" />
             <solid android:color="#ffffffff" />
-            <item name="shadow">#1a000000</item>
-            <!-- TextView shadow offsets do not respect scale. -->
-            <item name="android:shadowDx">0</item>
-            <item name="android:shadowDy">2</item>
+            <stroke android:width="2px" android:color="#1a000000"/>
         </shape>
     </item>
-    <item android:width="28dp" android:height="37dp"
+    <item android:width="28dp" android:height="34dp"
         android:drawable="@drawable/voucher_icon"
-        android:gravity="left" android:left="14dp" android:top="10dp"/>
+        android:gravity="left" android:left="14dp" android:top="10dp" android:right="110dp"
+        android:bottom="10dp"/>
 </layer-list>
