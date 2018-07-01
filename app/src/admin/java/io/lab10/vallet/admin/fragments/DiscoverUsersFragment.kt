@@ -170,13 +170,17 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         if (requestCode == IntentIntegrator.REQUEST_CODE) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null && result.contents != null) {
-                val address = result.contents.split(";")[0]
-                val userName = result.contents.split(";")[1]
-                if (Wallet.isValidAddress(address)) {
-                    var user = Users.User(address, address, userName)
-                    IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
+                if (result.contents.split(";").size == 2) {
+                    val address = result.contents.split(";")[0]
+                    val userName = result.contents.split(";")[1]
+                    if (Wallet.isValidAddress(address)) {
+                        var user = Users.User(address, address, userName)
+                        IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
+                    } else {
+                        EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
+                    }
                 } else {
-                    EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
+                    EventBus.getDefault().post(ErrorEvent("Invalid QR code"))
                 }
 
             }

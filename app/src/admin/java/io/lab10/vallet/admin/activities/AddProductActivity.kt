@@ -34,7 +34,6 @@ import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.events.ProductListPublishedEvent
 import org.greenrobot.eventbus.EventBus
 
-
 class AddProductActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1;
 
@@ -220,4 +219,5 @@ class AddProductActivity : AppCompatActivity() {
             throw IllegalArgumentException ("unsupported drawable type");
         }
     }
+
 }
