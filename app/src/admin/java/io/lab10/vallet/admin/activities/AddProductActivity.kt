@@ -51,22 +51,23 @@ class AddProductActivity : AppCompatActivity() {
         // TODO add multi voucher capabilities
         voucher = voucherBox.query().build().findFirst()
 
+        if (voucher == null) {
+            Toast.makeText(this, "Voucher is not yet created", Toast.LENGTH_LONG).show()
+            finish()
+        }
         pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, this.javaClass)
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        // TODO move to settings to enable it
         if(nfcAdapter == null){
             Toast.makeText(this,
                     "NFC NOT supported on this devices!",
                     Toast.LENGTH_LONG).show();
         }else if(!nfcAdapter!!.isEnabled()){
             Toast.makeText(this,
-                    "NFC NOT Enabled!",
+                    "To use NFC you have to enabled it!",
                     Toast.LENGTH_LONG).show();
-            showWirelessSettings()
-            finish();
         }
 
         productPicture.setOnClickListener() {
@@ -195,7 +196,9 @@ class AddProductActivity : AppCompatActivity() {
 
         if (nfcAdapter != null) {
             if (!nfcAdapter!!.isEnabled())
-                showWirelessSettings();
+                Toast.makeText(this,
+                        "To use NFC you have to enabled it!",
+                        Toast.LENGTH_LONG).show()
 
             nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }

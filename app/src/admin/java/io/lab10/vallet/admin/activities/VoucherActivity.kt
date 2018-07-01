@@ -23,6 +23,10 @@ import android.view.WindowManager
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
+import android.net.NetworkInfo
+import android.net.ConnectivityManager
+
+
 
 
 class VoucherActivity : AppCompatActivity() {
@@ -147,45 +151,70 @@ class VoucherActivity : AppCompatActivity() {
             val rootView = inflater.inflate(R.layout.fragment_voucher_settings, viewGroup, false)
             val finishButton = activity.voucherFinishBtn
             finishButton.setOnClickListener() { v ->
-                // TODO add voucher.valid? before submitting
 
-                // TOOD this seems not work very fast. There is a lag between pressed and showing progress bar.
-                activity.runOnUiThread {
+                if (haveNetworkConnection()) {
+                    // TODO add voucher.valid? before submitting
 
-                    progressBar.visibility = View.VISIBLE
-                    activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                }
+                    // TOOD this seems not work very fast. There is a lag between pressed and showing progress bar.
+                    // Replace that with event and do stuff in background
+                    activity.runOnUiThread {
 
-                val voucherName = (activity as VoucherActivity).voucherName
-                val voucherDecimal = 12;
+                        progressBar.visibility = View.VISIBLE
+                        activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    }
 
-                val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-                val editor = sharedPref.edit()
+                    val voucherName = (activity as VoucherActivity).voucherName
+                    val voucherDecimal = 12;
 
-                var voucherType = Vouchers.Type.EUR.toString()
-                if (!euroBtn.isChecked) {
-                    voucherType = Vouchers.Type.VOUCHER.toString()
-                }
-                // TODO: Manage password for the key
-                val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
-                val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-                editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-                editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
-                editor.commit()
+                    val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+                    val editor = sharedPref.edit()
 
-                // TODO trigger that only if balance is lower then needed amount for creating transaction.
-                //
-                if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
-                    FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress, voucherName, voucherType, voucherDecimal)
+                    var voucherType = Vouchers.Type.EUR.toString()
+                    if (!euroBtn.isChecked) {
+                        voucherType = Vouchers.Type.VOUCHER.toString()
+                    }
+                    // TODO: Manage password for the key
+                    val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
+                    val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+                    editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
+                    editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+                    editor.commit()
+
+                    // TODO trigger that only if balance is lower then needed amount for creating transaction.
+                    //
+
+                    if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
+                        FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress, voucherName, voucherType, voucherDecimal)
+                    } else {
+                        Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
+                    }
+
+                    val intent = Intent(view?.context, AdminActivity::class.java)
+                    startActivity(intent)
                 } else {
-                    Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
+                    Toast.makeText(activity, "Pleaes connect to the internet to continue", Toast.LENGTH_LONG).show()
                 }
-
-                val intent = Intent(view?.context, AdminActivity::class.java)
-                startActivity(intent)
             }
             return rootView
+        }
+
+
+        private fun haveNetworkConnection(): Boolean {
+            var haveConnectedWifi = false
+            var haveConnectedMobile = false
+
+            val cm = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo = cm.allNetworkInfo
+            for (ni in netInfo) {
+                if (ni.typeName.equals("WIFI", ignoreCase = true))
+                    if (ni.isConnected)
+                        haveConnectedWifi = true
+                if (ni.typeName.equals("MOBILE", ignoreCase = true))
+                    if (ni.isConnected)
+                        haveConnectedMobile = true
+            }
+            return haveConnectedWifi || haveConnectedMobile
         }
 
         companion object {
