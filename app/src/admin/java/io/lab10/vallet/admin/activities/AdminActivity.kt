@@ -9,7 +9,9 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.Users
@@ -28,10 +30,17 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         PriceListFragment.OnFragmentInteractionListener,
         ProductFragment.OnListFragmentInteractionListener {
 
-    override fun onListFragmentInteraction(item: Product) {
+    override fun onProductClickListner(item: Product) {
         val intent = Intent(this, AddProductActivity::class.java)
         intent.putExtra("PRODUCT_ID", item.id)
-        startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
+        startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)    }
+
+    override fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
+        holder.mBackgroundArea.visibility = View.VISIBLE
+    }
+
+    override fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
+        holder.mBackgroundArea.visibility = View.GONE
     }
 
     override fun onListFragmentInteraction(user: Users.User) {

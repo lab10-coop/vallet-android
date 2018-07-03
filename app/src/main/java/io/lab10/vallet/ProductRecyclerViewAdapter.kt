@@ -23,13 +23,13 @@ import org.greenrobot.eventbus.EventBus
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ViewHolder>() {
+class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ProductViewHolder>() {
 
 
     private var voucher: Voucher? = null
     private var voucherBox: Box<Voucher>? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_product, parent, false)
         voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
@@ -40,10 +40,10 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         if (voucher!!.type != 0) {
             view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         }
-        return ViewHolder(view)
+        return ProductViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
 
@@ -63,15 +63,15 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mProductImage.setOnClickListener {
             val product = holder.mItem
             if (product != null) {
-                mListener?.onListFragmentInteraction(product)
+                mListener?.onProductClickListner(product)
             }
         }
         holder.mProductImage.setOnLongClickListener() {
-            holder.mBackgroundArea.visibility = View.VISIBLE
+            mListener?.onProductLongClickListner(holder)
             true
         }
         holder.mBackgroundArea.setOnClickListener() {
-            holder.mBackgroundArea.visibility = View.GONE
+            mListener?.onProductCancelRemoveListner(holder)
         }
 
         holder.mDeleteProductImage.setOnClickListener() {
@@ -98,7 +98,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         EventBus.getDefault().post(ProductRefreshEvent())
     }
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ProductViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mProductName: TextView
         val mProductImage: ImageView
         val mProductPrice: TextView

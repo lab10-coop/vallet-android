@@ -23,7 +23,19 @@ import android.view.Menu
 import kotlinx.android.synthetic.client.activity_product_list.*
 
 class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentInteractionListener {
-    override fun onListFragmentInteraction(item: Product) {
+    override fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
+        // Do nothing client should not be able to remove item
+    }
+
+    override fun onProductRemoveButtonClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
+        // Do nothing client should not be able to remove item
+    }
+
+    override fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
+        // Do nothing client should not be able to remove item
+    }
+
+    override fun onProductClickListner(item: Product) {
         if (item.price > voucher!!.balance) {
             Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
         } else {

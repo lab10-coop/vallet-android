@@ -18,7 +18,6 @@ import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
-import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.events.ProductRefreshEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
@@ -93,7 +92,9 @@ class ProductFragment : Fragment() {
      * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Product)
+        fun onProductClickListner(item: Product)
+        fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder)
+        fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder)
     }
 
 }
