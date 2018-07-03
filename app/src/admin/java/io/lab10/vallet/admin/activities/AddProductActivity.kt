@@ -37,7 +37,7 @@ import io.lab10.vallet.models.Product_
 import org.greenrobot.eventbus.EventBus
 
 class AddProductActivity : AppCompatActivity() {
-    val REQUEST_IMAGE_CAPTURE = 1;
+    val REQUEST_IMAGE_CAPTURE = 101;
 
     val TAG = AddProductActivity::class.java.name
     private var pendingIntent: PendingIntent? = null
@@ -127,11 +127,13 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val extras = data.extras
-            val imageBitmap = extras!!.get("data") as Bitmap
-            productPicture.setImageBitmap(imageBitmap)
+            if (data != null) {
+                val extras = data.extras
+                val imageBitmap = extras!!.get("data") as Bitmap
+                productPicture.setImageBitmap(imageBitmap)
+            }
         }
     }
 
