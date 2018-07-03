@@ -27,10 +27,6 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
         // Do nothing client should not be able to remove item
     }
 
-    override fun onProductRemoveButtonClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
-        // Do nothing client should not be able to remove item
-    }
-
     override fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
         // Do nothing client should not be able to remove item
     }

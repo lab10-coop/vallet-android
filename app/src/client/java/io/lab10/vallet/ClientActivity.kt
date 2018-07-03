@@ -39,7 +39,6 @@ class ClientActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var subscription: DataSubscription
     private var scanningInProgress: Boolean = false
     val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
     val REQUEST_BT_ENABLE = 100
@@ -176,7 +175,6 @@ class ClientActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        subscription.cancel()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
