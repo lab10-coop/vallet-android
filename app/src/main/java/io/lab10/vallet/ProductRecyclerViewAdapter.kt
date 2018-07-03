@@ -13,6 +13,7 @@ import android.widget.TextView
 import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductRefreshEvent
+import io.lab10.vallet.events.ProductRemoveEvent
 import io.lab10.vallet.models.*
 import io.objectbox.Box
 import kotlinx.android.synthetic.main.fragment_product.view.*
@@ -95,7 +96,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
         productBox.query().equal(Product_.id, id).build().remove()
         // TODO replace that by observer on the table
-        EventBus.getDefault().post(ProductRefreshEvent())
+        EventBus.getDefault().post(ProductRemoveEvent())
     }
 
     inner class ProductViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {

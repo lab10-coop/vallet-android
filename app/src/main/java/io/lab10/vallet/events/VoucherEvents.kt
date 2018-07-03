@@ -11,5 +11,6 @@ class TokenTypeEvent(val name: String, val address: String)
 class ProductsListEvent
 class ProductAddedEvent
 class ProductRefreshEvent
+class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val ipnsAddress: String)
 class TokenRedeemEvent(val address: String)

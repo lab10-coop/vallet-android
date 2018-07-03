@@ -96,6 +96,16 @@ class PriceListFragment : Fragment() {
     fun onRefresh(event: ProductRefreshEvent){
         refreshProducts()
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductRemove(event: ProductRemoveEvent) {
+        refreshProductsLocal()
+        Thread(Runnable {
+            var addressName = IPFSManager.INSTANCE.publishProductList(activity);
+            if (addressName != null) {
+                EventBus.getDefault().post(ProductListPublishedEvent((activity as AdminActivity).voucher!!.id, addressName))
+            }
+        }).start()
+    }
 
     @Subscribe
     fun onProductListPublished(event: ProductListPublishedEvent) {
@@ -117,6 +127,15 @@ class PriceListFragment : Fragment() {
         fun newInstance() = PriceListFragment()
     }
 
+    private fun refreshProductsLocal() {
+        val voucher = (activity as AdminActivity).voucher
+
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        productFragment.swiperefresh.isRefreshing = true;
+        Products.refresh(voucher!!.tokenAddress)
+        productFragment.notifyAboutchange()
+        productFragment.swiperefresh.isRefreshing = false
+    }
     private fun refreshProducts() {
 
 
