@@ -28,7 +28,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         PriceListFragment.OnFragmentInteractionListener,
         ProductFragment.OnListFragmentInteractionListener {
 
-
     override fun onListFragmentInteraction(item: Product) {
         val intent = Intent(this, AddProductActivity::class.java)
         intent.putExtra("PRODUCT_ID", item.id)
