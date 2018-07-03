@@ -179,7 +179,7 @@ class ClientActivity : AppCompatActivity() {
         subscription.cancel()
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
@@ -190,7 +190,8 @@ class ClientActivity : AppCompatActivity() {
         Vouchers.refresh()
         viewAdapter.notifyDataSetChanged()
     }
-    @Subscribe
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
@@ -202,7 +203,7 @@ class ClientActivity : AppCompatActivity() {
         viewAdapter.notifyDataSetChanged()
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTokenNameEvent(event: TokenNameEvent) {
         var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
