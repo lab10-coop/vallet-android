@@ -18,6 +18,7 @@ import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
+import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.events.ProductRefreshEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.EventBus
 class ProductFragment : Fragment() {
     private var mListener: OnListFragmentInteractionListener? = null
     private var adapter: ProductRecyclerViewAdapter? = null
+    private var recyclerView: RecyclerView? = null
 
     private val MY_CAMERA_REQUEST_CODE = 100;
 
@@ -36,10 +38,10 @@ class ProductFragment : Fragment() {
             // Set the adapter
             if (view.productList is RecyclerView) {
                 val context = view.productList.getContext()
-                val recyclerView = view.productList as RecyclerView
+                recyclerView = view.productList as RecyclerView
                 adapter = ProductRecyclerViewAdapter(Products.getProducts(), mListener)
-                recyclerView.layoutManager = GridLayoutManager(context, 2)
-                recyclerView.adapter = adapter
+                recyclerView!!.layoutManager = GridLayoutManager(context, 2)
+                recyclerView!!.adapter = adapter
             }
 
         view.swiperefresh.setOnRefreshListener(
@@ -49,7 +51,7 @@ class ProductFragment : Fragment() {
         )
 
         setupPermissions()
-            return view
+        return view
     }
 
     private fun setupPermissions() {
