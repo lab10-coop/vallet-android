@@ -90,12 +90,10 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
             Toast.makeText(this,
                     "NFC NOT supported on this devices!",
                     Toast.LENGTH_LONG).show();
-            finish();
         }else if(!nfcAdapter!!.isEnabled()){
             Toast.makeText(this,
                     "NFC NOT Enabled!",
                     Toast.LENGTH_LONG).show();
-            finish();
         }
 
 
@@ -145,10 +143,8 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (nfcAdapter != null) {
-            if (!nfcAdapter!!.isEnabled())
-                showWirelessSettings();
-
-            nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
+            if (nfcAdapter!!.isEnabled())
+                nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }
 
     }
