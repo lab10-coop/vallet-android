@@ -36,6 +36,8 @@ class DebugActivity : AppCompatActivity() {
 
         saveButton.setOnClickListener() { v ->
             val editor = sharedPref.edit()
+            if (apiServerAddressInput.text.toString().length > 0)
+                editor.putString(resources.getString(R.string.shared_pref_vallet_api_server_address), apiServerAddressInput.text.toString())
             if (serverIp.text.toString().length > 0)
                 editor.putString(resources.getString(R.string.shared_pref_artis_node_address), serverIp.text.toString())
             if (contractAddress.text.toString().length > 0)
@@ -51,6 +53,7 @@ class DebugActivity : AppCompatActivity() {
             val editor = sharedPref.edit()
             editor.remove(resources.getString(R.string.shared_pref_artis_node_address))
             editor.remove(resources.getString(R.string.shared_pref_factory_contract_address))
+            editor.remove(resources.getString(R.string.shared_pref_vallet_api_server_address))
             editor.commit()
             refreshAll()
         }
@@ -87,6 +90,11 @@ class DebugActivity : AppCompatActivity() {
 
     }
 
+
+    private fun refreshApiServerAddress() {
+        apiServerAddressLabel.text = sharedPref!!.getString(resources.getString(R.string.shared_pref_vallet_api_server_address), resources.getString(R.string.default_vallet_api_server_address))
+
+    }
     private fun refreshDebugMode() {
         val debugMode = sharedPref!!.getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
         if (debugMode) {
@@ -149,6 +157,7 @@ class DebugActivity : AppCompatActivity() {
         refreshIpfsAddress()
         refreshDebugMode()
         refreshIPNSAddress()
+        refreshApiServerAddress()
     }
 
     override fun onStart() {

@@ -156,6 +156,27 @@
             android:orientation="horizontal">
 
             <EditText
+                android:id="@+id/apiServerAddressInput"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:hint="Api Server IP" />
+
+            <TextView
+                android:id="@+id/apiServerAddressLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/label_margin"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
                 android:id="@+id/ipfsAddressInput"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

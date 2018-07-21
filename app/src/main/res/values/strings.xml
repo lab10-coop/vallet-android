@@ -30,6 +30,8 @@
     <string name="product_price">Price</string>
     <string name="add_product_button">Add a product</string>
     <string name="shared_pref_artis_node_address">server_node_ip</string>
+    <string name="shared_pref_vallet_api_server_address">vallet_api_server_ip</string>
+    <string name="default_vallet_api_server_address">http://192.168.1.103</string>
     <string name="faucet_server">http://faucet.t1.artis.lab10.io/</string>
     <string name="shared_pref_ipfs_address">ipfs_address</string>
     <string name="shared_pref_debug_mode">debug_mode</string>
