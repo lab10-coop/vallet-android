@@ -107,12 +107,12 @@ class HomeActivityFragment : Fragment() {
         if (recentTransaction.size > 0) {
             viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
         }
-        if ((activity as AdminActivity).voucher?.type == 0) {
-            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
-            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
-        } else {
+        if ((activity as AdminActivity).voucher?.type == 1) {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
             viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
+        } else {
+            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
+            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
 
         recyclerView = viewHolder!!.historyRecycler.apply {
