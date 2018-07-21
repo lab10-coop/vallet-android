@@ -148,24 +148,8 @@ class PriceListFragment : Fragment() {
             Products.refresh(voucher!!.tokenAddress)
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
-
-            // TODO we should use IntentService for all network activities
-            // to avoid potential memory leaks. In this case we also should check
-            // response and handle case where response will fail and inform user.
-            Thread(Runnable {
-                try {
-                    val priceListIPNSAddress = voucher!!.ipnsAdddress
-                    IPFSManager.INSTANCE.fetchProductList(context, priceListIPNSAddress, voucher.tokenAddress)
-                    EventBus.getDefault().post(ProductsListEvent())
-                } catch (e: Exception) {
-                    if (isAdded) {
-                        activity.runOnUiThread {
-                            productFragment.swiperefresh.isRefreshing = false
-                        }
-                        EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-                    }
-                }
-            }).start()
+            val token_name = "Lab10"
+            PriceListManager.fetchPriceList(token_name)
         }
     }
 }
