@@ -15,14 +15,13 @@ import android.graphics.drawable.BitmapDrawable
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Parcelable
-import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.models.Product
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import android.content.ContextWrapper
@@ -42,7 +41,7 @@ class AddProductActivity : AppCompatActivity() {
     val TAG = AddProductActivity::class.java.name
     private var pendingIntent: PendingIntent? = null
     private var nfcAdapter: NfcAdapter? = null
-    private var voucher: Voucher? = null
+    private var voucher: Token? = null
     private var product: Product? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +53,7 @@ class AddProductActivity : AppCompatActivity() {
             var productID = intent.getLongExtra("PRODUCT_ID",0)
             product = productBox.query().equal(Product_.id, productID).build().findFirst()
         }
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         // TODO add multi voucher capabilities
         voucher = voucherBox.query().build().findFirst()
 

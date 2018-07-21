@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.content.Intent
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -14,7 +14,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         var voucher = voucherBox.query().build().find()
 
         // TODO try to fetch from network

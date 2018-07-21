@@ -8,20 +8,20 @@ import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.admin.activity_show_qr_code.*
 
 class ShowQrCodeActivity : AppCompatActivity() {
 
     lateinit var sharedPref: SharedPreferences
-    var voucher: Voucher? = null
+    var voucher: Token? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_qr_code)
 
         sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
 
         closeButton.setOnClickListener() { _ ->

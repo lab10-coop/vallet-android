@@ -2,12 +2,9 @@ import android.content.Context
 import android.util.Log
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
-import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
-import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -15,7 +12,6 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
-import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter

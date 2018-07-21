@@ -1,6 +1,5 @@
 package io.lab10.vallet.admin.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -12,7 +11,7 @@ import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -21,13 +20,13 @@ class HistoryActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    var voucher: Voucher? = null
+    var voucher: Token? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
 
         viewManager = LinearLayoutManager(this)

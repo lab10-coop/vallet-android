@@ -12,7 +12,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.admin.activity_debug.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -22,14 +22,14 @@ class DebugActivity : AppCompatActivity() {
     val TAG = DebugActivity::class.java.simpleName
 
     lateinit var sharedPref: SharedPreferences
-    var voucher: Voucher? = null
+    var voucher: Token? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_debug)
 
         sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
 
         refreshAll()

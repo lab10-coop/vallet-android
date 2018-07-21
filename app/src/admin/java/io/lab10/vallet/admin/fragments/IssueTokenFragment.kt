@@ -16,7 +16,7 @@ import java.math.BigInteger
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus
@@ -25,7 +25,7 @@ class IssueTokenFragment : DialogFragment() {
 
     private var userName: String? = null
     private var userAddress: String? = null
-    private var voucher: Voucher? = null
+    private var voucher: Token? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -35,7 +35,7 @@ class IssueTokenFragment : DialogFragment() {
             userName = arguments.getString(USER_NAME_PARAM)
             userAddress = arguments.getString(USER_ADDRESS_PARAM)
         }
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
     }
 

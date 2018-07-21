@@ -19,7 +19,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import android.view.WindowManager
-import io.lab10.vallet.models.Vouchers
+import io.lab10.vallet.models.Tokens
 import android.net.ConnectivityManager
 
 
@@ -126,7 +126,7 @@ class CreateTokenActivity : AppCompatActivity() {
 
                     val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                     val editor = sharedPref.edit()
-                    var voucherType = Vouchers.Type.EUR.toString()
+                    var voucherType = Tokens.Type.EUR.toString()
 
                     // TODO: Manage password for the key
                     val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")

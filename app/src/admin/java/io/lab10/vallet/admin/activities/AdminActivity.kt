@@ -53,7 +53,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     val TAG = AdminActivity::class.java.simpleName
-    var voucher: Voucher? = null
+    var voucher: Token? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
 
         navigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
@@ -107,8 +107,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductListPublishedEvent(event: ProductListPublishedEvent) {
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        var voucher = voucherBox.query().equal(Voucher_.id, event.voucherId).build().findFirst()
+        val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        var voucher = voucherBox.query().equal(Token_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
             voucher.ipnsAdddress = event.ipnsAddress
             voucherBox.put(voucher)
@@ -122,11 +122,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         var voucherName = event.name
         tokenNameLabel.text = voucherName
         var voucherType = 0
-        if (event.type.equals(Vouchers.Type.VOUCHER.toString()) ) {
+        if (event.type.equals(Tokens.Type.VOUCHER.toString()) ) {
             voucherType = 1
         }
-        val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-        val voucher = Voucher(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true)
+        val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        val voucher = Token(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true, 0, "", Products.getProducts())
         val voucherId = voucherBox.put(voucher)
         // Generate IPFS address
         Thread(Runnable {
