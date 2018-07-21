@@ -1,11 +1,9 @@
 package io.lab10.vallet.admin.fragments
 
 import android.content.Context
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,19 +14,12 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import java.math.BigInteger
 import android.text.InputFilter
-import android.view.KeyEvent
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Vouchers
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
-
-
-
 
 class IssueTokenFragment : DialogFragment() {
 

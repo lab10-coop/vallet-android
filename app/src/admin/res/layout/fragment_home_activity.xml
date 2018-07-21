@@ -66,7 +66,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/work_sans_bold"
                         android:text="0"
-                        android:lineSpacingMultiplier="2.5"
+                        android:lineSpacingMultiplier="1.5"
                         android:lineSpacingExtra="0dp"
                         android:textColor="#fff"
                         android:textSize="50sp" />
