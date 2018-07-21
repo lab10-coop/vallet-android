@@ -1,50 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"  android:layout_width="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout android:id="@+id/activity_main"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="30dp"
-        tools:context=".admin.activities.AdminActivity"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        tools:context=".admin.activities.AdminActivity">
 
         <LinearLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/home_background">
+            android:background="@drawable/home_background"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/voucherTypeIcon"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginTop="80dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/euro_icon_white"/>
-
-            <TextView
-                android:id="@+id/voucherCountLabel"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="50sp"
-                android:fontFamily="@font/work_sans_bold"
-                android:textAlignment="center"
-                android:textColor="#fff"/>
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="61dp"
-                android:fontFamily="@font/work_sans"
-                android:text="@string/circulating"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+
+
+                <TextView
+                    android:id="@+id/tokenNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
+                    android:text="Token name"
+                    android:textColor="#fff"
+                    android:textSize="16sp"
+                    android:layout_marginTop="40dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    tools:text="Lab10" />
+
+                <LinearLayout
+                    android:id="@+id/valueLabel"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tokenNameLabel"
+                    android:orientation="horizontal"
+                    android:padding="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:id="@+id/voucherTypeIcon"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/euro_icon_white"/>
+
+                    <TextView
+                        android:id="@+id/voucherCountLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/work_sans_bold"
+                        android:text="0"
+                        android:lineSpacingMultiplier="2.5"
+                        android:lineSpacingExtra="0dp"
+                        android:textColor="#fff"
+                        android:textSize="50sp" />
+                </LinearLayout>
+
+
+                <TextView
+                android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/work_sans"
+                    android:text="@string/circulating"
+                    android:textColor="#fff"
+                    app:layout_constraintTop_toBottomOf="@+id/valueLabel"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/showQrCode"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/qr_icon" />
+            </android.support.constraint.ConstraintLayout>
 
 
         </LinearLayout>
@@ -56,45 +107,45 @@
             app:layout_constraintTop_toBottomOf="@id/header">
 
             <TextView
+                style="@style/LabelText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/LabelText"
-                android:layout_marginTop="45dp"
                 android:layout_marginLeft="20dp"
-                android:text="@string/label_recent_activities"/>
+                android:layout_marginTop="45dp"
+                android:text="@string/label_recent_activities" />
 
             <TextView
                 android:id="@+id/noActivitiesPlaceHolder"
+                style="@style/LabelText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/LabelText"
-                android:textAlignment="center"
-                android:fontFamily="@font/work_sans"
-                android:textColor="@color/cardview_shadow_start_color"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
-                android:text="@string/placeholder_no_recent_activities"/>
+                android:fontFamily="@font/work_sans"
+                android:text="@string/placeholder_no_recent_activities"
+                android:textAlignment="center"
+                android:textColor="@color/cardview_shadow_start_color" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/historyRecycler"
-                android:scrollbars="vertical"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_height="match_parent"/>
+                android:scrollbars="vertical" />
 
             <TextView
                 android:id="@+id/view_history_label"
+                style="@style/LabelText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/LabelText"
-                android:layout_marginTop="25dp"
-                android:layout_marginLeft="20dp"
-                android:textAllCaps="true"
-                android:textSize="16sp"
-                android:textAlignment="center"
                 android:layout_marginBottom="25dp"
-                android:text="@string/label_view_history"/>
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:text="@string/label_view_history"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
