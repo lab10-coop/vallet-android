@@ -7,14 +7,26 @@
     android:background="@color/background"
     tools:context="io.lab10.vallet.admin.activities.VoucherActivity$VoucherNameFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:elevation="2dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="0dp"
         android:padding="@dimen/layout_padding"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/logo_margin"
             android:paddingBottom="50dp"
-            android:paddingTop="50dp"
+            android:paddingTop="25dp"
             android:src="@drawable/vallet_logo" />
 
         <TextView
@@ -54,13 +66,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Voucher name"
+            android:hint="@string/label_voucher_name"
             android:inputType="textPersonName"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             style="@style/InputText"
             android:layout_marginBottom="20dp"
-            tools:text="Voucher Name" />
+            tools:text="Shop Name" />
+
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/getStarterd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_selector"
+        android:layout_margin="20dp"
+        android:textColor="#ffffff"
+        android:textSize="20dp"
+        android:fontFamily="@font/work_sans_medium"
+        android:textAllCaps="true"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/get_started" />
 </android.support.constraint.ConstraintLayout>

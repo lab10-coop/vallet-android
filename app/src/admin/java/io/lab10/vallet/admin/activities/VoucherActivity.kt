@@ -18,12 +18,8 @@ import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.Toast
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
-import kotlinx.android.synthetic.admin.fragment_voucher_settings.*
 import android.view.WindowManager
-import io.lab10.vallet.ValletApp
-import io.lab10.vallet.models.Voucher
 import io.lab10.vallet.models.Vouchers
-import android.net.NetworkInfo
 import android.net.ConnectivityManager
 
 
@@ -46,8 +42,6 @@ class VoucherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voucher)
-        voucherFinishBtn.visibility = View.GONE
-
 
         mStepsPagerAdapter = StepsPagerAdapter(supportFragmentManager)
 
@@ -62,22 +56,7 @@ class VoucherActivity : AppCompatActivity() {
 
             }
             override fun onPageSelected(position: Int) {
-                if (position == 0) {
-                    voucherNextBtn.visibility = View.VISIBLE
-                    voucherFinishBtn.visibility = View.GONE
-                    step1.setImageDrawable(getDrawable(R.drawable.step_circle_active))
-                    step2.setImageDrawable(getDrawable(R.drawable.step_circle))
-                    step3.setImageDrawable(getDrawable(R.drawable.step_circle))
-
-                }
-
-                if (position == 1) {
-                    voucherNextBtn.visibility = View.GONE
-                    voucherFinishBtn.visibility = View.VISIBLE
-                    step1.setImageDrawable(getDrawable(R.drawable.step_circle))
-                    step2.setImageDrawable(getDrawable(R.drawable.step_circle_active))
-                    step3.setImageDrawable(getDrawable(R.drawable.step_circle))
-                }
+                // TODO nothing to do here since we have just one page at the moment
             }
 
         })
@@ -93,9 +72,6 @@ class VoucherActivity : AppCompatActivity() {
             when(position) {
                 0 -> {
                     return VoucherNameFragment.newInstance(voucherSettingsViewPager)
-                }
-                1 -> {
-                    return VoucherSettingsFragment.newInstance()
                 } else -> {
                     return VoucherNameFragment.newInstance(voucherSettingsViewPager)
                 }
@@ -103,7 +79,7 @@ class VoucherActivity : AppCompatActivity() {
         }
 
         override fun getCount(): Int {
-            return 2
+            return 1
         }
     }
 
@@ -111,7 +87,7 @@ class VoucherActivity : AppCompatActivity() {
 
         override fun onClick(view: View?) {
             when (view?.id) {
-                R.id.voucherNextBtn -> {
+                R.id.getStarterd -> {
                     if (inputVoucherName.text.toString().length < 3) {
                         Toast.makeText(activity, resources.getString(R.string.error_voucher_name_too_short), Toast.LENGTH_SHORT).show()
                     } else {
@@ -126,30 +102,11 @@ class VoucherActivity : AppCompatActivity() {
                                   savedInstanceState: Bundle?): View? {
 
             val rootView = inflater.inflate(R.layout.fragment_voucher_name, viewGroup, false)
-            activity.voucherNextBtn.setOnClickListener(this)
             val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
             val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
             rootView.inputVoucherName.setText(voucherName)
-            return rootView
-        }
 
-        companion object {
-            var voucherViewPager: ViewPager? = null
-
-            fun newInstance(viewPager: ViewPager): VoucherNameFragment {
-                val fragment = VoucherNameFragment()
-                voucherViewPager = viewPager
-                return fragment
-            }
-        }
-    }
-
-    class VoucherSettingsFragment : Fragment() {
-
-        override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-            val rootView = inflater.inflate(R.layout.fragment_voucher_settings, viewGroup, false)
-            val finishButton = activity.voucherFinishBtn
+            val finishButton = rootView.getStarterd
             finishButton.setOnClickListener() { v ->
 
                 if (haveNetworkConnection()) {
@@ -169,11 +126,8 @@ class VoucherActivity : AppCompatActivity() {
 
                     val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
                     val editor = sharedPref.edit()
-
                     var voucherType = Vouchers.Type.EUR.toString()
-                    if (!euroBtn.isChecked) {
-                        voucherType = Vouchers.Type.VOUCHER.toString()
-                    }
+
                     // TODO: Manage password for the key
                     val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
                     val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
@@ -196,9 +150,9 @@ class VoucherActivity : AppCompatActivity() {
                     Toast.makeText(activity, "Pleaes connect to the internet to continue", Toast.LENGTH_LONG).show()
                 }
             }
+
             return rootView
         }
-
 
         private fun haveNetworkConnection(): Boolean {
             var haveConnectedWifi = false
@@ -218,8 +172,11 @@ class VoucherActivity : AppCompatActivity() {
         }
 
         companion object {
-            fun newInstance() : VoucherSettingsFragment {
-                val fragment = VoucherSettingsFragment()
+            var voucherViewPager: ViewPager? = null
+
+            fun newInstance(viewPager: ViewPager): VoucherNameFragment {
+                val fragment = VoucherNameFragment()
+                voucherViewPager = viewPager
                 return fragment
             }
         }

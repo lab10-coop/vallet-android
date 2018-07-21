@@ -13,66 +13,6 @@
         android:id="@+id/voucherSettingsViewPager"
         android:layout_width="match_parent"
         android:layout_height="568dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toTopOf="@+id/navigationContainer" />
-
-    <LinearLayout
-        android:id="@+id/navigationContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:layout_marginBottom="30dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:id="@+id/step1"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:background="@drawable/step_circle_active" />
-
-        <ImageView
-            android:id="@+id/step2"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:background="@drawable/step_circle" />
-
-        <ImageView
-            android:id="@+id/step3"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:background="@drawable/step_circle" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/voucherNextBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="20dp"
-        android:elevation="2dp"
-        android:visibility="visible"
-        android:background="@drawable/round_next_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
-
-    <Button
-        android:id="@+id/voucherFinishBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="20dp"
-        android:elevation="2dp"
-        android:background="@drawable/round_finish_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
-
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.constraint.ConstraintLayout>
