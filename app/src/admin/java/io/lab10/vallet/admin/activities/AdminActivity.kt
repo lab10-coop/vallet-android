@@ -19,6 +19,7 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.*
 import kotlinx.android.synthetic.admin.activity_admin.*
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -119,6 +120,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
         var voucherName = event.name
+        tokenNameLabel.text = voucherName
         var voucherType = 0
         if (event.type.equals(Vouchers.Type.VOUCHER.toString()) ) {
             voucherType = 1
