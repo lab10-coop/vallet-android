@@ -25,7 +25,7 @@ import android.net.ConnectivityManager
 
 
 
-class VoucherActivity : AppCompatActivity() {
+class CreateTokenActivity : AppCompatActivity() {
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -91,7 +91,7 @@ class VoucherActivity : AppCompatActivity() {
                     if (inputVoucherName.text.toString().length < 3) {
                         Toast.makeText(activity, resources.getString(R.string.error_voucher_name_too_short), Toast.LENGTH_SHORT).show()
                     } else {
-                        (activity as VoucherActivity).voucherName = inputVoucherName.text.toString()
+                        (activity as CreateTokenActivity).voucherName = inputVoucherName.text.toString()
                         voucherViewPager?.currentItem = 1
                     }
                 }
@@ -121,7 +121,7 @@ class VoucherActivity : AppCompatActivity() {
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
 
-                    val voucherName = (activity as VoucherActivity).voucherName
+                    val voucherName = (activity as CreateTokenActivity).voucherName
                     val voucherDecimal = 12;
 
                     val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)

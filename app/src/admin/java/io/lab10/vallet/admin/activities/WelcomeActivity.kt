@@ -1,6 +1,5 @@
 package io.lab10.vallet.admin.activities
 
-import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
@@ -23,7 +22,7 @@ class WelcomeActivity : AppCompatActivity() {
             val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         } else {
-            val intent = Intent(this, VoucherActivity::class.java)
+            val intent = Intent(this, CreateTokenActivity::class.java)
             startActivity(intent)
         }
     }

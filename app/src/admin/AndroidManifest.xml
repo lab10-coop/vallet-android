@@ -23,7 +23,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".admin.activities.VoucherActivity"
+            android:name=".admin.activities.CreateTokenActivity"
             android:label="@string/title_activity_voucher"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />

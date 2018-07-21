@@ -56,7 +56,7 @@ class DebugActivity : AppCompatActivity() {
         }
 
         generateTokenButton.setOnClickListener() { v ->
-            val intent = Intent(this, VoucherActivity::class.java)
+            val intent = Intent(this, CreateTokenActivity::class.java)
             startActivity(intent)
         }
 
