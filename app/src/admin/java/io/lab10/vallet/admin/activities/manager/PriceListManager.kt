@@ -34,9 +34,9 @@ class PriceListManager {
                     })
         }
 
-        fun fetchPriceList(token_name: String) {
+        fun fetchPriceList(tokenContractAddress: String) {
             val apiService = ValletApiService.create("http://192.168.1.103:3000")
-            apiService.fetchPriceList(token_name).observeOn(AndroidSchedulers.mainThread())
+            apiService.fetchPriceList(tokenContractAddress).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe ({
                         result ->

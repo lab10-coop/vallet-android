@@ -9,8 +9,8 @@ import retrofit2.http.*
 
 interface ValletApiService {
 
-    @GET("/price_lists/{token_name}")
-    fun fetchPriceList(@Path("token_name") token_name: String): Observable<TokenBase>
+    @GET("/price_lists/{token_contract_address}")
+    fun fetchPriceList(@Path("token_contract_address") token_contract_address: String): Observable<TokenBase>
 
     @POST("/price_lists")
     fun createPriceList(@Body token: TokenBase): Observable<TokenCreated>

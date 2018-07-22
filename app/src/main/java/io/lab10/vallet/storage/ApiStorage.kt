@@ -9,7 +9,7 @@ import io.lab10.vallet.models.TokenUpdate
 class ApiStorage(val token: Token) : TokenStorageBase{
 
     override fun create() {
-        val tokenBase = TokenBase(token!!.name, token!!.tokenType, token!!.productsBase())
+        val tokenBase = TokenBase(token!!.name, token!!.tokenType, token!!.tokenAddress, token!!.productsBase())
         PriceListManager.createPriceList(tokenBase)
     }
 
@@ -19,6 +19,6 @@ class ApiStorage(val token: Token) : TokenStorageBase{
     }
 
     override fun fetch() {
-        PriceListManager.fetchPriceList(token!!.name)
+        PriceListManager.fetchPriceList(token!!.tokenAddress)
     }
 }
