@@ -28,6 +28,7 @@ import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -114,6 +115,8 @@ class HomeActivityFragment : Fragment() {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
             viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
+
+        viewHolder!!.tokenNameLabel.text = (activity as AdminActivity).voucher!!.name
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)
