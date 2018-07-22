@@ -6,22 +6,12 @@
             android:name="io.lab10.vallet.ClientActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="io.lab10.vallet.ProductListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- Define Vallet TAGS to be able to trigger the app automatically -->
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-
-                <data android:scheme="http" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="io.lab10.vallet.ClientHomeActivty"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <data android:scheme="http" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

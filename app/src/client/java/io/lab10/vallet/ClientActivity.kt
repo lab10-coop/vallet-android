@@ -64,7 +64,6 @@ class ClientActivity : AppCompatActivity() {
                 Toast.makeText(this, "Debug mode on", Toast.LENGTH_SHORT).show()
         }
 
-        viewAdapter = VoucherAdapter(Tokens.getVouchers())
         scanTokenContract.visibility = View.VISIBLE
         scanTokenContract.setOnClickListener {
             val integrator = IntentIntegrator(this)
