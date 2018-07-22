@@ -79,7 +79,7 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
             toolbarBalance.text = tokenBalance
             val vouchersBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             token = vouchersBox.query().equal(Token_.tokenAddress, tokenAddress).build().findFirst()
-            if (token != null && token!!.remoteStoragePresent()) {
+            if (token != null && token!!.remoteReadStoragePresent()) {
                 token!!.storage().fetch()
             } else {
                 EventBus.getDefault().post(ErrorEvent("Token does not have remote storage defined. Contact Admin"))

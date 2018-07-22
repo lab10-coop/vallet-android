@@ -44,9 +44,15 @@ data class Token(@Id var id: Long = 0,
         return productsBase
     }
 
-    // Check if one any remote storage is already created
-    fun remoteStoragePresent(): Boolean {
+    // Check if any remote storage is already created
+    // Use by admin to store data
+    fun remoteWriteStoragePresent(): Boolean {
         return !secret.isNullOrEmpty() or !ipnsAdddress.isNullOrEmpty()
+    }
+
+    // Use for reading by client
+    fun remoteReadStoragePresent() : Boolean {
+        return !tokenAddress.isNullOrEmpty() or !ipnsAdddress.isNullOrEmpty()
     }
 
 }

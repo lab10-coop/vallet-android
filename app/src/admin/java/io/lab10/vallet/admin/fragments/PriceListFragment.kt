@@ -152,7 +152,7 @@ class PriceListFragment : Fragment() {
             Products.refresh(token!!)
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
-            if (token!!.remoteStoragePresent()) {
+            if (token!!.remoteWriteStoragePresent()) {
                 token.storage().fetch()
             } else {
                 token.storage().create()
