@@ -124,44 +124,6 @@ class Web3jManager private constructor(){
         }
     }
 
-    fun getVoucherBalance(context: Context, tokenAddress: String) {
-        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        if (Wallet.isValidAddress(tokenAddress)) {
-            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-            token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.TransferEventResponse
-                        if (matchClientAddress(context, log._to))
-                            emitTransactionEvent(log, tokenAddress)
-
-                    }
-            token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log, tokenAddress)
-                    }
-        }
-    }
-
-    fun getVoucherBalanceFrom(context: Context, tokenAddress: String, blockNumber: Long) {
-        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        if (Wallet.isValidAddress(tokenAddress)) {
-            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-            token.transferEventObservable(DefaultBlockParameterNumber(BigInteger.valueOf(blockNumber)), DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.TransferEventResponse
-                        if (matchClientAddress(context, log._to))
-                            emitTransactionEvent(log, tokenAddress)
-
-                    }
-            token.redeemEventObservable(DefaultBlockParameterNumber(BigInteger.valueOf(blockNumber)), DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log, tokenAddress)
-                    }
-        }
-    }
-
     fun getTokenName(context: Context, tokenAddress: String) {
         // NOTE: For some reason to get name of the token it is required to pass credentials, can not be done with readonlytransactionmanager
         // as the web3j will fail. Not fully understand why, if this is a bug in web3j or the readonlytransactionmanager is missing something.
@@ -207,12 +169,11 @@ class Web3jManager private constructor(){
         return address.equals(walletAddress)
 
     }
-    fun getClientBalance(context: Context, address: String) : BigInteger {
-        val contractAddress = getContractAddress(context)
+    fun getClientBalance(context: Context, tokenContractAddress: String, address: String) {
         val credentials = loadCredential(context)
         var balance = BigInteger.ZERO
         if (credentials != null) {
-            var token = Token.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 try {
                     token.balanceOf(address).send()
@@ -221,10 +182,9 @@ class Web3jManager private constructor(){
                 }
             }.subscribeOn(Schedulers.io())
                     .subscribe() { result ->
-                        balance = result;
+                        EventBus.getDefault().post(TokenBalanceEvent(result.toLong(), tokenContractAddress))
                     }
         }
-        return balance;
     }
 
     // TODO combine that with all circulating and balance as all those methods depend on same events.

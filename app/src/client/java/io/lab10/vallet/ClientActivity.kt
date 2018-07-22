@@ -50,10 +50,14 @@ class ClientActivity : AppCompatActivity() {
 
         viewManager = LinearLayoutManager(this)
 
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
+
+
         Tokens.refresh()
         // Trigger balance check for each token
         Tokens.getVouchers().forEach { e ->
-            Web3jManager.INSTANCE.getVoucherBalanceFrom(this, e.tokenAddress, e.lastBlockNumber)
+            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
         }
 
         logo.setOnClickListener() {
@@ -63,6 +67,7 @@ class ClientActivity : AppCompatActivity() {
                 debugMode = true
                 Toast.makeText(this, "Debug mode on", Toast.LENGTH_SHORT).show()
         }
+
         viewAdapter = VoucherAdapter(Tokens.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
             scanTokenContract.setOnClickListener {
@@ -88,9 +93,6 @@ class ClientActivity : AppCompatActivity() {
 
         observeVouchers()
 
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
-
         if (voucherWalletAddress.equals("")) {
             val editor = sharedPref.edit()
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
@@ -114,7 +116,6 @@ class ClientActivity : AppCompatActivity() {
         } catch (e: Exception) {
 
         }
-
     }
 
     private fun startLoaderAnimation() {
@@ -174,6 +175,18 @@ class ClientActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNewBalanceAvailabelEvent(event: TokenBalanceEvent) {
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        val token = tokenBox.query().equal(Token_.tokenAddress, event.address).build().findFirst()
+        if (token != null) {
+            token.balance = event.balance.toInt()
+            tokenBox.put(token)
+        }
+        Tokens.refresh()
+        viewAdapter.notifyDataSetChanged()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -267,7 +280,7 @@ class ClientActivity : AppCompatActivity() {
     }
 
     private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
-        Web3jManager.INSTANCE.getVoucherBalance(this, address)
+        Web3jManager.INSTANCE.getClientBalance(this, address, voucherWalletAddress)
         var voucher = voucherBox.query().equal(Token_.tokenAddress, address).build().findFirst()
         if (voucher == null) {
             voucher = Token(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
