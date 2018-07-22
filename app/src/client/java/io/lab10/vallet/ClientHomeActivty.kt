@@ -1,6 +1,8 @@
 package io.lab10.vallet
 
+import android.app.Activity
 import android.app.PendingIntent
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +19,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.google.zxing.integration.android.IntentIntegrator
+import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.*
@@ -129,7 +133,14 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
         menu.addSubMenu("Settings")
-        menu.add(resources.getString(R.string.tap_to_search_for_admin))
+        val scanMenu = menu.add(resources.getString(R.string.tap_to_search_for_admin))
+        scanMenu.setOnMenuItemClickListener { _ ->
+            val integrator = IntentIntegrator(this)
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan()
+            true
+        }
         val qrMenu = menu.add(resources.getString(R.string.your_qrcode))
         qrMenu.setOnMenuItemClickListener { _ ->
             val intent = Intent(this, ShowQrCodeActivity::class.java)
@@ -193,6 +204,40 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setIntent(intent)
         resolveIntent(intent)
     }
+
+    private val REQUEST_BT_ENABLE = 100
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        // Return from QR code scanning
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents != null) {
+                val data = result.contents
+                val splitData = data.split(";")
+                if (splitData.size == 4) {
+                    val voucherName = splitData[0]
+                    val voucherType = splitData[1]
+                    val tokenAddress = splitData[2]
+                    val ipnsAddress = splitData[3]
+                    if (Wallet.isValidAddress(tokenAddress)) {
+                        storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
+                    }
+                } else {
+                    Toast.makeText(this, "Invalid qr code, try different", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
+
+        if (requestCode == REQUEST_BT_ENABLE) {
+            if (resultCode == Activity.RESULT_OK) {
+                startBroadcastingAddress()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductchangedEvent(event: ProductChangedEvent) {
@@ -265,6 +310,58 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Trigger balance check for each token
         Tokens.getVouchers().forEach { e ->
             Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
+        }
+    }
+
+    private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
+        Web3jManager.INSTANCE.getClientBalance(this, address, voucherWalletAddress)
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        var token = tokenBox.query().equal(Token_.tokenAddress, address).build().findFirst()
+        if (token == null) {
+            token = Token(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
+            tokenBox.put(token)
+        } else {
+            token.ipnsAdddress = ipnsAddress
+            token.name = voucherName
+            token.tokenType = voucherType
+            tokenBox.put(token)
+        }
+        ValletApp.activeToken = token
+        Tokens.refresh()
+        reloadNavigation()
+        reloadProductList()
+    }
+
+    private var scanningInProgress = false
+
+    private fun startBroadcastingAddress() {
+        if (!scanningInProgress) {
+            // TODO make sure that BT is on if not turn it on
+
+            val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter == null) {
+                Toast.makeText(this, "This devices does not support BT please use QR code instead", Toast.LENGTH_SHORT).show()
+            } else {
+                val address = voucherWalletAddress
+                // Address is always with 0x which we don't need to transfer
+                val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE + 2)
+                val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE + 2)
+                val uuid1 = BTUtils.encodeAddress(part1)
+                val uuid2 = BTUtils.encodeAddress(part2)
+                if (!mBluetoothAdapter.isEnabled) {
+                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    this.startActivityForResult(enableBtIntent, REQUEST_BT_ENABLE)
+                } else {
+                    scanningInProgress = true
+                    //if (debugMode)
+                    //    Toast.makeText(this, "Broadcasting address", Toast.LENGTH_LONG).show()
+                    //startLoaderAnimation()
+                    //loader.setBackgroundResource(R.drawable.loader)
+                    //scanningLabel.text = resources.getString(R.string.broadcasting_wallet_address)
+                    mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid1)
+                    mBluetoothAdapter.listenUsingRfcommWithServiceRecord(getString(R.string.app_name), uuid2)
+                }
+            }
         }
     }
 
