@@ -70,10 +70,11 @@ class PriceListManager {
 
         private fun updateLocalDb(products: List<ProductBase>) {
             val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-
+            val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+            val token = getActiveToken()
             products.forEach { item ->
                 var product = productBox.query().equal(Product_.name, item.name).build().findFirst()
-                val token = getActiveToken()
+
                 if (product != null) {
                     product.nfcTagId = item.nfcTagId
                     product.price = item.price
@@ -83,6 +84,7 @@ class PriceListManager {
                 }
                 token.products.add(product)
             }
+            tokenBox.put(token)
         }
 
         private fun getActiveToken(): Token {
