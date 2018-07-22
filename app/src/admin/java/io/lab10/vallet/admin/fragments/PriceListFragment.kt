@@ -109,6 +109,7 @@ class PriceListFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRemove(event: ProductRemoveEvent) {
         refreshProductsLocal()
+        getActiveToken().storage().store()
     }
 
     @Subscribe
