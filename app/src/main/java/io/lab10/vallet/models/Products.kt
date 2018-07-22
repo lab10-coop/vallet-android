@@ -28,7 +28,7 @@ object Products {
         ITEMS.addAll(token.products)
     }
 
-    fun toJson(): String {
+   /* fun toJson(): String {
         val gson = Gson()
         return gson.toJson(getProducts())
     }
@@ -44,5 +44,5 @@ object Products {
             v.id = 0
             token!!.products.add(v)
         }
-    }
+    }*/
 }

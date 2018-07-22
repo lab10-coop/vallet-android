@@ -110,7 +110,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         var voucher = voucherBox.query().equal(Token_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
-            voucher.ipnsAdddress = event.ipnsAddress
+            // TODO if we are using ValletApi we store here uuid if ipfs ipnsAddress
+            voucher.ipnsAdddress = event.secret
             voucherBox.put(voucher)
             Toast.makeText(this, "Ipfs address created", Toast.LENGTH_SHORT).show()
         }

@@ -122,7 +122,7 @@ class PriceListFragment : Fragment() {
     fun onProductListPublished(event: ProductListPublishedEvent) {
         val voucher = (activity as AdminActivity).voucher
         if (voucher != null && voucher.ipnsAdddress != null && voucher.ipnsAdddress.isBlank()) {
-            voucher.ipnsAdddress = event.ipnsAddress
+            voucher.ipnsAdddress = event.secret
             val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             voucherBox.put(voucher)
         }

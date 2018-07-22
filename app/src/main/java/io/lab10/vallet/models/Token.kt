@@ -23,3 +23,16 @@ data class Token(@Id var id: Long = 0,
     lateinit var products: ToMany<Product>
 
 }
+
+// Data structures for retrofit to communicate with ValletAPI
+data class TokenCreate(
+        val tokenName: String,
+        val tokenType: Integer,
+        val products: List<Product>
+)
+
+data class TokenUpdate(
+        val secret: String,
+        val tokenName: String,
+        val products: List<Product>
+)

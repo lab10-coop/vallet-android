@@ -12,5 +12,5 @@ class ProductsListEvent
 class ProductAddedEvent
 class ProductRefreshEvent
 class ProductRemoveEvent
-class ProductListPublishedEvent(val voucherId: Long, val ipnsAddress: String)
+class ProductListPublishedEvent(val voucherId: Long, val secret: String = "")
 class TokenRedeemEvent(val address: String)

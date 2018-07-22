@@ -35,7 +35,7 @@ class IPFSManager private constructor() {
 
     fun publishProductList(context: Context): String? {
         var productListFile = File.createTempFile("productList", null)
-        productListFile.writeText(Products.toJson())
+        //productListFile.writeText(Products.toJson())
         val address = getIPFSConnection(context).add.file(productListFile)
         return getIPFSConnection(context).name.publish(address.Hash)
     }
@@ -46,7 +46,7 @@ class IPFSManager private constructor() {
             if (priceListIPFSAddress != null) {
                 val hash = priceListIPFSAddress.split("/")[2]
                 val productListJson = getIPFSConnection(context).get.cat(hash)
-                Products.fromJson(productListJson, tokenAddress, clean)
+                //Products.fromJson(productListJson, tokenAddress, clean)
             }
         }
         return ""
