@@ -3,34 +3,45 @@ package io.lab10.vallet.admin.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.activities.AdminActivity
+import io.lab10.vallet.admin.activities.manager.PriceListManager
+import io.lab10.vallet.admin.interfaces.ValletApiService
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
-import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Products
-import io.lab10.vallet.models.Voucher
+import io.lab10.vallet.models.Token
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.EventBus
-import org.web3j.protocol.admin.Admin
 
 
 class PriceListFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
+
+    private var sharedPref: SharedPreferences? = null
+
+    val valletApiService by lazy {
+        sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val apiBaseUrl = sharedPref!!.getString(activity.resources.getString(R.string.shared_pref_vallet_api_server_address), activity.resources.getString(R.string.default_vallet_api_server_address))
+        ValletApiService.create(apiBaseUrl)
+    }
+
+    var disposable: Disposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -128,11 +139,11 @@ class PriceListFragment : Fragment() {
     }
 
     private fun refreshProductsLocal() {
-        val voucher = (activity as AdminActivity).voucher
+        val token = (activity as AdminActivity).voucher
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
-        Products.refresh(voucher!!.tokenAddress)
+        Products.refresh(token!!)
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     }
@@ -141,11 +152,11 @@ class PriceListFragment : Fragment() {
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
-        val voucher = (activity as AdminActivity).voucher
+        val token = (activity as AdminActivity).voucher
 
-        if (voucher != null) {
+        if (token != null) {
             // Load first from local storage
-            Products.refresh(voucher!!.tokenAddress)
+            Products.refresh(token!!)
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
             val token_name = "Lab10"

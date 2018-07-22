@@ -13,8 +13,10 @@ import android.widget.TextView
 import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductRemoveEvent
-import io.lab10.vallet.models.*
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Product
+import io.lab10.vallet.models.Product_
+import io.lab10.vallet.models.Wallet
 import io.objectbox.Box
 import kotlinx.android.synthetic.main.fragment_product.view.*
 import org.greenrobot.eventbus.EventBus
@@ -27,18 +29,17 @@ import org.greenrobot.eventbus.EventBus
 class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<ProductRecyclerViewAdapter.ProductViewHolder>() {
 
 
-    private var voucher: io.lab10.vallet.models.Token? = null
-    private var voucherBox: Box<io.lab10.vallet.models.Token>? = null
+    private var token: io.lab10.vallet.models.Token? = null
+    private var tokenBox: Box<io.lab10.vallet.models.Token>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_product, parent, false)
-        voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        // Fetch voucher base on the first product (all products are from the same
-        // voucher so does not matter which one we will pick
-        voucher = (voucherBox  as Box<io.lab10.vallet.models.Token>).query().equal(Token_.tokenAddress, mValues.first().token).build().findFirst()
+        tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        // TODO add multi token support
+        token = tokenBox!!.query().build().findFirst()
 
-        if (voucher!!.type != 0) {
+        if (token!!.type != 0) {
             view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         }
         return ProductViewHolder(view)
@@ -48,7 +49,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
 
-        if (voucher!!.type != 0) {
+        if (token!!.type != 0) {
             holder.mProductPrice.setText(mValues.get(position).price.toString())
         } else {
             holder.mProductPrice.setText(Wallet.convertATS2EUR(mValues.get(position).price).toString())

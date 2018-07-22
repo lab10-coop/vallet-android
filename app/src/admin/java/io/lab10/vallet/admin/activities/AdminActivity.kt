@@ -126,7 +126,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             voucherType = 1
         }
         val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        val voucher = Token(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true, 0, "", Products.getProducts())
+        val voucher = Token(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true, 0, "")
         val voucherId = voucherBox.put(voucher)
         // Generate IPFS address
         Thread(Runnable {

@@ -33,6 +33,8 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.models.Product_
+import io.objectbox.Box
+import io.objectbox.BoxStore
 import org.greenrobot.eventbus.EventBus
 
 class AddProductActivity : AppCompatActivity() {
@@ -41,8 +43,9 @@ class AddProductActivity : AppCompatActivity() {
     val TAG = AddProductActivity::class.java.name
     private var pendingIntent: PendingIntent? = null
     private var nfcAdapter: NfcAdapter? = null
-    private var voucher: Token? = null
+    private var token: Token? = null
     private var product: Product? = null
+    private var tokenBox: Box<Token> ? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +56,11 @@ class AddProductActivity : AppCompatActivity() {
             var productID = intent.getLongExtra("PRODUCT_ID",0)
             product = productBox.query().equal(Product_.id, productID).build().findFirst()
         }
-        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        // TODO add multi voucher capabilities
-        voucher = voucherBox.query().build().findFirst()
+        tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        // TODO add multi token capabilities
+        token = tokenBox!!.query().build().findFirst()
 
-        if (voucher == null) {
+        if (token == null) {
             Toast.makeText(this, "Voucher is not yet created", Toast.LENGTH_LONG).show()
             finish()
         }
@@ -83,7 +86,7 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
-        if (voucher!!.type == 0) {
+        if (token!!.type == 0) {
             productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
         }
@@ -102,7 +105,7 @@ class AddProductActivity : AppCompatActivity() {
             var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
             if (!priceString.trim().equals("")) {
-                if (voucher!!.type == 0) {
+                if (token!!.type == 0) {
                     price = Wallet.convertEUR2ATS(priceString)
                 } else {
                     price = priceString.toInt()
@@ -159,26 +162,24 @@ class AddProductActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-
-
         // TODO we should use IntentService for all network activities
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
             if (product == null) {
-                product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId, voucher!!.tokenAddress)
+                product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId)
             } else {
                 (product as Product).name = name
                 (product as Product).price = price
                 (product as Product).nfcTagId = nfcTagId
             }
-            productBox.put(product)
+            token!!.products.add(product)
+            tokenBox!!.put(token)
             EventBus.getDefault().post(ProductAddedEvent())
             var addressName = IPFSManager.INSTANCE.publishProductList(this)
             if (addressName != null && addressName.isNotBlank())
-                EventBus.getDefault().post(ProductListPublishedEvent(voucher!!.id, addressName))
+                EventBus.getDefault().post(ProductListPublishedEvent(token!!.id, addressName))
             Log.d(TAG, "Address of products list: " +  addressName)
         }).start()
     }

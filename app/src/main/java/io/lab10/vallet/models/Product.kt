@@ -5,15 +5,17 @@ import android.os.Parcelable
 import com.google.gson.Gson
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.objectbox.relation.ToOne
 
 @Entity
-data class Product(@Id var id: Long,
-                   var name: String,
-                   var price: Long,
-                   var imagePath: String,
-                   var localImagePath: String,
-                   var nfcTagId: String,
-                   var token: String)  {
+data class Product(@Id var id: Long = 0,
+                   var name: String = "",
+                   var price: Long = 0,
+                   var imagePath: String = "",
+                   var localImagePath: String = "",
+                   var nfcTagId: String = "")  {
+
+    lateinit var token: ToOne<Token>
 
     override fun toString(): String {
         return name

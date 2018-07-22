@@ -19,8 +19,8 @@
     <string name="shared_pref_voucher_wallet_file">voucher_wallet_file</string>
     <string name="voucher_type_euro">V-EUR</string>
     <string name="voucher_type_voucher">Voucher</string>
-    <string name="message_creating_token">New voucher</string>
-    <string name="message_creating_token_in_proggres">Creating new voucher ...</string>
+    <string name="message_creating_token">New token</string>
+    <string name="message_creating_token_in_proggres">Creating new token ...</string>
     <string name="circulating">Circulating</string>
     <string name="label_recent_activities">Recent activities</string>
     <string name="main_menu_home">Activity</string>
@@ -46,7 +46,7 @@
     <string name="your_qrcode">Your QR-Code</string>
     <string name="product_nfc_placeholder">Scan NFC tag</string>
     <string name="label_view_history"><![CDATA[View history >]]></string>
-    <string name="label_scan_token"><![CDATA[Scan voucher >]]></string>
+    <string name="label_scan_token"><![CDATA[Scan token >]]></string>
     <string name="placeholder_no_recent_activities">No recent activities</string>
     <string name="history">History</string>
     <string name="tap_to_search_for_admin">Tap to start scanning admin</string>

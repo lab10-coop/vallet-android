@@ -23,9 +23,9 @@ object Products {
         return ITEMS
     }
 
-    fun refresh(tokenAddress: String) {
+    fun refresh(token: Token) {
         ITEMS.clear()
-        ITEMS.addAll(productBox.query().equal(Product_.token, tokenAddress).build().find())
+        ITEMS.addAll(token.products)
     }
 
     fun toJson(): String {
@@ -34,24 +34,15 @@ object Products {
     }
 
     fun fromJson(json: String, tokenAddress: String, clean: Boolean = false) {
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        val token = tokenBox.query().equal(Token_.tokenAddress, tokenAddress).build().findFirst()
         val gson = Gson()
         val products = gson.fromJson(json, Array<Product>::class.java)
         if (clean)
-            productBox.query().equal(Product_.token, tokenAddress).build().remove()
+            token!!.products.clear()
         products.forEach { v ->
-            // TODO add check if product is valid?
-            v.token = tokenAddress
             v.id = 0
-            if (!isProductOnList(v)) {
-                val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-                productBox.put(v)
-            }
+            token!!.products.add(v)
         }
-    }
-
-    private fun isProductOnList(item: Product): Boolean {
-        val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
-        val product = productBox.query().equal(Product_.name, item.name).equal(Product_.token, item.token).build().findFirst()
-        return product != null
     }
 }
