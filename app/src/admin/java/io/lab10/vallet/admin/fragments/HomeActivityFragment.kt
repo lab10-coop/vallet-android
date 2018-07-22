@@ -115,7 +115,8 @@ class HomeActivityFragment : Fragment() {
             viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
 
-        viewHolder!!.tokenNameLabel.text = (activity as AdminActivity).voucher!!.name
+        if ((activity as AdminActivity).voucher != null)
+            viewHolder!!.tokenNameLabel.text = (activity as AdminActivity).voucher!!.name
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)

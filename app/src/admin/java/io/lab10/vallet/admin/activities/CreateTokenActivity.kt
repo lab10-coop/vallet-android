@@ -83,20 +83,7 @@ class CreateTokenActivity : AppCompatActivity() {
         }
     }
 
-    class VoucherNameFragment : Fragment(), View.OnClickListener {
-
-        override fun onClick(view: View?) {
-            when (view?.id) {
-                R.id.getStarterd -> {
-                    if (inputVoucherName.text.toString().length < 3) {
-                        Toast.makeText(activity, resources.getString(R.string.error_voucher_name_too_short), Toast.LENGTH_SHORT).show()
-                    } else {
-                        (activity as CreateTokenActivity).voucherName = inputVoucherName.text.toString()
-                        voucherViewPager?.currentItem = 1
-                    }
-                }
-            }
-        }
+    class VoucherNameFragment : Fragment() {
 
         override fun onCreateView(inflater: LayoutInflater, viewGroup: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
@@ -121,7 +108,7 @@ class CreateTokenActivity : AppCompatActivity() {
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
 
-                    val voucherName = (activity as CreateTokenActivity).voucherName
+                    val voucherName = inputVoucherName.text.toString()
                     val voucherDecimal = 12;
 
                     val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
