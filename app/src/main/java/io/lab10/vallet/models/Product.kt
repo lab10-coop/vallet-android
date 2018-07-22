@@ -30,3 +30,11 @@ data class Product(@Id var id: Long = 0,
         return (name.isNotEmpty() && price > 0)
     }
 }
+
+// data structure for retrofit to avoid loops with gson as it has problems with handling ToOne/ToMany
+data class ProductBase(
+        val name: String,
+        val price: Long,
+        val imagePath: String,
+        val nfcTagId: String
+)

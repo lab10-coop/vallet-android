@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.admin.activities.manager.PriceListManager
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.events.*
@@ -128,14 +129,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }
         val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         val voucher = Token(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true, 0, "")
-        val voucherId = voucherBox.put(voucher)
-        // Generate IPFS address
+        voucherBox.put(voucher)
+
+        // prepare remote storage
         Thread(Runnable {
-            var addressName = IPFSManager.INSTANCE.publishProductList(this);
-            if (addressName != null) {
-                Log.d(TAG, "Address of products list: " + addressName)
-                EventBus.getDefault().post(ProductListPublishedEvent(voucherId, addressName))
-            }
+           voucher.storage().create()
         }).start()
     }
 

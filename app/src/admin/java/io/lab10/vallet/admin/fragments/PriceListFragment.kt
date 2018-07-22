@@ -21,6 +21,7 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.TokenUpdate
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
@@ -32,16 +33,6 @@ import org.greenrobot.eventbus.EventBus
 class PriceListFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
-
-    private var sharedPref: SharedPreferences? = null
-
-    val valletApiService by lazy {
-        sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val apiBaseUrl = sharedPref!!.getString(activity.resources.getString(R.string.shared_pref_vallet_api_server_address), activity.resources.getString(R.string.default_vallet_api_server_address))
-        ValletApiService.create(apiBaseUrl)
-    }
-
-    var disposable: Disposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -100,7 +91,15 @@ class PriceListFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductAdded(event: ProductAddedEvent) {
-        refreshProducts()
+        refreshProductsLocal()
+        storeRemotly()
+    }
+
+    private fun storeRemotly() {
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        // TODO support multiple tokens
+        val token = tokenBox.query().build().findFirst()
+        token!!.storage().store()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,15 +151,20 @@ class PriceListFragment : Fragment() {
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
-        val token = (activity as AdminActivity).voucher
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        // TODO support multiple tokens
+        val token = tokenBox.query().build().findFirst()
 
         if (token != null) {
             // Load first from local storage
             Products.refresh(token!!)
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
-            val token_name = "Lab10"
-            PriceListManager.fetchPriceList(token_name)
+            if (token!!.remoteStoragePresent()) {
+                token.storage().fetch()
+            } else {
+                token.storage().create()
+            }
         }
     }
 }

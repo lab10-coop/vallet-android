@@ -174,16 +174,6 @@ class AddProductActivity : AppCompatActivity() {
             token!!.products.add(product)
             tokenBox!!.put(token)
             EventBus.getDefault().post(ProductAddedEvent())
-            // TODO add ipfsOn/valletApi setting to find out which storage to use
-            // currently we are using valletAPI by default
-            if (false) {
-                var addressName = IPFSManager.INSTANCE.publishProductList(this)
-                if (addressName != null && addressName.isNotBlank())
-                    EventBus.getDefault().post(ProductListPublishedEvent(token!!.id, addressName))
-            } else {
-                val tokenUpdate = TokenUpdate(token!!.secret, token!!.name, token!!.products)
-                PriceListManager.updatePriceList(tokenUpdate)
-            }
         }).start()
     }
 

@@ -21,6 +21,7 @@ class IPFSManager private constructor() {
     }
 
     private fun getServerAddress(context: Context): String {
+        // TODO to avoid passing context we could store all configs in DB
       return context.getString(R.string.ipfs_server)
     }
 
