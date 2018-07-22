@@ -119,15 +119,15 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
-        var voucherName = event.name
-        tokenNameLabel.text = voucherName
-        var voucherType = 0
+        var tokenName = event.name
+        tokenNameLabel.text = tokenName
+        var tokenType = 0
         if (event.type.equals(Tokens.Type.VOUCHER.toString()) ) {
-            voucherType = 1
+            tokenType = 1
         }
-        val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        val voucher = Token(0, voucherName!!, tokenContractaddress!!, 0, voucherType, "", true, 0, "")
-        voucherBox.put(voucher)
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
+        tokenBox.put(voucher)
 
         // prepare remote storage
         Thread(Runnable {
