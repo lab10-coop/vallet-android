@@ -3,9 +3,6 @@
 
     <application>
         <activity
-            android:name="io.lab10.vallet.ClientActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name="io.lab10.vallet.ClientHomeActivty"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
