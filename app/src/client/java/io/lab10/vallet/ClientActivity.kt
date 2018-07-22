@@ -65,13 +65,13 @@ class ClientActivity : AppCompatActivity() {
         }
 
         viewAdapter = VoucherAdapter(Tokens.getVouchers())
-            scanTokenContract.visibility = View.VISIBLE
-            scanTokenContract.setOnClickListener {
-                val integrator = IntentIntegrator(this)
-                integrator.setBeepEnabled(false);
-                integrator.setBarcodeImageEnabled(true);
-                integrator.initiateScan()
-            }
+        scanTokenContract.visibility = View.VISIBLE
+        scanTokenContract.setOnClickListener {
+            val integrator = IntentIntegrator(this)
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan()
+        }
 
         recyclerView = findViewById<RecyclerView>(R.id.voucherList).apply {
             setHasFixedSize(true)
@@ -101,23 +101,12 @@ class ClientActivity : AppCompatActivity() {
         if (debugMode)
             Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
-        generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
     }
 
     private fun refreshBalance() {
         // Trigger balance check for each token
         Tokens.getVouchers().forEach { e ->
             Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
-        }
-    }
-
-    private fun generateWalletBarcode(address: String) {
-        try {
-            val barcodeEncoder = BarcodeEncoder()
-            val bitmap = barcodeEncoder.encodeBitmap(address, BarcodeFormat.QR_CODE, 400, 400)
-            voucherQrcode.setImageBitmap(bitmap)
-        } catch (e: Exception) {
-
         }
     }
 
@@ -297,11 +286,6 @@ class ClientActivity : AppCompatActivity() {
         }
         Tokens.refresh()
         viewAdapter.notifyDataSetChanged()
-    }
-
-    fun getPhoneName(): String {
-        val myDevice = BluetoothAdapter.getDefaultAdapter()
-        return myDevice.name
     }
 
 }

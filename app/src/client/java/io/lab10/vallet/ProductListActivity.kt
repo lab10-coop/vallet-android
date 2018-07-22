@@ -93,7 +93,6 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
             finish()
         }
 
-
         pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, this.javaClass)
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)

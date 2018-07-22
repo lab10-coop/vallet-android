@@ -1,5 +1,6 @@
 package io.lab10.vallet.models
 
+import android.content.Context
 import com.google.gson.Gson
 import io.lab10.vallet.ValletApp
 
