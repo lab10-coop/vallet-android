@@ -90,6 +90,11 @@ class PriceListFragment : Fragment() {
         storeRemotly()
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductsChanged(event: ProductChangedEvent) {
+        refreshProductsLocal()
+    }
+
     private fun storeRemotly() {
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         // TODO support multiple tokens
@@ -104,21 +109,15 @@ class PriceListFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRemove(event: ProductRemoveEvent) {
         refreshProductsLocal()
-        Thread(Runnable {
-            var addressName = IPFSManager.INSTANCE.publishProductList(activity);
-            if (addressName != null) {
-                EventBus.getDefault().post(ProductListPublishedEvent((activity as AdminActivity).voucher!!.id, addressName))
-            }
-        }).start()
     }
 
     @Subscribe
     fun onProductListPublished(event: ProductListPublishedEvent) {
-        val voucher = (activity as AdminActivity).voucher
-        if (voucher != null && voucher.ipnsAdddress != null && voucher.ipnsAdddress.isBlank()) {
-            voucher.ipnsAdddress = event.secret
+        val token = getActiveToken()
+        if (token != null && token.ipnsAdddress != null && token.ipnsAdddress.isBlank()) {
+            token.ipnsAdddress = event.secret
             val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-            voucherBox.put(voucher)
+            voucherBox.put(token)
         }
     }
 
@@ -133,7 +132,7 @@ class PriceListFragment : Fragment() {
     }
 
     private fun refreshProductsLocal() {
-        val token = (activity as AdminActivity).voucher
+        val token = getActiveToken()
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
@@ -143,12 +142,9 @@ class PriceListFragment : Fragment() {
     }
     private fun reloadProducts() {
 
-
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
-        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        // TODO support multiple tokens
-        val token = tokenBox.query().build().findFirst()
+        val token = getActiveToken()
 
         if (token != null) {
             // Load first from local storage
@@ -161,5 +157,11 @@ class PriceListFragment : Fragment() {
                 token.storage().create()
             }
         }
+    }
+
+    private fun getActiveToken(): Token {
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        // TODO support multiple tokens
+       return tokenBox.query().build().findFirst()!!
     }
 }
