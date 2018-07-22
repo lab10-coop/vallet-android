@@ -46,7 +46,7 @@ class IssueTokenFragment : DialogFragment() {
 
         view.issueUserName.text = userName
 
-        if (voucher!!.type == 0) {
+        if (voucher!!.tokenType == 0) {
             view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(4, 2)))
             view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }
@@ -61,7 +61,7 @@ class IssueTokenFragment : DialogFragment() {
                 try {
                     var address = Wallet.formatAddress(userAddress)
                     var amount = BigInteger.ZERO
-                    if (voucher!!.type == 0) {
+                    if (voucher!!.tokenType == 0) {
                         amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amountInput).toLong())
                     } else {
                         amount = BigInteger(amountInput)

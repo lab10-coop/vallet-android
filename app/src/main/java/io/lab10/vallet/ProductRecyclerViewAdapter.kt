@@ -39,7 +39,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         // TODO add multi token support
         token = tokenBox!!.query().build().findFirst()
 
-        if (token!!.type != 0) {
+        if (token!!.tokenType != 0) {
             view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         }
         return ProductViewHolder(view)
@@ -49,7 +49,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         holder.mItem = mValues.get(position)
         holder.mProductName.setText(mValues.get(position).name)
 
-        if (token!!.type != 0) {
+        if (token!!.tokenType != 0) {
             holder.mProductPrice.setText(mValues.get(position).price.toString())
         } else {
             holder.mProductPrice.setText(Wallet.convertATS2EUR(mValues.get(position).price).toString())

@@ -34,7 +34,6 @@ import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.models.Product_
 import io.objectbox.Box
-import io.objectbox.BoxStore
 import org.greenrobot.eventbus.EventBus
 
 class AddProductActivity : AppCompatActivity() {
@@ -86,7 +85,7 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
-        if (token!!.type == 0) {
+        if (token!!.tokenType == 0) {
             productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
         }
@@ -105,7 +104,7 @@ class AddProductActivity : AppCompatActivity() {
             var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
             if (!priceString.trim().equals("")) {
-                if (token!!.type == 0) {
+                if (token!!.tokenType == 0) {
                     price = Wallet.convertEUR2ATS(priceString)
                 } else {
                     price = priceString.toInt()

@@ -28,7 +28,6 @@ import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
-import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -48,7 +47,7 @@ class HomeActivityFragment : Fragment() {
         val query = valletTransactionBox.query().build()
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
             .observer { sum ->
-                if ((activity as AdminActivity).voucher?.type == 0) {
+                if ((activity as AdminActivity).voucher?.tokenType == 0) {
                     viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
                 } else {
                     viewHolder!!.voucherCountLabel.text = sum.toString()
@@ -108,7 +107,7 @@ class HomeActivityFragment : Fragment() {
         if (recentTransaction.size > 0) {
             viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
         }
-        if ((activity as AdminActivity).voucher?.type == 1) {
+        if ((activity as AdminActivity).voucher?.tokenType == 1) {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
             viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
         } else {

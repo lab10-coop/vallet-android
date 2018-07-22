@@ -30,8 +30,8 @@ class HistoryActivity : AppCompatActivity() {
         voucher = voucherBox.query().build().findFirst()
 
         viewManager = LinearLayoutManager(this)
-        if (voucher?.type != null) {
-            viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), voucher!!.type)
+        if (voucher?.tokenType != null) {
+            viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), voucher!!.tokenType)
         }
 
         recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {

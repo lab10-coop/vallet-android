@@ -81,7 +81,7 @@ class DebugActivity : AppCompatActivity() {
             val barcodeEncoder = BarcodeEncoder()
             val address = voucher!!.tokenAddress
             val priceListIPNSAddress = voucher!!.ipnsAdddress
-            val data = voucher!!.name + ";" + voucher!!.type + ";" + address + ";" + priceListIPNSAddress
+            val data = voucher!!.name + ";" + voucher!!.tokenType + ";" + address + ";" + priceListIPNSAddress
             val bitmap = barcodeEncoder.encodeBitmap(data, BarcodeFormat.QR_CODE, 400, 400)
             voucherQrcode.setImageBitmap(bitmap)
         } catch (e: Exception) {
