@@ -43,15 +43,16 @@ class AddProductActivity : AppCompatActivity() {
     private var token: Token? = null
     private var product: Product? = null
     private var tokenBox: Box<Token> ? = null
+    private var productBox: Box<Product>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_product)
 
+        productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
         if (intent.hasExtra("PRODUCT_ID")) {
-            var productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
             var productID = intent.getLongExtra("PRODUCT_ID",0)
-            product = productBox.query().equal(Product_.id, productID).build().findFirst()
+            product = productBox!!.query().equal(Product_.id, productID).build().findFirst()
         }
         tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         // TODO add multi token capabilities
@@ -61,6 +62,7 @@ class AddProductActivity : AppCompatActivity() {
             Toast.makeText(this, "Voucher is not yet created", Toast.LENGTH_LONG).show()
             finish()
         }
+
         pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, this.javaClass)
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
@@ -159,20 +161,25 @@ class AddProductActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
+        if (product == null) {
+            product = Product(0, name, price, "", image.absolutePath, nfcTagId)
+        } else {
+            (product as Product).name = name
+            (product as Product).price = price
+            (product as Product).nfcTagId = nfcTagId
+        }
+        token!!.products.add(product)
+        tokenBox!!.put(token)
+
         // TODO we should use IntentService for all network activities
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
             val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
-            if (product == null) {
-                product = Product(0, name, price, address.Hash, image.absolutePath, nfcTagId)
-            } else {
-                (product as Product).name = name
-                (product as Product).price = price
-                (product as Product).nfcTagId = nfcTagId
+            if (product != null) {
+                product!!.imagePath = address.Hash
+                productBox!!.put(product)
             }
-            token!!.products.add(product)
-            tokenBox!!.put(token)
             EventBus.getDefault().post(ProductAddedEvent())
         }).start()
     }
