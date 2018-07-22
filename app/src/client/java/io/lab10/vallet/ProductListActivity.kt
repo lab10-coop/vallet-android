@@ -20,6 +20,8 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import io.lab10.vallet.events.ProductChangedEvent
+import io.lab10.vallet.events.ProductRefreshEvent
 import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token_
@@ -116,34 +118,29 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
         return true
     }
 
-    private fun fetchProducts(priceListIPNSAddress: String) {
-        // TODO we should use IntentService for all network activities
-        // to avoid potential memory leaks. In this case we also should check
-        // response and handle case where response will fail and inform user.
-        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-        productFragment.swiperefresh.isRefreshing = true;
-        //Load from local if exists for given token
-        Products.refresh(token!!)
-        EventBus.getDefault().post(ProductsListEvent())
-
-        Thread(Runnable {
-            try {
-                IPFSManager.INSTANCE.fetchProductList(this, priceListIPNSAddress, tokenAddress!!, true)
-                EventBus.getDefault().post(ProductsListEvent())
-            } catch (e: Exception) {
-                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-                productFragment.swiperefresh.isRefreshing = false;
-            }
-        }).start()
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductchangedEvent(event: ProductChangedEvent) {
+        refreshProductList()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onProductsListEvent(event: ProductsListEvent) {
-        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-        Products.refresh(token!!)
-        productFragment.notifyAboutchange()
-        productFragment.swiperefresh.isRefreshing = false
-    };
+    fun onProductRefreshevent(event: ProductRefreshEvent) {
+        refreshProductList()
+        reloadProductList()
+    }
+
+    private fun reloadProductList() {
+
+        if (token != null) {
+            // Load first from local storage
+            Products.refresh(token!!)
+            var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+            productFragment.notifyAboutchange()
+            productFragment.swiperefresh.isRefreshing = false
+            if (token!!.remoteReadStoragePresent())
+                token!!.storage().fetch()
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -196,6 +193,13 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
             }
             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun refreshProductList() {
+        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        Products.refresh(token!!)
+        productFragment.notifyAboutchange()
+        productFragment.swiperefresh.isRefreshing = false
     }
 
 }

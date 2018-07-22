@@ -63,28 +63,26 @@ class PriceListManager {
         private fun updateLocalDb(products: List<ProductBase>) {
             val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
             val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-            val token = getActiveToken()
-            products.forEach { item ->
-                var product = productBox.query().equal(Product_.name, item.name).build().findFirst()
+            val token = ValletApp.activeToken
+            if (token != null) {
+                products.forEach { item ->
+                    var product = productBox.query().equal(Product_.name, item.name).build().findFirst()
 
-                if (product != null) {
-                    product.nfcTagId = item.nfcTagId
-                    product.price = item.price
-                    product.imagePath = item.imagePath
-                } else {
-                    product = Product(0, item.name, item.price, item.imagePath, item.nfcTagId)
+                    if (product != null) {
+                        product.nfcTagId = item.nfcTagId
+                        product.price = item.price
+                        product.imagePath = item.imagePath
+                    } else {
+                        product = Product(0, item.name, item.price, item.imagePath, item.nfcTagId)
+                    }
+                    token.products.add(product)
                 }
-                token.products.add(product)
+                tokenBox.put(token)
+                EventBus.getDefault().post(ProductChangedEvent())
+            } else {
+                EventBus.getDefault().post(ErrorEvent("No active token available"))
             }
-            tokenBox.put(token)
-            EventBus.getDefault().post(ProductChangedEvent())
 
-        }
-
-        private fun getActiveToken(): Token {
-            val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-            // TODO add support for multiple tokens
-            return tokenBox.query().build().findFirst()!!
         }
     }
 }

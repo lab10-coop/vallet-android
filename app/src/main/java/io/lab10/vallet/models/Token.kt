@@ -18,7 +18,7 @@ data class Token(@Id var id: Long = 0,
                  var balance: Int = 0,
                  var tokenType: Int = 0,
                  var ipnsAdddress: String = "",
-                 var default: Boolean = true,
+                 var active: Boolean = true,
                  var lastBlockNumber: Long = 0,
                  var secret: String = "") {
 

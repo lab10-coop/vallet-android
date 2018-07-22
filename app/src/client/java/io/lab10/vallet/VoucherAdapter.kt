@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Token_
 import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.client.voucher_item.view.*
@@ -21,10 +22,17 @@ class VoucherAdapter(private val myDataset: MutableList<Token>) :
 
         override fun onClick(v: View?) {
             val intent = Intent(mView.context, ProductListActivity::class.java)
+            val tokenAddress = mView.voucherTokenAddress.text as String
             intent.action = "Start"
-            intent.putExtra("EXTRA_TOKEN_ADDRESS", mView.voucherTokenAddress.text)
+            intent.putExtra("EXTRA_TOKEN_ADDRESS", tokenAddress)
             intent.putExtra("EXTRA_TOKEN_BALANCE", mView.voucherBalance.text)
             intent.putExtra("EXTRA_TOKEN_TYPE", mVoucherType)
+            // TODO take care of it when we will change design
+            val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+            val token = tokenBox.query().equal(Token_.tokenAddress, tokenAddress).build().findFirst()
+            if (token != null) {
+                ValletApp.activeToken = token
+            }
             mView.context.startActivity(intent)
         }
 
