@@ -55,10 +55,6 @@ class ClientActivity : AppCompatActivity() {
 
 
         Tokens.refresh()
-        // Trigger balance check for each token
-        Tokens.getVouchers().forEach { e ->
-            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
-        }
 
         logo.setOnClickListener() {
             if (debugModeCount < 7)
@@ -106,6 +102,13 @@ class ClientActivity : AppCompatActivity() {
             Log.i(TAG, "Wallet address: " + voucherWalletAddress)
 
         generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
+    }
+
+    private fun refreshBalance() {
+        // Trigger balance check for each token
+        Tokens.getVouchers().forEach { e ->
+            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
+        }
     }
 
     private fun generateWalletBarcode(address: String) {
@@ -165,6 +168,7 @@ class ClientActivity : AppCompatActivity() {
 
     public override fun onStart() {
         super.onStart()
+        refreshBalance()
         EventBus.getDefault().register(this)
     }
 
