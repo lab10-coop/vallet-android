@@ -3,7 +3,6 @@ package io.lab10.vallet.admin.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -15,14 +14,10 @@ import io.lab10.vallet.ValletApp
 
 import io.lab10.vallet.admin.activities.AddProductActivity
 import io.lab10.vallet.admin.activities.AdminActivity
-import io.lab10.vallet.admin.activities.manager.PriceListManager
-import io.lab10.vallet.admin.interfaces.ValletApiService
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
-import io.lab10.vallet.models.TokenUpdate
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
@@ -44,7 +39,7 @@ class PriceListFragment : Fragment() {
             startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
         }
 
-        refreshProducts()
+        reloadProducts()
 
         return view
     }
@@ -77,7 +72,7 @@ class PriceListFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == AddProductActivity.PRODUCT_RETURN_CODE) {
-                refreshProducts()
+                reloadProducts()
             }
         }
     }
@@ -104,7 +99,7 @@ class PriceListFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefresh(event: ProductRefreshEvent){
-        refreshProducts()
+        reloadProducts()
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRemove(event: ProductRemoveEvent) {
@@ -146,7 +141,7 @@ class PriceListFragment : Fragment() {
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     }
-    private fun refreshProducts() {
+    private fun reloadProducts() {
 
 
         var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
