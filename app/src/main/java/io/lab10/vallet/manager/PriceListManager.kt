@@ -1,12 +1,9 @@
-package io.lab10.vallet.admin.activities.manager
+package io.lab10.vallet.manager
 
-import android.util.Log
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.interfaces.ValletApiService
+import io.lab10.vallet.interfaces.ValletApiService
 import io.lab10.vallet.events.ErrorEvent
-import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.events.ProductChangedEvent
-import io.lab10.vallet.events.ProductRefreshEvent
 import io.lab10.vallet.models.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -46,18 +43,7 @@ class PriceListManager {
                         val response = (result as TokenBase)
                         updateLocalDb(response.products)
                     }, { error ->
-                        try {
-                            if ((error as HttpException).code() == 404) {
-                                // For some reason the secret token does not exist on server we need to recreate it
-                                val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-                                // TODO add support for multiple tokens
-                                val token = tokenBox.query().build().findFirst()
-                                token!!.storage().create()
-                                EventBus.getDefault().post(ErrorEvent(error.message.toString()))
-                            }
-                        } catch (e: Exception) {
-                            EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-                        }
+                        EventBus.getDefault().post(ErrorEvent(error.message.toString()))
                     })
         }
 

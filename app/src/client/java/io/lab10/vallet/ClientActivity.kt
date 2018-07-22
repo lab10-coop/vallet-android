@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.connectivity.BTUtils
-import io.lab10.vallet.models.Vouchers
 
 import kotlinx.android.synthetic.client.activity_client.*
 import org.greenrobot.eventbus.EventBus
@@ -24,11 +23,11 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import com.google.zxing.integration.android.IntentIntegrator
 import io.lab10.vallet.events.*
-import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Voucher_
+import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Token_
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
-import io.objectbox.reactive.DataSubscription
 import org.greenrobot.eventbus.ThreadMode
 
 class ClientActivity : AppCompatActivity() {
@@ -40,7 +39,7 @@ class ClientActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private var scanningInProgress: Boolean = false
-    val voucherBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
+    val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
     val REQUEST_BT_ENABLE = 100
     var debugMode: Boolean = false
     var debugModeCount: Int = 0
@@ -51,9 +50,9 @@ class ClientActivity : AppCompatActivity() {
 
         viewManager = LinearLayoutManager(this)
 
-        Vouchers.refresh()
+        Tokens.refresh()
         // Trigger balance check for each token
-        Vouchers.getVouchers().forEach { e ->
+        Tokens.getVouchers().forEach { e ->
             Web3jManager.INSTANCE.getVoucherBalanceFrom(this, e.tokenAddress, e.lastBlockNumber)
         }
 
@@ -64,7 +63,7 @@ class ClientActivity : AppCompatActivity() {
                 debugMode = true
                 Toast.makeText(this, "Debug mode on", Toast.LENGTH_SHORT).show()
         }
-        viewAdapter = VoucherAdapter(Vouchers.getVouchers())
+        viewAdapter = VoucherAdapter(Tokens.getVouchers())
             scanTokenContract.visibility = View.VISIBLE
             scanTokenContract.setOnClickListener {
                 val integrator = IntentIntegrator(this)
@@ -179,36 +178,24 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
-        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
-        if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
-            voucher.balance = voucher.balance + event.value.toInt()
-            voucher.lastBlockNumber = event.blockNumber.toLong()
-            voucherBox.put(voucher)
-        }
-        Vouchers.refresh()
+        Tokens.refresh()
         viewAdapter.notifyDataSetChanged()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
-        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
-        if (voucher != null && voucher.lastBlockNumber < event.blockNumber.toLong()) {
-            voucher.balance = voucher.balance - event.value.toInt()
-            voucher.lastBlockNumber = event.blockNumber.toLong()
-            voucherBox.put(voucher)
-        }
-        Vouchers.refresh()
+        Tokens.refresh()
         viewAdapter.notifyDataSetChanged()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTokenNameEvent(event: TokenNameEvent) {
-        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        var voucher = voucherBox.query().equal(Token_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             voucher.name = event.name
             voucherBox.put(voucher)
         }
-        Vouchers.refresh()
+        Tokens.refresh()
         viewAdapter.notifyDataSetChanged()
     }
 
@@ -229,20 +216,20 @@ class ClientActivity : AppCompatActivity() {
 
     @Subscribe
     fun onTokenTypeEvent(event: TokenTypeEvent) {
-        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, event.address).build().findFirst()
+        var voucher = voucherBox.query().equal(Token_.tokenAddress, event.address).build().findFirst()
         if (voucher != null) {
             if (event.name.equals("EUR")) {
-                voucher.type = 0
+                voucher.tokenType = 0
             } else {
-                voucher.type = 1
+                voucher.tokenType = 1
             }
             voucherBox.put(voucher)
         }
     }
 
     private fun observeVouchers() {
-        voucherBox.query().orderDesc(Voucher_.name).build().subscribe().on(AndroidScheduler.mainThread()).observer { vouchers ->
-            Vouchers.refresh()
+        voucherBox.query().orderDesc(Token_.name).build().subscribe().on(AndroidScheduler.mainThread()).observer { vouchers ->
+            Tokens.refresh()
             viewAdapter.notifyDataSetChanged()
         }
     }
@@ -281,17 +268,17 @@ class ClientActivity : AppCompatActivity() {
 
     private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
         Web3jManager.INSTANCE.getVoucherBalance(this, address)
-        var voucher = voucherBox.query().equal(Voucher_.tokenAddress, address).build().findFirst()
+        var voucher = voucherBox.query().equal(Token_.tokenAddress, address).build().findFirst()
         if (voucher == null) {
-            voucher = Voucher(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
+            voucher = Token(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
             voucherBox.put(voucher)
         } else {
             voucher.ipnsAdddress = ipnsAddress
             voucher.name = voucherName
-            voucher.type = voucherType
+            voucher.tokenType = voucherType
             voucherBox.put(voucher)
         }
-        Vouchers.refresh()
+        Tokens.refresh()
         viewAdapter.notifyDataSetChanged()
     }
 

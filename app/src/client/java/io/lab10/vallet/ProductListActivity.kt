@@ -11,7 +11,7 @@ import android.nfc.Tag
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.ProductsListEvent
 import io.lab10.vallet.fragments.ProductFragment
-import io.lab10.vallet.models.*
+import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -20,6 +20,9 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import io.lab10.vallet.models.Product
+import io.lab10.vallet.models.Products
+import io.lab10.vallet.models.Token_
 import kotlinx.android.synthetic.client.activity_product_list.*
 
 class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentInteractionListener {
@@ -32,7 +35,7 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
     }
 
     override fun onProductClickListner(item: Product) {
-        if (item.price > voucher!!.balance) {
+        if (item.price > token!!.balance) {
             Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
         } else {
             AlertDialog.Builder(this)
@@ -52,7 +55,7 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
     private var tokenAddress: String? = null
     private var tokenBalance: String? = null
     private var tokenType: Int? = null
-    private var voucher: Voucher? = null
+    private var token: io.lab10.vallet.models.Token? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,12 +77,12 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
                 toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
             }
             toolbarBalance.text = tokenBalance
-            val vouchersBox = ValletApp.getBoxStore().boxFor(Voucher::class.java)
-            voucher = vouchersBox.query().equal(Voucher_.tokenAddress, tokenAddress).build().findFirst()
-            if (voucher != null && voucher is Voucher && voucher!!.ipnsAdddress.length > 0) {
-                fetchProducts(voucher!!.ipnsAdddress)
+            val vouchersBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+            token = vouchersBox.query().equal(Token_.tokenAddress, tokenAddress).build().findFirst()
+            if (token != null && token!!.remoteStoragePresent()) {
+                token!!.storage().fetch()
             } else {
-                EventBus.getDefault().post(ErrorEvent("Missing ipns address"))
+                EventBus.getDefault().post(ErrorEvent("Token does not have remote storage defined. Contact Admin"))
                 finish()
             }
 
@@ -120,7 +123,7 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
         productFragment.swiperefresh.isRefreshing = true;
         //Load from local if exists for given token
-        Products.refresh(tokenAddress!!)
+        Products.refresh(token!!)
         EventBus.getDefault().post(ProductsListEvent())
 
         Thread(Runnable {
@@ -137,7 +140,7 @@ class ProductListActivity : AppCompatActivity(), ProductFragment.OnListFragmentI
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
         var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
-        Products.refresh(tokenAddress!!)
+        Products.refresh(token!!)
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     };

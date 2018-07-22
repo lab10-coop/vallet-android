@@ -7,13 +7,11 @@ import android.support.v7.app.AppCompatActivity
 import io.lab10.vallet.R
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.activities.manager.PriceListManager
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.events.*

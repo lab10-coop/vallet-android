@@ -9,13 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import io.lab10.vallet.models.Voucher
-import io.lab10.vallet.models.Vouchers
+import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.client.voucher_item.view.*
 
-class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
+class VoucherAdapter(private val myDataset: MutableList<Token>) :
         RecyclerView.Adapter<VoucherAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView), View.OnClickListener {
@@ -58,13 +57,13 @@ class VoucherAdapter(private val myDataset: MutableList<Voucher>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mVoucherName.text = myDataset[position].name
         holder.mVoucherTokenAddress.text = myDataset[position].tokenAddress
-        if (myDataset[position].type != 0) {
+        if (myDataset[position].tokenType != 0) {
             holder.mVoucherTypeImage.setBackgroundResource(R.drawable.voucher_icon)
             holder.mVoucherBalance.text = myDataset[position].balance.toString()
         } else {
             holder.mVoucherBalance.text = Wallet.convertATS2EUR(myDataset[position].balance.toLong()).toString()
         }
-        holder.mVoucherType = myDataset[position].type
+        holder.mVoucherType = myDataset[position].tokenType
     }
 
     override fun getItemCount() = myDataset.size

@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin.interfaces
+package io.lab10.vallet.interfaces
 
 import io.lab10.vallet.models.*
 import io.reactivex.Observable

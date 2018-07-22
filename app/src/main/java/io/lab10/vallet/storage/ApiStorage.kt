@@ -1,7 +1,7 @@
 package io.lab10.vallet.storage
 
 import io.lab10.vallet.TokenStorageBase
-import io.lab10.vallet.admin.activities.manager.PriceListManager
+import io.lab10.vallet.manager.PriceListManager
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.TokenBase
 import io.lab10.vallet.models.TokenUpdate

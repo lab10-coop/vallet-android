@@ -17,7 +17,6 @@ import android.nfc.Tag
 import android.os.Parcelable
 import android.text.InputFilter
 import android.text.InputType
-import android.util.Log
 import android.widget.Toast
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.utils.EuroInputFilter
@@ -27,9 +26,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
-import io.lab10.vallet.admin.activities.manager.PriceListManager
 import io.lab10.vallet.events.ProductAddedEvent
-import io.lab10.vallet.events.ProductListPublishedEvent
 import io.lab10.vallet.models.*
 import io.objectbox.Box
 import org.greenrobot.eventbus.EventBus
