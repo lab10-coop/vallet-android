@@ -2,19 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/price_list_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ClientHomeActivty"
     tools:showIn="@layout/app_bar_client_home_activty">
-
-
-    <fragment android:name="io.lab10.vallet.fragments.ProductFragment"
-        android:id="@+id/product_fragment"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/fragment_product_list"/>
 
 </android.support.constraint.ConstraintLayout>

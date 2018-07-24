@@ -6,6 +6,7 @@
     <color name="background">#fafbfcff</color>
     <color name="black">#000</color>
     <color name="white">#fff</color>
+    <color name="gray">#6a737c</color>
     <color name="primaryButtonBg">#fff</color>
     <color name="primaryFont">#000</color>
     <color name="theme_1">#ffec00</color>

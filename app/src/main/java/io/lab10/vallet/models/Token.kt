@@ -15,7 +15,7 @@ import io.objectbox.relation.ToMany
 data class Token(@Id var id: Long = 0,
                  var name: String = "",
                  val tokenAddress: String = "",
-                 var balance: Int = 0,
+                 var balance: Long = 0,
                  var tokenType: Int = 0,
                  var ipnsAdddress: String = "",
                  var active: Boolean = true,

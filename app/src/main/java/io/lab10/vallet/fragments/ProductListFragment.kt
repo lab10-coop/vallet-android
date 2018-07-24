@@ -23,13 +23,19 @@ import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
 
 
-class ProductFragment : Fragment() {
+class ProductListFragment : Fragment() {
     private var mListener: OnListFragmentInteractionListener? = null
     private var adapter: ProductRecyclerViewAdapter? = null
     private var recyclerView: RecyclerView? = null
 
     private val MY_CAMERA_REQUEST_CODE = 100;
 
+
+    companion object {
+        fun newInstance(): ProductListFragment {
+            val fragment = ProductListFragment()
+            return fragment
+        }    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
             val view = inflater!!.inflate(R.layout.fragment_product_list, container, false)

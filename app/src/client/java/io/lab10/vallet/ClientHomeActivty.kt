@@ -11,10 +11,13 @@ import android.nfc.Tag
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,7 +25,8 @@ import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
 import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.*
-import io.lab10.vallet.fragments.ProductFragment
+import io.lab10.vallet.fragments.NoStoreFragment
+import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
 import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.client.activity_client_home_activty.*
@@ -34,10 +38,9 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 
-class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductFragment.OnListFragmentInteractionListener {
+class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
+
     var voucherWalletAddress : String = "";
-
-
 
     override fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
         // Do nothing client should not be able to remove item
@@ -72,15 +75,22 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
 
-        if (ValletApp.activeToken!!.tokenType != 0) {
-            toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+        if (ValletApp.activeToken != null) {
+            toolbarVoucherTypeIcon.visibility = View.VISIBLE
+            if (ValletApp.activeToken!!.tokenType != 0) {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+            } else {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+            }
+            if (ValletApp.activeToken!!.remoteReadStoragePresent()) {
+                ValletApp.activeToken!!.storage().fetch()
+            } else {
+                EventBus.getDefault().post(ErrorEvent("Token does not have remote storage defined. Contact Admin"))
+            }
+            showPriceListFragment()
+
         } else {
-            toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
-        }
-        if (ValletApp.activeToken!!.remoteReadStoragePresent()) {
-            ValletApp.activeToken!!.storage().fetch()
-        } else {
-            EventBus.getDefault().post(ErrorEvent("Token does not have remote storage defined. Contact Admin"))
+           showPlaceHolderFragment()
         }
 
         setPriceListHeader()
@@ -110,8 +120,28 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         nav_view.setNavigationItemSelectedListener(this)
     }
 
+    private fun showPlaceHolderFragment() {
+        val noStorePlaceHolder = NoStoreFragment.newInstance()
+        toolbarVoucherTypeIcon.visibility = View.GONE
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.price_list_fragment_container, noStorePlaceHolder)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    private fun showPriceListFragment() {
+        val productListFragment = ProductListFragment.newInstance()
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.price_list_fragment_container, productListFragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
     private fun setPriceListHeader() {
-        toolbarBalance.text = ValletApp.activeToken!!.balance.toString()
+        if (ValletApp.activeToken != null) {
+            toolbarBalance.text = ValletApp.activeToken!!.balance.toString()
+        }
     }
 
     private fun reloadNavigation() {
@@ -119,13 +149,20 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         navigationView.setNavigationItemSelectedListener(this)
         val menu = navigationView.menu
         menu.clear()
+        if(ValletApp.activeToken == null){
+            val i = menu.add(resources.getString(R.string.no_token_available))
+            val txt = resources.getString(R.string.no_token_available)
+            val s = SpannableString(txt)
+            s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.gray)), 0, txt.length, 0);
+            i.setTitle(s)
+        }
         Tokens.getVouchers().forEach { token ->
             val item = menu.add(token.name)
             item.isCheckable = true
             item.isChecked = token.active
             item.setActionView(R.layout.token_balance )
             val view = item.actionView
-            view.voucherBalance.text = token.balance.toString()
+            view.voucherBalance.text = Wallet.convertATS2EUR(token.balance).toString()
             item.setOnMenuItemClickListener { _ ->
                 ValletApp.activeToken = token
                 reloadProductList()
@@ -256,7 +293,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         val token = tokenBox.query().equal(Token_.tokenAddress, event.address).build().findFirst()
         if (token != null) {
-            token.balance = event.balance.toInt()
+            token.balance = event.balance
             tokenBox.put(token)
         }
         Tokens.refresh()
@@ -272,19 +309,23 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun reloadProductList() {
 
         if (ValletApp.activeToken != null) {
+            showPriceListFragment()
             // Load first from local storage
             Products.refresh(ValletApp.activeToken!!)
-            var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+            var productFragment = supportFragmentManager.primaryNavigationFragment as ProductListFragment
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
             if (ValletApp.activeToken!!.remoteReadStoragePresent())
                 ValletApp.activeToken!!.storage().fetch()
+        } else {
+            showPlaceHolderFragment()
         }
     }
 
 
     private fun refreshProductListView() {
-        var productFragment = supportFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        showPriceListFragment()
+        var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container) as ProductListFragment
         Products.refresh(ValletApp.activeToken!!)
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false

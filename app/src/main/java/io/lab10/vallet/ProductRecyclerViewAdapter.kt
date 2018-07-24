@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-import io.lab10.vallet.fragments.ProductFragment.OnListFragmentInteractionListener
+import io.lab10.vallet.fragments.ProductListFragment.OnListFragmentInteractionListener
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductRemoveEvent
 import io.lab10.vallet.models.Token
