@@ -144,7 +144,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun setPriceListHeader() {
         if (ValletApp.activeToken != null) {
-            toolbarBalance.text = ValletApp.activeToken!!.balance.toString()
+            toolbarBalance.text = Wallet.convertATS2EUR(ValletApp.activeToken!!.balance).toString()
         }
     }
 
