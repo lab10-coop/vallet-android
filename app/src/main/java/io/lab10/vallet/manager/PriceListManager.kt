@@ -15,7 +15,7 @@ class PriceListManager {
     companion object {
         fun createPriceList(token: TokenBase) {
             // TODO extract that to settings
-            val apiService = ValletApiService.create("http://192.168.1.103:3000")
+            val apiService = ValletApiService.create("https://vallet.mars.lab10.io")
 
             apiService.createPriceList(token).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
@@ -35,7 +35,7 @@ class PriceListManager {
         }
 
         fun fetchPriceList(tokenContractAddress: String) {
-            val apiService = ValletApiService.create("http://192.168.1.103:3000")
+            val apiService = ValletApiService.create("https://vallet.mars.lab10.io")
             apiService.fetchPriceList(tokenContractAddress).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe ({
@@ -48,7 +48,7 @@ class PriceListManager {
         }
 
         fun updatePriceList(token: TokenUpdate) {
-            val apiService = ValletApiService.create("http://192.168.1.103:3000")
+            val apiService = ValletApiService.create("https://vallet.mars.lab10.io")
             apiService.updatePriceList(token).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe ({
