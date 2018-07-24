@@ -9,7 +9,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.models.Token
-import kotlinx.android.synthetic.admin.activity_show_qr_code.*
+import kotlinx.android.synthetic.main.activity_show_qr_code.*
 
 class ShowQrCodeActivity : AppCompatActivity() {
 
