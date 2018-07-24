@@ -77,6 +77,16 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
         voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
 
+
+        if (voucherWalletAddress.equals("")) {
+            val editor = sharedPref.edit()
+            val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
+            voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), voucherWalletAddress)
+            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
+            editor.commit()
+        }
+
         // TODO move that to settings
         val nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null){
