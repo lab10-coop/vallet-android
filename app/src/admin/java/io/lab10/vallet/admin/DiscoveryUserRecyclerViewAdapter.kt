@@ -9,9 +9,9 @@ import android.widget.TextView
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment.OnListFragmentInteractionListener
-import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.admin.models.BTUsers
 
-class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
+class DiscoveryUserRecyclerViewAdapter(private val mValues: List<BTUsers.User>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -40,7 +40,7 @@ class DiscoveryUserRecyclerViewAdapter(private val mValues: List<Users.User>, pr
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView
         val mContentView: Button
-        var mItem: Users.User? = null
+        var mItem: BTUsers.User? = null
 
         init {
             mIdView = mView.findViewById(R.id.id) as TextView

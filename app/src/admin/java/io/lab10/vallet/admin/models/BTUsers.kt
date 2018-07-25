@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Created by mtfk on 10.01.18.
  */
-object Users {
+object BTUsers {
 
     /**
      * An array of users items.

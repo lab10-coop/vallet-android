@@ -15,7 +15,7 @@ import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
-import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.admin.models.BTUsers
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
@@ -46,7 +46,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         holder.mBackgroundArea.visibility = View.GONE
     }
 
-    override fun onListFragmentInteraction(user: Users.User) {
+    override fun onListFragmentInteraction(user: BTUsers.User) {
         IssueTokenFragment.newInstance(user).show(supportFragmentManager, "dialog")
     }
 

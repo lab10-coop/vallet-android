@@ -20,7 +20,7 @@ import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 import io.lab10.vallet.admin.events.BTScanningActivityEvent
 import io.lab10.vallet.admin.events.NewAddressEvent
 
-import io.lab10.vallet.admin.models.Users
+import io.lab10.vallet.admin.models.BTUsers
 import io.lab10.vallet.admin.recievers.BluetoothBroadcastReceiver
 import io.lab10.vallet.connectivity.BTUtils
 import kotlinx.android.synthetic.admin.fragment_user_list.*
@@ -94,7 +94,7 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         if (view.list is RecyclerView) {
             val context = view.list.getContext()
             val recyclerView = view.list as RecyclerView
-            adapter = DiscoveryUserRecyclerViewAdapter(Users.getUsers(), mListener)
+            adapter = DiscoveryUserRecyclerViewAdapter(BTUsers.getUsers(), mListener)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
         }
@@ -115,8 +115,8 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: NewAddressEvent) {
-        var user = Users.User(event.address, event.address, event.deviceName)
-        Users.addItem(user)
+        var user = BTUsers.User(event.address, event.address, event.deviceName)
+        BTUsers.addItem(user)
         adapter!!.notifyDataSetChanged()
         val debugMode = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE).getBoolean(resources.getString(R.string.shared_pref_debug_mode), false)
         if (debugMode) {
@@ -154,7 +154,7 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
      * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Users.User)
+        fun onListFragmentInteraction(item: BTUsers.User)
     }
 
     companion object {
@@ -174,7 +174,7 @@ class DiscoverUsersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     val address = result.contents.split(";")[0]
                     val userName = result.contents.split(";")[1]
                     if (Wallet.isValidAddress(address)) {
-                        var user = Users.User(address, address, userName)
+                        var user = BTUsers.User(address, address, userName)
                         IssueTokenFragment.newInstance(user).show(fragmentManager, userName)
                     } else {
                         EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
