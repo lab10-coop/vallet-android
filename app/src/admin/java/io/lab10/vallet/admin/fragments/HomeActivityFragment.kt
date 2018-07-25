@@ -46,7 +46,7 @@ class HomeActivityFragment : Fragment() {
         val query = valletTransactionBox.query().build()
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
             .observer { sum ->
-                if ((activity as AdminActivity).voucher?.tokenType == 0) {
+                if (ValletApp.activeToken!!.tokenType == 0) {
                     viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
                 } else {
                     viewHolder!!.voucherCountLabel.text = sum.toString()
