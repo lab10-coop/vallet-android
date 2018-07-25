@@ -29,7 +29,7 @@ import org.greenrobot.eventbus.ThreadMode
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
-        IssueTokenFragment.OnFragmentInteractionListener,
+        IssueDialogFragment.OnFragmentInteractionListener,
         PriceListFragment.OnFragmentInteractionListener,
         ProductListFragment.OnListFragmentInteractionListener {
 
@@ -47,7 +47,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     override fun onListFragmentInteraction(user: BTUsers.User) {
-        IssueTokenFragment.newInstance(user).show(supportFragmentManager, "dialog")
+        IssueDialogFragment.newInstance(user).show(supportFragmentManager, "dialog")
     }
 
     override fun onFragmentInteraction(uri: Uri) {

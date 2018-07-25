@@ -1,7 +1,6 @@
 package io.lab10.vallet
 
 import android.app.Application
-import io.lab10.vallet.models.MyObjectBox
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Token_
 import io.objectbox.BoxStore

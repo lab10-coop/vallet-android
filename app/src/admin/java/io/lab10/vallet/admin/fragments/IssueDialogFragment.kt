@@ -21,7 +21,7 @@ import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus
 
-class IssueTokenFragment : DialogFragment() {
+class IssueDialogFragment : DialogFragment() {
 
     private var userName: String? = null
     private var userAddress: String? = null
@@ -135,7 +135,7 @@ class IssueTokenFragment : DialogFragment() {
         val USER_ADDRESS_PARAM = "user_address"
 
         fun newInstance(user: BTUsers.User) =
-            IssueTokenFragment().apply {
+            IssueDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(USER_NAME_PARAM, user.name)
                     putString(USER_ADDRESS_PARAM, user.address)
