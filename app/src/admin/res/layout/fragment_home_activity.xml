@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,72 +27,70 @@
                 android:layout_height="wrap_content">
 
 
-
                 <TextView
                     android:id="@+id/tokenNameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
                     android:fontFamily="@font/work_sans"
-                    android:text="Creating token ..."
                     android:textColor="#fff"
                     android:textSize="16sp"
-                    android:layout_marginTop="40dp"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="Lab10" />
 
                 <LinearLayout
                     android:id="@+id/valueLabel"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tokenNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="0dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tokenNameLabel">
 
 
                     <ImageView
                         android:id="@+id/voucherTypeIcon"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_marginTop="12dp"
                         android:layout_marginRight="5dp"
-                        android:background="@drawable/euro_icon_white"/>
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/euro_icon_white" />
 
                     <TextView
                         android:id="@+id/voucherCountLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/work_sans_bold"
-                        android:text="0"
-                        android:lineSpacingMultiplier="1.5"
                         android:lineSpacingExtra="0dp"
+                        android:lineSpacingMultiplier="1.5"
+                        android:text="0"
                         android:textColor="#fff"
                         android:textSize="50sp" />
                 </LinearLayout>
 
 
                 <TextView
-                android:layout_width="wrap_content"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/work_sans"
                     android:text="@string/circulating"
                     android:textColor="#fff"
-                    app:layout_constraintTop_toBottomOf="@+id/valueLabel"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:textSize="16sp" />
+                    app:layout_constraintTop_toBottomOf="@+id/valueLabel" />
 
                 <ImageView
                     android:id="@+id/showQrCode"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="20dp"
                     android:layout_marginRight="20dp"
+                    android:layout_marginTop="20dp"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/qr_icon" />
@@ -149,6 +148,7 @@
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
+
 </ScrollView>
 
 

@@ -7,6 +7,9 @@
     android:background="@color/background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include layout="@layout/progressbar_overlay"/>
+
+
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"

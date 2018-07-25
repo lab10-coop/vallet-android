@@ -9,16 +9,18 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.Users
 import io.lab10.vallet.events.*
-import io.lab10.vallet.fragments.ProductFragment
+import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
 import kotlinx.android.synthetic.admin.activity_admin.*
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import kotlinx.android.synthetic.main.progressbar_overlay.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -28,7 +30,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         DiscoverUsersFragment.OnListFragmentInteractionListener,
         IssueTokenFragment.OnFragmentInteractionListener,
         PriceListFragment.OnFragmentInteractionListener,
-        ProductFragment.OnListFragmentInteractionListener {
+        ProductListFragment.OnListFragmentInteractionListener {
 
     override fun onProductClickListner(item: Product) {
         val intent = Intent(this, AddProductActivity::class.java)
@@ -60,9 +62,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        voucher = voucherBox.query().build().findFirst()
-
         navigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var selectedFragment: Fragment? = null
@@ -83,9 +82,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, HomeActivityFragment.newInstance())
         transaction.commit()
-        // TODO move to home fragment
-        if (voucher?.tokenAddress != null)
-            Web3jManager.INSTANCE.getCirculatingVoucher(this, voucher!!.tokenAddress)
 
     }
 
@@ -128,6 +124,9 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
         tokenBox.put(voucher)
+
+        progress_overlay.setVisibility(View.GONE)
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
         // prepare remote storage
         Thread(Runnable {

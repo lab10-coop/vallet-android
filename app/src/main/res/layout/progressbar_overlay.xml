@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/semitransparent_background"
+    android:elevation="1dp"
+    android:visibility="gone"
+    android:id="@+id/progress_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ProgressBar
+        android:id="@+id/creatingTokenProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="70dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/colorPrimary"
+        />
+
+    <TextView
+        android:id="@+id/myTextProgress"
+        android:background="@android:color/transparent"
+        android:text="We are creating your store\nPlease wait..."
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        />
+
+
+</FrameLayout>

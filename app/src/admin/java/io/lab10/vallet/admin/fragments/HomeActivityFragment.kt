@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import io.lab10.vallet.admin.activities.HistoryActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
@@ -28,6 +25,8 @@ import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import kotlinx.android.synthetic.main.progressbar_overlay.view.*
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -115,8 +114,8 @@ class HomeActivityFragment : Fragment() {
             viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
 
-        if ((activity as AdminActivity).voucher != null)
-            viewHolder!!.tokenNameLabel.text = (activity as AdminActivity).voucher!!.name
+        if (ValletApp.activeToken != null)
+            viewHolder!!.tokenNameLabel.text = ValletApp.activeToken!!.name
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)
@@ -151,6 +150,15 @@ class HomeActivityFragment : Fragment() {
         viewHolder!!.view_history_label.setOnClickListener { v ->
             val intent = Intent(activity, HistoryActivity::class.java)
             startActivity(intent)
+        }
+
+
+        if (ValletApp.activeToken == null) {
+            activity.findViewById<View>(R.id.progress_overlay).setVisibility(View.VISIBLE);
+            activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            Web3jManager.INSTANCE.getCirculatingVoucher(activity, ValletApp.activeToken!!.tokenAddress)
         }
         return viewHolder
     }

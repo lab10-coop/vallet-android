@@ -13,9 +13,8 @@ import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 
 import io.lab10.vallet.admin.activities.AddProductActivity
-import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.events.*
-import io.lab10.vallet.fragments.ProductFragment
+import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
@@ -79,7 +78,7 @@ class PriceListFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsListEvent(event: ProductsListEvent) {
-        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
         productFragment.notifyAboutchange()
         productFragment.swiperefresh.isRefreshing = false
     }
@@ -135,7 +134,7 @@ class PriceListFragment : Fragment() {
     private fun refreshProductsLocal() {
         val token = ValletApp.activeToken
 
-        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
         productFragment.swiperefresh.isRefreshing = true;
         Products.refresh(token!!)
         productFragment.notifyAboutchange()
@@ -143,7 +142,7 @@ class PriceListFragment : Fragment() {
     }
     private fun reloadProducts() {
 
-        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductFragment
+        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
         productFragment.swiperefresh.isRefreshing = true;
         val token = ValletApp.activeToken
 
