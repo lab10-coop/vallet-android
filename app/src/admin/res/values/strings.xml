@@ -8,7 +8,7 @@
     <string name="title_activity_admin">Vallet Admin</string>
     <string name="title_activity_voucher">VoucherActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="create_voucher_hint">Welcome Vallet admin!\nName yout shop and get started.</string>
+    <string name="create_voucher_hint">Welcome Vallet admin!\nName your shop and get started.</string>
     <string name="select_user_nearby">Select user nearby</string>
     <string name="issue_token">Issue</string>
 
