@@ -1,7 +1,5 @@
 package io.lab10.vallet.models
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.google.gson.Gson
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id

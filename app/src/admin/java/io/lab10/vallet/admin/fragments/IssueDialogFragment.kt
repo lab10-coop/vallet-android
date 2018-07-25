@@ -12,12 +12,11 @@ import io.lab10.vallet.R
 import io.lab10.vallet.admin.models.BTUsers
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
-import java.math.BigInteger
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.admin.events.IssueTokenEvent
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Token
-import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus
 
@@ -57,24 +56,9 @@ class IssueDialogFragment : DialogFragment() {
             if (amountInput.isBlank()) {
                 EventBus.getDefault().post(ErrorEvent("Value must be present"))
             } else {
-
                 try {
-                    var address = Wallet.formatAddress(userAddress)
-                    var amount = BigInteger.ZERO
-                    if (voucher!!.tokenType == 0) {
-                        amount = BigInteger.valueOf(Wallet.convertEUR2ATS(amountInput).toLong())
-                    } else {
-                        amount = BigInteger(amountInput)
-                    }
-                    if (amount > BigInteger.ZERO) {
-                        Web3jManager.INSTANCE.issueTokensTo(activity, address, amount, voucher!!.tokenAddress)
-                        // Request funds for user to be able to consume tokens
-                        // TODO calculate how much we should request base on the amount
-                        FaucetManager.INSTANCE.getFounds(context, address)
-                        dialog.dismiss()
-                    } else {
-                        EventBus.getDefault().post(ErrorEvent("Value must be positive"))
-                    }
+                    EventBus.getDefault().post(IssueTokenEvent(userAddress!!, amountInput, userName))
+                    dialog.dismiss()
                 } catch (e: Exception) {
                     EventBus.getDefault().post(ErrorEvent(e.message.toString()))
                 }

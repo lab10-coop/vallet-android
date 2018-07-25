@@ -14,8 +14,10 @@ import android.view.WindowManager
 import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.admin.events.IssueTokenEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.BTUsers
+import io.lab10.vallet.admin.models.User
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
@@ -25,6 +27,7 @@ import kotlinx.android.synthetic.main.progressbar_overlay.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.math.BigInteger
 
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
@@ -140,6 +143,31 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }).start()
     }
 
+    @Subscribe
+    fun onIssueTokenEvent(event: IssueTokenEvent) {
+        var address = Wallet.formatAddress(event.userAddress)
+        var amount = BigInteger.ZERO
+        var userName = event.userName
+        if (userName.isNullOrEmpty()) {
+            userName = ""
+        }
+        addUserToAddressBook(event.userAddress, userName!!)
+        if (ValletApp.activeToken?.tokenType == 0) {
+            amount = BigInteger.valueOf(Wallet.convertEUR2ATS(event.amount).toLong())
+        } else {
+            amount = BigInteger(event.amount)
+        }
+        if (amount > BigInteger.ZERO) {
+            Web3jManager.INSTANCE.issueTokensTo(this, address, amount, ValletApp.activeToken!!.tokenAddress)
+            // Request funds for user to be able to consume tokens
+            // TODO calculate how much we should request base on the amount
+            // TODO check balance before
+            FaucetManager.INSTANCE.getFounds(this, address)
+        } else {
+            EventBus.getDefault().post(ErrorEvent("Value must be positive"))
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this);
@@ -148,6 +176,12 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this);
+    }
+
+    private fun addUserToAddressBook(address: String, name: String) {
+        val userBox = ValletApp.getBoxStore().boxFor(User::class.java)
+        val user = User(0,name, address)
+        userBox.put(user)
     }
 
     private fun createToken(tokenName: String) {
