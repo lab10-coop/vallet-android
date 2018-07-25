@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -59,6 +60,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+
+        val tokenName = intent.getStringExtra("TOKEN_NAME")
+        if (tokenName != null) {
+            createToken(tokenName)
+        }
 
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
@@ -142,6 +148,30 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this);
+    }
+
+    private fun createToken(tokenName: String) {
+        val voucherDecimal = 12;
+
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        var voucherType = Tokens.Type.EUR.toString()
+
+        // TODO: Manage password for the key
+        val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+        editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
+        editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
+        editor.commit()
+
+        // TODO trigger that only if balance is lower then needed amount for creating transaction.
+        //
+
+        if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
+            FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, walletAddress, tokenName, voucherType, voucherDecimal)
+        } else {
+            Web3jManager.INSTANCE.generateNewToken(this, tokenName, voucherType, voucherDecimal)
+        }
     }
 
 

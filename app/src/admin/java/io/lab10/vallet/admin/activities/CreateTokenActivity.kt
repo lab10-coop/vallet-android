@@ -18,11 +18,9 @@ import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.Toast
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
-import android.view.WindowManager
-import io.lab10.vallet.models.Tokens
 import android.net.ConnectivityManager
-
-
+import io.lab10.vallet.admin.events.CreateTokenEvent
+import org.greenrobot.eventbus.EventBus
 
 
 class CreateTokenActivity : AppCompatActivity() {
@@ -55,6 +53,7 @@ class CreateTokenActivity : AppCompatActivity() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
             }
+
             override fun onPageSelected(position: Int) {
                 // TODO nothing to do here since we have just one page at the moment
             }
@@ -69,10 +68,11 @@ class CreateTokenActivity : AppCompatActivity() {
     inner class StepsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            when(position) {
+            when (position) {
                 0 -> {
                     return VoucherNameFragment.newInstance(voucherSettingsViewPager)
-                } else -> {
+                }
+                else -> {
                     return VoucherNameFragment.newInstance(voucherSettingsViewPager)
                 }
             }
@@ -96,45 +96,25 @@ class CreateTokenActivity : AppCompatActivity() {
             val finishButton = rootView.getStarterd
             finishButton.setOnClickListener() { v ->
 
-                if (haveNetworkConnection()) {
-                    // TODO add voucher.valid? before submitting
-
-                    // TOOD this seems not work very fast. There is a lag between pressed and showing progress bar.
-                    // Replace that with event and do stuff in background
-                    activity.runOnUiThread {
-
-                        progressBar.visibility = View.VISIBLE
-                        activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    }
-
-                    val voucherName = inputVoucherName.text.toString()
-                    val voucherDecimal = 12;
-
-                    val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-                    val editor = sharedPref.edit()
-                    var voucherType = Tokens.Type.EUR.toString()
-
-                    // TODO: Manage password for the key
-                    val walletFile = Web3jManager.INSTANCE.createWallet(context, "123")
-                    val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-                    editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-                    editor.putString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
-                    editor.commit()
-
-                    // TODO trigger that only if balance is lower then needed amount for creating transaction.
-                    //
-
-                    if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
-                        FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(context, walletAddress, voucherName, voucherType, voucherDecimal)
-                    } else {
-                        Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
-                    }
-
-                    val intent = Intent(view?.context, AdminActivity::class.java)
-                    startActivity(intent)
+                // TODO replace that with token.valid?
+                if (inputVoucherName.text.length < 3) {
+                    Toast.makeText(activity, "Please fill the name of the store at least 3 characters", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(activity, "Pleaes connect to the internet to continue", Toast.LENGTH_LONG).show()
+                    if (haveNetworkConnection()) {
+                        // TODO add voucher.valid? before submitting
+
+                        val name = inputVoucherName.text.toString()
+                        EventBus.getDefault().post(CreateTokenEvent(name))
+
+
+                        val intent = Intent(view?.context, AdminActivity::class.java)
+                        intent.putExtra("TOKEN_NAME", name)
+                        startActivity(intent)
+
+
+                    } else {
+                        Toast.makeText(activity, "Pleaes connect to the internet to continue", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
