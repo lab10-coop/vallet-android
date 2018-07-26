@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
-import io.lab10.vallet.admin.activities.HistoryActivity
+import io.lab10.vallet.activites.HistoryActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
 import io.lab10.vallet.events.RedeemVoucherEvent
@@ -25,8 +25,6 @@ import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
-import kotlinx.android.synthetic.admin.fragment_home_activity.*
-import kotlinx.android.synthetic.main.progressbar_overlay.view.*
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null

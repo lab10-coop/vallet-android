@@ -44,7 +44,7 @@
             android:name=".admin.activities.DebugActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".admin.activities.HistoryActivity"
+            android:name=".activites.HistoryActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".admin.activities.ShowQrCodeActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
