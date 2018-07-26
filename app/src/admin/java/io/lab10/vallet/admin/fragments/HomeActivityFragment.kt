@@ -44,16 +44,17 @@ class HomeActivityFragment : Fragment() {
         EventBus.getDefault().register(this)
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
         val query = valletTransactionBox.query().build()
-        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum()}
-            .observer { sum ->
-                if (ValletApp.activeToken!!.tokenType == 0) {
-                    viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
-                } else {
-                    viewHolder!!.voucherCountLabel.text = sum.toString()
-                }
+        if (ValletApp.activeToken != null) {
+            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
+                    .observer { sum ->
+                        if (ValletApp.activeToken!!.tokenType == 0) {
+                            viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
+                        } else {
+                            viewHolder!!.voucherCountLabel.text = sum.toString()
+                        }
 
-            }
-
+                    }
+        }
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,2)}
                 .observer { recent ->
                     (viewAdapter as HistoryRecyclerViewAdapter).setTransaction(recent)
