@@ -337,7 +337,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (ValletApp.activeToken != null) {
             // Load first from local storage
             Products.refresh(ValletApp.activeToken!!)
-            var productFragment = supportFragmentManager.primaryNavigationFragment
+            var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
             if (productFragment is ProductListFragment) {
                 productFragment.notifyAboutchange()
                 productFragment.swiperefresh.isRefreshing = false
