@@ -7,12 +7,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
+import io.lab10.vallet.HistoryRecyclerViewAdapter
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
-import kotlinx.android.synthetic.admin.activity_history.*
+import kotlinx.android.synthetic.main.activity_history.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 

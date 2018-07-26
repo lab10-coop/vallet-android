@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.HistoryRecyclerViewAdapter
+import io.lab10.vallet.HistoryRecyclerViewAdapter
 import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.admin.activities.ShowQrCodeActivity
 import io.lab10.vallet.models.History

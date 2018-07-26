@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin
+package io.lab10.vallet
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import io.lab10.vallet.R
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.Wallet
 
@@ -32,7 +31,7 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
 
 
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): HistoryRecyclerViewAdapter.ViewHolder {
+                                    viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.history_item, parent, false) as View
 

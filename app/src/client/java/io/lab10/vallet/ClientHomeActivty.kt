@@ -23,6 +23,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
+import io.lab10.vallet.activites.HistoryActivity
 import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.NoStoreFragment
@@ -206,12 +207,21 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return true
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item != null) {
+            when (item.getItemId()) {
+                R.id.menu_history -> {
+                    val intent = Intent(this, HistoryActivity::class.java)
+                    startActivity(intent)
+                    return true
+                }
+                else -> return super.onOptionsItemSelected(item)
+            }
+        } else {
+            return true
         }
-
+    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }

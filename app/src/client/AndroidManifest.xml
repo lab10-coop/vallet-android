@@ -21,6 +21,9 @@
         <activity
             android:name="io.lab10.vallet.ShowQrCodeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="io.lab10.vallet.activites.HistoryActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
