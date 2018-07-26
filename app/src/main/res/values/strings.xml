@@ -20,8 +20,7 @@
     <string name="voucher_type_euro">V-EUR</string>
     <string name="voucher_type_voucher">Voucher</string>
     <string name="message_creating_token">New token</string>
-    <string name="message_creating_token_in_proggres">Creating new token ...</string>
-    <string name="circulating">Circulating</string>
+    <string name="message_creating_token_in_progress">Creating new token ...</string>
     <string name="label_recent_activities">Recent activities</string>
     <string name="main_menu_home">Activity</string>
     <string name="main_menu_issue">Issue</string>
@@ -49,7 +48,7 @@
     <string name="label_scan_token"><![CDATA[Scan token >]]></string>
     <string name="placeholder_no_recent_activities">No recent activities</string>
     <string name="history">History</string>
-    <string name="tap_to_search_for_admin">Tap to start scanning admin</string>
+    <string name="tap_to_search_for_admin">Add new store</string>
     <string name="add_store_button">Add store</string>
     <string name="place_holder_label">You do not have any store in your wallet. Please scan QR code to add new.</string>
     <string name="no_token_available">Empty</string>

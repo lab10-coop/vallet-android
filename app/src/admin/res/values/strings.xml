@@ -11,6 +11,7 @@
     <string name="create_voucher_hint">Welcome Vallet admin!\nName your shop and get started.</string>
     <string name="select_user_nearby">Select user nearby</string>
     <string name="issue_token">Issue</string>
+    <string name="circulating">Vouchers Circulating</string>
 
     <string-array name="voucher_type">
         <item>EUR</item>
