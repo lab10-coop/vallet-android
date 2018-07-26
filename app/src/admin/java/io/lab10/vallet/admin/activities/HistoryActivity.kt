@@ -1,4 +1,4 @@
-package io.lab10.vallet.admin.activities
+package io.lab10.vallet.activites
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +12,6 @@ import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
-import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.admin.activity_history.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

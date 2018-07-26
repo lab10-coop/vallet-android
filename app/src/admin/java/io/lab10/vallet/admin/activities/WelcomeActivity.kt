@@ -14,11 +14,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        var voucher = voucherBox.query().build().find()
-
-        // TODO try to fetch from network
-        if (voucher.size > 0) {
+        if (ValletApp.activeToken != null) {
             val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         } else {
