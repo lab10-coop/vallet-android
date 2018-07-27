@@ -26,5 +26,7 @@
     <string name="error_voucher_name_too_short">Voucher name too short. Min 3 characters.</string>
     <string name="issue_to">to</string>
     <string name="get_started">Get started</string>
+    <string name="transfer">Transferred</string>
+    <string name="redeem">Redeem</string>
 
 </resources>
