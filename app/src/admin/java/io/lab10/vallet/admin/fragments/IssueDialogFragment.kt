@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.events.IssueTokenEvent
 import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.IssueTokenEvent
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.utils.EuroInputFilter
 import org.greenrobot.eventbus.EventBus

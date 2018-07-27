@@ -15,4 +15,9 @@ class ProductRefreshEvent
 class ProductChangedEvent
 class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val secret: String = "")
+// TOOD This is for burning tokens but not idea why we should do it...
 class TokenRedeemEvent(val address: String)
+
+
+class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)
+class PendingTransactionEvent(val status: String, val userAddress: String, val transactionId: String)

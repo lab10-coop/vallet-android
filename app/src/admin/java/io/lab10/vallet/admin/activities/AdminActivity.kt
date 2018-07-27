@@ -14,7 +14,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.admin.events.IssueTokenEvent
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.admin.models.BTUsers
 import io.lab10.vallet.admin.models.User
