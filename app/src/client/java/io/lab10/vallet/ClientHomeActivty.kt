@@ -54,19 +54,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onProductClickListner(item: Product) {
-        if (item.price > ValletApp.activeToken!!.balance) {
-            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
-        } else {
-            AlertDialog.Builder(this)
-                    .setTitle("Pay")
-                    .setMessage("Are you confirm to pay for that product?")
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
-                        Web3jManager.INSTANCE.redeemToken(this, item.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress)
-                        Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
-                    })
-                    .setNegativeButton(android.R.string.no, null).show()
-        }
+        payFor(item)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -221,6 +209,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return true
         }
     }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -249,7 +238,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (nfcAdapter!!.isEnabled())
                 nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }
-
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -269,6 +257,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             reloadProductList()
         }
     }
+
     private val REQUEST_BT_ENABLE = 100
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -301,6 +290,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -370,7 +360,27 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 val st = String.format("%02X", b)
                 result += st
             }
-            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+            val productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
+            val product = productBox.query().equal(Product_.nfcTagId, result).build().findFirst()
+            if (product != null) {
+                payFor(product)
+            }
+        }
+    }
+
+    private fun payFor(product: Product) {
+        if (product.price > ValletApp.activeToken!!.balance) {
+            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
+        } else {
+            AlertDialog.Builder(this)
+                    .setTitle("Pay")
+                    .setMessage(resources.getString(R.string.confirm_to_pay) + " " + product.name)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
+                        Web3jManager.INSTANCE.redeemToken(this, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress)
+                        Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
+                    })
+                    .setNegativeButton(android.R.string.no, null).show()
         }
     }
 

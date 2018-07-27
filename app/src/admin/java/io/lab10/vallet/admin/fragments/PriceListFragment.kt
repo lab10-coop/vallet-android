@@ -1,14 +1,17 @@
 package io.lab10.vallet.admin.fragments
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 
@@ -27,6 +30,8 @@ import org.greenrobot.eventbus.EventBus
 class PriceListFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
+    private var pendingIntent: PendingIntent? = null
+    private var nfcAdapter: NfcAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -36,6 +41,22 @@ class PriceListFragment : Fragment() {
         view.addProductBtn.setOnClickListener() { v ->
             val intent = Intent(activity, AddProductActivity::class.java)
             startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
+        }
+
+
+        pendingIntent = PendingIntent.getActivity(activity, 0,
+                Intent(activity, this.javaClass)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
+        if(nfcAdapter == null){
+            Toast.makeText(activity,
+                    "NFC NOT supported on this devices!",
+                    Toast.LENGTH_LONG).show();
+        }else if(!nfcAdapter!!.isEnabled()){
+            Toast.makeText(activity,
+                    "To use NFC you have to enabled it!",
+                    Toast.LENGTH_LONG).show();
         }
 
         reloadProducts()
