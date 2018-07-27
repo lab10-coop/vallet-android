@@ -1,6 +1,7 @@
 package io.lab10.vallet.activites
 
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,7 +17,13 @@ import kotlinx.android.synthetic.main.activity_history.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-class HistoryActivity : AppCompatActivity() {
+class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
+    override fun onRefresh() {
+        History.clear()
+        fetchHistory()
+        viewAdapter.notifyDataSetChanged()
+        swipe_container.setRefreshing(false);
+    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -42,15 +49,9 @@ class HistoryActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        if (recyclerView.adapter.itemCount == 0) {
-            recyclerView.visibility = View.GONE
-            empty_view.visibility = View.VISIBLE
-        } else {
-            recyclerView.visibility = View.VISIBLE
-            empty_view.visibility = View.GONE
-        }
+        swipe_container.setOnRefreshListener(this)
 
-
+        managePlaceholder()
         fetchHistory()
     }
 
@@ -59,6 +60,7 @@ class HistoryActivity : AppCompatActivity() {
         return true
     }
 
+    // TODO add latest block
     private fun fetchHistory() {
         Web3jManager.INSTANCE.fetchAllTransaction(this, ValletApp.activeToken!!.tokenAddress)
     }
@@ -66,8 +68,11 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
-            var transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
-            History.addItem(transaction)
+            val transfer = resources.getString(R.string.transfer)
+            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+            History.addTransaction(transaction)
+            History.reloadTransactions()
+            managePlaceholder()
             viewAdapter.notifyDataSetChanged()
         }
 
@@ -76,8 +81,10 @@ class HistoryActivity : AppCompatActivity() {
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         runOnUiThread {
-            var transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
-            History.addItem(transaction)
+            val redeem = resources.getString(R.string.redeem)
+            var transaction = ValletTransaction(0, redeem, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+            History.addTransaction(transaction)
+            History.reloadTransactions()
             viewAdapter.notifyDataSetChanged()
         }
     }
@@ -90,6 +97,16 @@ class HistoryActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this);
+    }
+
+    private fun managePlaceholder() {
+        if (recyclerView.adapter.itemCount == 0) {
+            recyclerView.visibility = View.GONE
+            empty_view.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.VISIBLE
+            empty_view.visibility = View.GONE
+        }
     }
 
 }

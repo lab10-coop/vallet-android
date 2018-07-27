@@ -13,9 +13,9 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
+import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
@@ -257,8 +257,10 @@ class Web3jManager private constructor(){
                         EventBus.getDefault().post(ErrorEvent("Unknown error"))
                     }
                 }
-            }.subscribeOn(Schedulers.io()).subscribe {
-                EventBus.getDefault().post(MessageEvent(context.getString(R.string.message_voucher_issued)))
+            }.subscribeOn(Schedulers.io()).subscribe { event ->
+                val transaction = event as TransactionReceipt
+                val log = event.logs.first()
+                EventBus.getDefault().post(PendingTransactionEvent(transaction.status, log.address, transaction.transactionHash))
             }
         } catch (e: Exception) {
             if (e.message != null)
