@@ -82,7 +82,7 @@ class HomeActivityFragment : Fragment() {
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         if (isAdded) {
             val transfer = resources.getString(R.string.redeem)
-            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            var transaction = ValletTransaction(0, transfer, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             History.reloadTransactions()
             activity.runOnUiThread {
