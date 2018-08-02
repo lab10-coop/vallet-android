@@ -107,22 +107,23 @@ class Web3jManager private constructor(){
     }
 
     fun getCirculatingVoucher(context: Context, tokenContractAddress: String) {
-        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        if (Wallet.isValidAddress(tokenContractAddress)) {
-            var token = Token.load(tokenContractAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-            token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.TransferEventResponse
-                        // TODO add address to support multiple vouchers
-                        emitTransactionEvent(log, "")
+        // NOTE: For some reason to get totalSupply of the token it is required to pass credentials, can not be done with readonlytransactionmanager
+        // as the web3j will fail. Not fully understand why, if this is a bug in web3j or the readonlytransactionmanager is missing something.
+        // TODO find out why ^
+        val credentials = loadCredential(context)
+        try {
+            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            if (Wallet.isValidAddress(tokenContractAddress)) {
+                Single.fromCallable {
+                    token.totalSupply().send()
+                }.subscribeOn(Schedulers.io()).subscribe { result ->
+                    EventBus.getDefault().post(TokenTotalSupplyEvent(result.toLong(), tokenContractAddress))
+                }
+            }
+        } catch (e: Exception) {
+            if (e.message != null)
+                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
-                    }
-            token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
-                        var log = event as Token.RedeemEventResponse
-                        // TODO add address to support multiple vouchers
-                        emitRedeemEvent(log, "")
-                    }
         }
     }
 

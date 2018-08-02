@@ -20,6 +20,7 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.HistoryRecyclerViewAdapter
 import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.admin.activities.ShowQrCodeActivity
+import io.lab10.vallet.events.TokenTotalSupplyEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
@@ -86,6 +87,17 @@ class HomeActivityFragment : Fragment() {
             History.reloadTransactions()
             activity.runOnUiThread {
                 viewAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    @Subscribe
+    fun onTotalSupplyEvent(event: TokenTotalSupplyEvent) {
+        if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
+            if (ValletApp.activeToken!!.tokenType == 0) {
+                viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
+            } else {
+                viewHolder!!.voucherCountLabel.text = event.value.toString()
             }
         }
     }

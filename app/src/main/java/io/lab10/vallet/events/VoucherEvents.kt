@@ -7,6 +7,7 @@ class TransferVoucherEvent(val address: String, val transactionId: String, val t
 class RedeemVoucherEvent(val address: String, val transactionId: String, val to: String, val value: BigInteger, val blockNumber: BigInteger)
 class TokenCreateEvent(val address: String, val name: String, val type: String, val decimal: BigInteger)
 class TokenNameEvent(val name: String, val address: String)
+class TokenTotalSupplyEvent(val value: Long, val address: String)
 class TokenTypeEvent(val name: String, val address: String)
 class TokenBalanceEvent(val balance: Long, val address: String)
 class ProductsListEvent
