@@ -68,28 +68,24 @@ class HomeActivityFragment : Fragment() {
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         if (isAdded) {
-            val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-            val builder = valletTransactionBox.query();
-            builder.equal(ValletTransaction_.transactionId, event.transactionId)
-            var transaction = builder.build().findUnique()
-            if (transaction == null) {
-                transaction = ValletTransaction(0, "Transfer", event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
-                valletTransactionBox.put(transaction)
+            val transfer = resources.getString(R.string.transfer)
+            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            History.addTransaction(transaction)
+            History.reloadTransactions()
+            activity.runOnUiThread {
+                viewAdapter.notifyDataSetChanged()
             }
         }
-
-
     }
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         if (isAdded) {
-            val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-            val builder = valletTransactionBox.query();
-            builder.equal(ValletTransaction_.transactionId, event.transactionId)
-            var transaction = builder.build().findUnique()
-            if (transaction == null) {
-                transaction = ValletTransaction(0, "Redeem", -event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
-                valletTransactionBox.put(transaction)
+            val transfer = resources.getString(R.string.redeem)
+            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            History.addTransaction(transaction)
+            History.reloadTransactions()
+            activity.runOnUiThread {
+                viewAdapter.notifyDataSetChanged()
             }
         }
     }

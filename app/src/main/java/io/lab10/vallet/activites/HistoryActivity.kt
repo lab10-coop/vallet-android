@@ -69,7 +69,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
             val transfer = resources.getString(R.string.transfer)
-            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             History.reloadTransactions()
             managePlaceholder()
@@ -82,7 +82,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         runOnUiThread {
             val redeem = resources.getString(R.string.redeem)
-            var transaction = ValletTransaction(0, redeem, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId)
+            var transaction = ValletTransaction(0, redeem, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             History.reloadTransactions()
             viewAdapter.notifyDataSetChanged()

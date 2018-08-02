@@ -5,6 +5,7 @@ import io.lab10.vallet.Token
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
+import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -13,6 +14,7 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.protocol.core.methods.response.TransactionReceipt
@@ -249,7 +251,8 @@ class Web3jManager private constructor(){
             var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 try {
-                token.issue(to, amount).send()
+                    EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
+                    token.issue(to, amount).send()
                 } catch (e: Exception) {
                     if (e.message != null) {
                         EventBus.getDefault().post(ErrorEvent(e.message.toString()))
@@ -260,7 +263,6 @@ class Web3jManager private constructor(){
             }.subscribeOn(Schedulers.io()).subscribe { event ->
                 val transaction = event as TransactionReceipt
                 val log = event.logs.first()
-                EventBus.getDefault().post(PendingTransactionEvent(transaction.status, log.address, transaction.transactionHash))
             }
         } catch (e: Exception) {
             if (e.message != null)
