@@ -93,11 +93,13 @@ class HomeActivityFragment : Fragment() {
 
     @Subscribe
     fun onTotalSupplyEvent(event: TokenTotalSupplyEvent) {
-        if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
-            if (ValletApp.activeToken!!.tokenType == 0) {
-                viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
-            } else {
-                viewHolder!!.voucherCountLabel.text = event.value.toString()
+        activity.runOnUiThread {
+            if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
+                if (ValletApp.activeToken!!.tokenType == 0) {
+                    viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
+                } else {
+                    viewHolder!!.voucherCountLabel.text = event.value.toString()
+                }
             }
         }
     }
