@@ -62,17 +62,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
-
-
-        if (voucherWalletAddress.equals("")) {
-            val editor = sharedPref.edit()
+        if (ValletApp.wallet == null) {
+            // TODO take care of the passoword. Auto generate it?
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), voucherWalletAddress)
-            editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-            editor.commit()
+            ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
         }
 
         // TODO move that to settings
@@ -379,12 +373,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun refreshBalance() {
         // Trigger balance check for each token
         Tokens.getVouchers().forEach { e ->
-            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  voucherWalletAddress)
+            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  ValletApp.wallet!!.address)
         }
     }
 
     private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
-        Web3jManager.INSTANCE.getClientBalance(this, address, voucherWalletAddress)
+        Web3jManager.INSTANCE.getClientBalance(this, address, ValletApp.wallet!!.address)
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         var token = tokenBox.query().equal(Token_.tokenAddress, address).build().findFirst()
         if (token == null) {
@@ -412,7 +406,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (mBluetoothAdapter == null) {
                 Toast.makeText(this, "This devices does not support BT please use QR code instead", Toast.LENGTH_SHORT).show()
             } else {
-                val address = voucherWalletAddress
+                val address = ValletApp.wallet!!.address
                 // Address is always with 0x which we don't need to transfer
                 val part1 = address.substring(2, BTUtils.SERVICE_NAME_SIZE + 2)
                 val part2 = address.substring(BTUtils.SERVICE_NAME_SIZE + 2)

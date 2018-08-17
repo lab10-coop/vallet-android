@@ -61,7 +61,7 @@ data class Token(@Id var id: Long = 0,
 // TODO we can not use token data class since gson is not handling ToMany relation ship so we need
 // to deserialize it using other object and fill relations manually
 
-// NOTICe keep in mind that those data structure should have attribute names of the API calls
+// NOTICE keep in mind that those data structure should have attribute names of the API calls
 data class TokenCreated(
         val secret: String,
         val token_name: String,

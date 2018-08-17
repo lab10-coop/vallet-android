@@ -14,8 +14,7 @@ class ShowQrCodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_qr_code)
 
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val voucherWalletAddress = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "")
+        val voucherWalletAddress = ValletApp.wallet!!.address
 
         closeButton.setOnClickListener() { _ ->
             finish()

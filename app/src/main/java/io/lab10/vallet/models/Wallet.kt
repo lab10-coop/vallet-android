@@ -1,9 +1,13 @@
 package io.lab10.vallet.models
 
-import android.content.Context
-import io.lab10.vallet.R
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
 
-class Wallet {
+@Entity
+data class Wallet(@Id var id: Long = 0,
+                  var name: String = "",
+                  val address: String = "",
+                  val filePath: String = "") {
     companion object Wallet {
         fun convertEUR2ATS(price: String): Int {
             // 1 ATS = 1 cent

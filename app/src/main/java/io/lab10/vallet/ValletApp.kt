@@ -1,8 +1,10 @@
 package io.lab10.vallet
 
 import android.app.Application
+import io.lab10.vallet.models.MyObjectBox
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Token_
+import io.lab10.vallet.models.Wallet
 import io.objectbox.BoxStore
 
 open class ValletApp: Application() {
@@ -25,7 +27,16 @@ open class ValletApp: Application() {
                 activeToken!!.active = true
                 tokenBox.put(activeToken)
             }
-
+        var wallet: Wallet?
+            get() {
+                val walletBox = box!!.boxFor(Wallet::class.java)
+                return walletBox.query().build().findFirst()
+            }
+            set(value) {
+                val walletBox = box!!.boxFor(Wallet::class.java)
+                // TODO add support for multiple wallets
+                walletBox.put((value as Wallet))
+            }
         fun getBoxStore(): BoxStore {
           return box as BoxStore
         }
