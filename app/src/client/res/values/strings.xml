@@ -8,4 +8,7 @@
     <string name="transfer">Received</string>
     <string name="redeem">Spent</string>
     <string name="confirm_to_pay">Do you confirm the payment for</string>
+    <string name="pay_for">for</string>
+    <string name="pay_label">Pay</string>
+    <string name="pay_button">Pay</string>
 </resources>

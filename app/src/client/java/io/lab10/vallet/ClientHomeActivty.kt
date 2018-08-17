@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.nfc.Tag
@@ -14,7 +13,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -37,6 +35,7 @@ import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import io.lab10.vallet.utils.PayDialog
 
 
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
@@ -372,15 +371,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (product.price > ValletApp.activeToken!!.balance) {
             Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
         } else {
-            AlertDialog.Builder(this)
-                    .setTitle("Pay")
-                    .setMessage(resources.getString(R.string.confirm_to_pay) + " " + product.name)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialog, whichButton ->
-                        Web3jManager.INSTANCE.redeemToken(this, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress)
-                        Toast.makeText(this, "Paid", Toast.LENGTH_SHORT).show()
-                    })
-                    .setNegativeButton(android.R.string.no, null).show()
+            val cdd = PayDialog(this, product)
+            cdd.show()
         }
     }
 
