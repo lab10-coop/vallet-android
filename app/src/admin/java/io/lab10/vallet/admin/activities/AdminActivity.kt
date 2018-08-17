@@ -192,17 +192,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     private fun createToken(tokenName: String) {
         val voucherDecimal = 12;
-
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
         var voucherType = Tokens.Type.EUR.toString()
-
         // TODO: Manage password for the key
         val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
         val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
-        editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_file), walletFile)
-        editor.putString(resources.getString(R.string.shared_pref_voucher_wallet_address), walletAddress)
-        editor.commit()
+        ValletApp.wallet = Wallet(0, "Main", walletAddress, walletFile)
 
         // TODO trigger that only if balance is lower then needed amount for creating transaction.
         //
