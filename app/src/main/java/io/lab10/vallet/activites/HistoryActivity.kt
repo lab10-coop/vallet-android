@@ -41,18 +41,18 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         viewManager = LinearLayoutManager(this)
         if (ValletApp.activeToken?.tokenType != null) {
             viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), ValletApp.activeToken!!.tokenType)
+            recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {
+                setHasFixedSize(true)
+                layoutManager = viewManager
+                adapter = viewAdapter
+            }
+            swipe_container.setOnRefreshListener(this)
+
+            managePlaceholder()
+            fetchHistory()
+        } else {
+            finish()
         }
-
-        recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
-
-        swipe_container.setOnRefreshListener(this)
-
-        managePlaceholder()
-        fetchHistory()
     }
 
     override fun onSupportNavigateUp(): Boolean {
