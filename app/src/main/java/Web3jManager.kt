@@ -2,6 +2,7 @@ import android.content.Context
 import android.util.Log
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
+import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
@@ -68,8 +69,7 @@ class Web3jManager private constructor(){
     fun loadCredential(context: Context): Credentials? {
         // TODO take care of it
         val password = "123"
-        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val walletFile = sharedPref.getString(context.resources.getString(R.string.shared_pref_voucher_wallet_file), "")
+        val walletFile = ValletApp.wallet!!.filePath
         if (walletFile != "") {
             val walletPath = File(context.filesDir, walletFile)
             return WalletUtils.loadCredentials(password, walletPath)
@@ -291,12 +291,12 @@ class Web3jManager private constructor(){
     }
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
-        if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
+        if (ValletApp.Companion.wallet!!.address == log._to && log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
             EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
-        if (log._value != null)
+        if (ValletApp.Companion.wallet!!.address == log._from && log._value != null)
             EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
