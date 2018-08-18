@@ -15,95 +15,57 @@
         android:layout_marginBottom="30dp"
         tools:context=".admin.activities.AdminActivity">
 
-        <LinearLayout
-            android:id="@+id/header"
-            android:layout_width="match_parent"
+
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/home_background"
-            android:orientation="vertical">
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/work_sans"
+            android:text="@string/circulating"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:id="@+id/circulating"
+            app:layout_constraintBottom_toTopOf="@+id/valueLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <TextView
-                    android:id="@+id/tokenNameLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:fontFamily="@font/work_sans"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Lab10" />
-
-                <LinearLayout
-                    android:id="@+id/valueLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="0dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tokenNameLabel">
+        <LinearLayout
+            android:id="@+id/valueLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/circulating">
 
 
-                    <ImageView
-                        android:id="@+id/voucherTypeIcon"
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/euro_icon_white" />
+            <ImageView
+                android:id="@+id/voucherTypeIcon"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/euro_icon_black" />
 
-                    <TextView
-                        android:id="@+id/voucherCountLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/work_sans_bold"
-                        android:lineSpacingExtra="0dp"
-                        android:lineSpacingMultiplier="1.5"
-                        android:text="0"
-                        android:textColor="#fff"
-                        android:textSize="50sp" />
-                </LinearLayout>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/work_sans"
-                    android:text="@string/circulating"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/valueLabel" />
-
-                <ImageView
-                    android:id="@+id/showQrCode"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/qr_icon" />
-            </android.support.constraint.ConstraintLayout>
-
-
+            <TextView
+                android:id="@+id/voucherCountLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/work_sans_bold"
+                android:lineSpacingExtra="0dp"
+                android:lineSpacingMultiplier="1.5"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="50sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/header">
+            app:layout_constraintTop_toBottomOf="@id/valueLabel">
 
             <TextView
                 style="@style/LabelText"

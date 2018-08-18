@@ -1,14 +1,12 @@
 package io.lab10.vallet.admin.activities
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import io.lab10.vallet.R
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
+import android.view.Menu
 import android.view.MenuItem
+import io.lab10.vallet.R
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -27,6 +25,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.math.BigInteger
+import io.lab10.vallet.admin.adapters.MainPagerAdapter
+import io.objectbox.android.AndroidScheduler
 
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
@@ -70,26 +70,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
-        navigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                var selectedFragment: Fragment? = null
-                when (item.getItemId()) {
-                    R.id.action_item1 -> selectedFragment = HomeActivityFragment.newInstance()
-                    // TODO Disabled if none voucher is present
-                    R.id.action_item2 -> selectedFragment = DiscoverUsersFragment.newInstance()
-                    R.id.action_item3 -> selectedFragment = PriceListFragment.newInstance()
-                }
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.frame_layout, selectedFragment)
-                transaction.commit()
-                return true
-            }
-        })
+        val myPagerAdapter = MainPagerAdapter(supportFragmentManager)
+        myPagerAdapter.addFragment(HomeActivityFragment(), "Activities")
+        myPagerAdapter.addFragment(PriceListFragment(), "Price list")
+        main_pager.adapter = myPagerAdapter
 
-        //Manually displaying the first fragment - one time only
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frame_layout, HomeActivityFragment.newInstance())
-        transaction.commit()
+        tab_layout.setupWithViewPager(main_pager)
+        prepareHeader()
 
     }
 
@@ -124,7 +111,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
         var tokenName = event.name
-        tokenNameLabel.text = tokenName
+        supportActionBar!!.title = tokenName
         var tokenType = 0
         if (event.type.equals(Tokens.Type.VOUCHER.toString()) ) {
             tokenType = 1
@@ -174,14 +161,48 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }
     }
 
+    @Subscribe
+    fun onTotalSupplyEvent(event: TokenTotalSupplyEvent) {
+        runOnUiThread {
+            if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
+                if (ValletApp.activeToken!!.tokenType == 0) {
+                    voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
+                } else {
+                    voucherCountLabel.text = event.value.toString()
+                }
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this)
     }
 
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this);
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item != null) {
+            when (item.getItemId()) {
+                R.id.menu_history -> {
+                    val intent = Intent(this, ShowQrCodeActivity::class.java)
+                    startActivity(intent)
+                    return true
+                }
+                else -> return super.onOptionsItemSelected(item)
+            }
+        } else {
+            return true
+        }
     }
 
     private fun addUserToAddressBook(address: String, name: String) {
@@ -206,6 +227,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         } else {
             Web3jManager.INSTANCE.generateNewToken(this, tokenName, voucherType, voucherDecimal)
         }
+    }
+
+    private fun prepareHeader() {
+        setSupportActionBar(toolbar);
+
+        if (ValletApp.activeToken != null)
+            supportActionBar!!.title = ValletApp.activeToken!!.name
     }
 
 

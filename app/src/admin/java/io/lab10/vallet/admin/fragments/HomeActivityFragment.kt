@@ -19,20 +19,19 @@ import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.HistoryRecyclerViewAdapter
 import io.lab10.vallet.admin.activities.AdminActivity
-import io.lab10.vallet.admin.activities.ShowQrCodeActivity
-import io.lab10.vallet.events.TokenTotalSupplyEvent
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
+import kotlinx.android.synthetic.admin.fragment_home_activity.*
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
 
+    private var viewHolder: View? = null
     private var debugCount: Int = 0
     private var debugOn: Boolean = false
-    private var viewHolder: View? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -47,9 +46,9 @@ class HomeActivityFragment : Fragment() {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
                         if (ValletApp.activeToken!!.tokenType == 0) {
-                            viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
+                            voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
                         } else {
-                            viewHolder!!.voucherCountLabel.text = sum.toString()
+                            voucherCountLabel.text = sum.toString()
                         }
 
                     }
@@ -91,19 +90,6 @@ class HomeActivityFragment : Fragment() {
         }
     }
 
-    @Subscribe
-    fun onTotalSupplyEvent(event: TokenTotalSupplyEvent) {
-        activity.runOnUiThread {
-            if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
-                if (ValletApp.activeToken!!.tokenType == 0) {
-                    viewHolder!!.voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
-                } else {
-                    viewHolder!!.voucherCountLabel.text = event.value.toString()
-                }
-            }
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -115,26 +101,19 @@ class HomeActivityFragment : Fragment() {
         if (recentTransaction.size > 0) {
             viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
         }
+
         if ((activity as AdminActivity).voucher?.tokenType == 1) {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
-            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
+           // viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
         } else {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
-            viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
+           // viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
-
-        if (ValletApp.activeToken != null)
-            viewHolder!!.tokenNameLabel.text = ValletApp.activeToken!!.name
 
         recyclerView = viewHolder!!.historyRecycler.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
-        }
-
-        viewHolder!!.showQrCode.setOnClickListener() { _ ->
-            val intent = Intent(activity, ShowQrCodeActivity::class.java)
-            startActivity(intent)
         }
 
         viewHolder!!.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
@@ -155,6 +134,9 @@ class HomeActivityFragment : Fragment() {
             }
             return@OnTouchListener true
         })
+
+
+
 
         viewHolder!!.view_history_label.setOnClickListener { v ->
             val intent = Intent(activity, HistoryActivity::class.java)

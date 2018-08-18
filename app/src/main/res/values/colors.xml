@@ -12,4 +12,5 @@
     <color name="theme_1">#ffec00</color>
     <color name="menu_selected">#1C0A9F</color>
     <color name="semitransparent_background">#CC000000</color>
+    <color name="transparent">#00000000</color>
 </resources>
