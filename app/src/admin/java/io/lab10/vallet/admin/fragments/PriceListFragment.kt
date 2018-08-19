@@ -20,6 +20,7 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
+import kotlinx.android.synthetic.admin.activity_admin.view.*
 import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
@@ -38,10 +39,6 @@ class PriceListFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_price_list, container, false)
 
-        view.addProductBtn.setOnClickListener() { v ->
-            val intent = Intent(activity, AddProductActivity::class.java)
-            startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
-        }
 
 
         pendingIntent = PendingIntent.getActivity(activity, 0,

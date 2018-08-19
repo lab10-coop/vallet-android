@@ -1,8 +1,10 @@
 package io.lab10.vallet.admin.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -10,6 +12,7 @@ import io.lab10.vallet.R
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.google.zxing.integration.android.IntentIntegrator
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
@@ -26,6 +29,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.math.BigInteger
 import io.lab10.vallet.admin.adapters.MainPagerAdapter
+import io.lab10.vallet.connectivity.BTUtils
 import io.objectbox.android.AndroidScheduler
 
 
@@ -58,6 +62,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     val TAG = AdminActivity::class.java.simpleName
     var voucher: Token? = null
+    private val REQUEST_BT_SCAN = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,10 +79,49 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         myPagerAdapter.addFragment(HomeActivityFragment(), resources.getString(R.string.tab_activity))
         myPagerAdapter.addFragment(PriceListFragment(), resources.getString(R.string.tab_price_list))
         main_pager.adapter = myPagerAdapter
+        setFabIssue()
+        main_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                when(position) {
+                    0 -> {
+                        setFabIssue()
+                    }
+                    1 -> {
+                        setFabAddProduct()
+                    }
+                }
+            }
+        })
 
         tab_layout.setupWithViewPager(main_pager)
         prepareHeader()
 
+    }
+
+    private fun setFabAddProduct() {
+        fab_button.setImageResource(R.drawable.add_product_button)
+        fab_button.setOnClickListener() { v ->
+            val intent = Intent(this@AdminActivity, AddProductActivity::class.java)
+            startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
+        }
+    }
+
+    private fun setFabIssue() {
+        fab_button.setImageResource(R.drawable.fab_qr_button)
+        fab_button.setOnClickListener() { v ->
+            val integrator = IntentIntegrator(this@AdminActivity)
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan()
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -202,6 +246,34 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             }
         } else {
             return true
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode,resultCode,data)
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents != null) {
+                if (result.contents.split(";").size == 2) {
+                    val address = result.contents.split(";")[0]
+                    val userName = result.contents.split(";")[1]
+                    if (Wallet.isValidAddress(address)) {
+                        var user = BTUsers.User(address, address, userName)
+                        IssueDialogFragment.newInstance(user).show(supportFragmentManager, userName)
+                    } else {
+                        EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
+                    }
+                } else {
+                    EventBus.getDefault().post(ErrorEvent("Invalid QR code"))
+                }
+
+            }
+        }
+
+        if (requestCode == REQUEST_BT_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                BTUtils.startScanningForAddresses(this@AdminActivity)
+            }
         }
     }
 

@@ -133,14 +133,10 @@ class HomeActivityFragment : Fragment() {
             return@OnTouchListener true
         })
 
-
-
-
         viewHolder!!.view_history_label.setOnClickListener { v ->
             val intent = Intent(activity, HistoryActivity::class.java)
             startActivity(intent)
         }
-
 
         if (ValletApp.activeToken == null) {
             activity.findViewById<View>(R.id.progress_overlay).setVisibility(View.VISIBLE);
