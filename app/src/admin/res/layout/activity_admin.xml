@@ -34,6 +34,7 @@
         android:layout_height="50dp"
         android:background="@drawable/home_background"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:tabIndicatorColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         tools:layout_marginStart="0dp">

@@ -11,7 +11,7 @@
     <string name="create_voucher_hint">Welcome Vallet admin!\nName your shop and get started.</string>
     <string name="select_user_nearby">Select user nearby</string>
     <string name="issue_token">Issue</string>
-    <string name="circulating">Vouchers Circulating</string>
+    <string name="circulating">Circulating vouchers</string>
 
     <string-array name="voucher_type">
         <item>EUR</item>
@@ -28,5 +28,9 @@
     <string name="get_started">Get started</string>
     <string name="transfer">Transferred</string>
     <string name="redeem">Redeem</string>
+    <string name="tab_activity">Activity</string>
+    <string name="tab_price_list">Price list</string>
+    <string name="outgoing">Outgoing</string>
+    <string name="incoming">Incoming</string>
 
 </resources>

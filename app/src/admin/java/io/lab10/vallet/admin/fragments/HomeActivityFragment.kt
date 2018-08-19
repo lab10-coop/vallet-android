@@ -98,9 +98,7 @@ class HomeActivityFragment : Fragment() {
 
         viewManager = LinearLayoutManager(activity)
         var recentTransaction = History.getRecent()
-        if (recentTransaction.size > 0) {
-            viewHolder!!.noActivitiesPlaceHolder.visibility = View.GONE
-        }
+
 
         if ((activity as AdminActivity).voucher?.tokenType == 1) {
             viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
@@ -110,7 +108,7 @@ class HomeActivityFragment : Fragment() {
            // viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
         }
 
-        recyclerView = viewHolder!!.historyRecycler.apply {
+        recyclerView = viewHolder!!.outgoing_history_recycler.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter

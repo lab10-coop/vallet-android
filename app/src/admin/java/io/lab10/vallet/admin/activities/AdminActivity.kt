@@ -71,8 +71,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         Web3jManager.INSTANCE.getTokenContractAddress(this)
 
         val myPagerAdapter = MainPagerAdapter(supportFragmentManager)
-        myPagerAdapter.addFragment(HomeActivityFragment(), "Activities")
-        myPagerAdapter.addFragment(PriceListFragment(), "Price list")
+        myPagerAdapter.addFragment(HomeActivityFragment(), resources.getString(R.string.tab_activity))
+        myPagerAdapter.addFragment(PriceListFragment(), resources.getString(R.string.tab_price_list))
         main_pager.adapter = myPagerAdapter
 
         tab_layout.setupWithViewPager(main_pager)
