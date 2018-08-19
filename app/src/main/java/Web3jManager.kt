@@ -291,12 +291,12 @@ class Web3jManager private constructor(){
     }
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
-        if (ValletApp.Companion.wallet!!.address == log._to && log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
+        if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
             EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
-        if (ValletApp.Companion.wallet!!.address == log._from && log._value != null)
+        if (log._value != null)
             EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
