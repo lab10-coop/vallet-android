@@ -17,14 +17,15 @@ import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
-import io.lab10.vallet.HistoryRecyclerViewAdapter
 import io.lab10.vallet.admin.activities.AdminActivity
+import io.lab10.vallet.admin.adapters.SimpleHistoryViewAdapter
 import io.lab10.vallet.models.History
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.ValletTransaction_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import kotlin.math.abs
 
 class HomeActivityFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -33,9 +34,12 @@ class HomeActivityFragment : Fragment() {
     private var debugCount: Int = 0
     private var debugOn: Boolean = false
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var outgoingRecyclerView: RecyclerView
+    private lateinit var incomingRecyclerView: RecyclerView
+    private lateinit var incomingViewAdapter: RecyclerView.Adapter<*>
+    private lateinit var outgoingViewAdapter: RecyclerView.Adapter<*>
+    private lateinit var outgointViewManager: RecyclerView.LayoutManager
+    private lateinit var incomingViewManager: RecyclerView.LayoutManager
 
     override fun onStart() {
         super.onStart()
@@ -46,17 +50,42 @@ class HomeActivityFragment : Fragment() {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
                         if (ValletApp.activeToken!!.tokenType == 0) {
-                            voucherCountLabel.text = Wallet.convertATS2EUR(sum).toString()
+                            circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString()
                         } else {
-                            voucherCountLabel.text = sum.toString()
+                            circulating_vouchers_value.text = sum.toString()
+                        }
+
+                    }
+            // Outgoing
+            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
+                    .observer { sum ->
+                        if (ValletApp.activeToken!!.tokenType == 0) {
+                            outgoing_total.text = Wallet.convertATS2EUR(sum).toString()
+                        } else {
+                            outgoing_total.text = sum.toString()
+                        }
+
+                    }
+            // Incomming
+            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
+                    .observer { sum ->
+                        if (ValletApp.activeToken!!.tokenType == 0) {
+                            incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString()
+                        } else {
+                            incoming_total.text = abs(sum).toString()
                         }
 
                     }
         }
-        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,2)}
+        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
                 .observer { recent ->
-                    (viewAdapter as HistoryRecyclerViewAdapter).setTransaction(recent)
-                    viewAdapter.notifyDataSetChanged()
+                    (outgoingViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
+                    outgoingViewAdapter.notifyDataSetChanged()
+                }
+        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
+                .observer { recent ->
+                    (incomingViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
+                    incomingViewAdapter.notifyDataSetChanged()
                 }
     }
 
@@ -73,7 +102,8 @@ class HomeActivityFragment : Fragment() {
             History.addTransaction(transaction)
             History.reloadTransactions()
             activity.runOnUiThread {
-                viewAdapter.notifyDataSetChanged()
+                incomingViewAdapter.notifyDataSetChanged()
+                outgoingViewAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -85,7 +115,8 @@ class HomeActivityFragment : Fragment() {
             History.addTransaction(transaction)
             History.reloadTransactions()
             activity.runOnUiThread {
-                viewAdapter.notifyDataSetChanged()
+                incomingViewAdapter.notifyDataSetChanged()
+                outgoingViewAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -96,22 +127,32 @@ class HomeActivityFragment : Fragment() {
         viewHolder =  inflater.inflate(R.layout.fragment_home_activity, container, false) as View
 
 
-        viewManager = LinearLayoutManager(activity)
-        var recentTransaction = History.getRecent()
+        outgointViewManager = LinearLayoutManager(activity)
+        incomingViewManager = LinearLayoutManager(activity)
+
+        var recentOutgoingTransactions = History.getRecentOutgoing()
+        var recentIncomingTransactions = History.getRecentIncoming()
 
 
         if ((activity as AdminActivity).voucher?.tokenType == 1) {
-            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 1)
-           // viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon_white)
+            incomingViewAdapter = SimpleHistoryViewAdapter(recentIncomingTransactions, 1)
+            outgoingViewAdapter = SimpleHistoryViewAdapter(recentOutgoingTransactions, 1)
+            incoming_total_value_type_icon.setBackgroundResource(R.drawable.voucher_icon_gray)
+            outgoing_total_value_type_icon.setBackgroundResource(R.drawable.voucher_icon_gray)
         } else {
-            viewAdapter = HistoryRecyclerViewAdapter(recentTransaction, 0)
-           // viewHolder!!.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
+            incomingViewAdapter = SimpleHistoryViewAdapter(recentIncomingTransactions, 0)
+            outgoingViewAdapter = SimpleHistoryViewAdapter(recentOutgoingTransactions, 0)
         }
 
-        recyclerView = viewHolder!!.outgoing_history_recycler.apply {
+        outgoingRecyclerView = viewHolder!!.outgoing_history_recycler.apply {
             setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
+            layoutManager = outgointViewManager
+            adapter = outgoingViewAdapter
+        }
+        incomingRecyclerView = viewHolder!!.incoming_history_recycler.apply {
+            setHasFixedSize(true)
+            layoutManager = incomingViewManager
+            adapter = incomingViewAdapter
         }
 
         viewHolder!!.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->

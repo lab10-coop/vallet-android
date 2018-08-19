@@ -19,10 +19,12 @@ import org.greenrobot.eventbus.Subscribe
 
 class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
     override fun onRefresh() {
-        History.clear()
-        fetchHistory()
-        viewAdapter.notifyDataSetChanged()
-        swipe_container.setRefreshing(false);
+        runOnUiThread {
+            History.clear()
+            fetchHistory()
+            viewAdapter.notifyDataSetChanged()
+            swipe_container.setRefreshing(false);
+        }
     }
 
     private lateinit var recyclerView: RecyclerView

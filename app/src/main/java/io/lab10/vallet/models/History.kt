@@ -13,9 +13,14 @@ object History {
         return ITEMS
     }
 
-    fun getRecent(): MutableList<ValletTransaction> {
+    fun getRecentOutgoing(): MutableList<ValletTransaction> {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        return valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,2)
+        return valletTransactionBox.query().greater(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
+    }
+
+    fun getRecentIncoming(): MutableList<ValletTransaction> {
+        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+        return valletTransactionBox.query().less(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
     }
 
     fun toJson(): String {

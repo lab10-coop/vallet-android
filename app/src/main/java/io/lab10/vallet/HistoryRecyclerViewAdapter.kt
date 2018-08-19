@@ -32,20 +32,30 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ViewHolder {
+
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.history_item, parent, false) as View
-
         return ViewHolder(view)
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mName.text = history[position].name
-        holder.mTransaction = history[position]
-        if (voucherType == 0) {
-            holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString()
-        } else {
-            holder.mValue.text = history[position].value.toString()
-            holder.mVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+
+        // TODO history could change in the background while we are setting the view and the app could crash
+        try {
+            if (history.size > 0 && history.size >= position) {
+                holder.mName.text = history[position].name
+                holder.mTransaction = history[position]
+                if (voucherType == 0) {
+                    holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString()
+                } else {
+                    holder.mValue.text = history[position].value.toString()
+                    holder.mVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+                }
+            }
+        } catch(e: Exception) {
+            // TODO do nothing handle the crash by solving changing history
+            // Find out how to make sure that history won't change while we are loading the view
         }
 
     }

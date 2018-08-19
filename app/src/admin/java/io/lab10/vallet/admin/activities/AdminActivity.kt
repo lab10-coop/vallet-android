@@ -30,7 +30,6 @@ import org.greenrobot.eventbus.ThreadMode
 import java.math.BigInteger
 import io.lab10.vallet.admin.adapters.MainPagerAdapter
 import io.lab10.vallet.connectivity.BTUtils
-import io.objectbox.android.AndroidScheduler
 
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
@@ -210,9 +209,9 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         runOnUiThread {
             if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
                 if (ValletApp.activeToken!!.tokenType == 0) {
-                    voucherCountLabel.text = Wallet.convertATS2EUR(event.value).toString()
+                    circulating_vouchers_value.text = Wallet.convertATS2EUR(event.value).toString()
                 } else {
-                    voucherCountLabel.text = event.value.toString()
+                    circulating_vouchers_value.text = event.value.toString()
                 }
             }
         }
