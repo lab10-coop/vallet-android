@@ -20,8 +20,6 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
-import kotlinx.android.synthetic.admin.activity_admin.view.*
-import kotlinx.android.synthetic.admin.fragment_price_list.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -104,7 +102,7 @@ class PriceListFragment : Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductAdded(event: ProductAddedEvent) {
         refreshProductsLocal()
-        storeRemotly()
+        storeRemotely()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -112,7 +110,7 @@ class PriceListFragment : Fragment() {
         refreshProductsLocal()
     }
 
-    private fun storeRemotly() {
+    private fun storeRemotely() {
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         // TODO support multiple tokens
         val token = tokenBox.query().build().findFirst()

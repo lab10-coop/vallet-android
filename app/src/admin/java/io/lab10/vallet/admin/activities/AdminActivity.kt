@@ -41,14 +41,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onProductClickListner(item: Product) {
         val intent = Intent(this, AddProductActivity::class.java)
         intent.putExtra("PRODUCT_ID", item.id)
-        startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)    }
-
-    override fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
-        holder.mBackgroundArea.visibility = View.VISIBLE
-    }
-
-    override fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
-        holder.mBackgroundArea.visibility = View.GONE
+        startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
     }
 
     override fun onListFragmentInteraction(user: BTUsers.User) {
@@ -62,6 +55,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     val TAG = AdminActivity::class.java.simpleName
     var voucher: Token? = null
     private val REQUEST_BT_SCAN = 100
+    private var hideDeleteProducts = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,9 +86,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                 when(position) {
                     0 -> {
                         setFabIssue()
+                        deleteProductVisible(false)
                     }
                     1 -> {
                         setFabAddProduct()
+                        deleteProductVisible(true)
                     }
                 }
             }
@@ -103,6 +99,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         tab_layout.setupWithViewPager(main_pager)
         prepareHeader()
 
+    }
+
+    private fun deleteProductVisible(visible: Boolean) {
+        hideDeleteProducts = visible
+        invalidateOptionsMenu()
     }
 
     private fun setFabAddProduct() {
@@ -179,6 +180,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val transactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
         transactionBox.put(transaction)
     }
+
     @Subscribe
     fun onIssueTokenEvent(event: IssueTokenEvent) {
         var address = Wallet.formatAddress(event.userAddress)
@@ -230,13 +232,16 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        if (hideDeleteProducts) {
+            menu.findItem(R.id.menu_delete).setVisible(true)
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item != null) {
             when (item.getItemId()) {
-                R.id.menu_history -> {
+                R.id.menu_qr_code -> {
                     val intent = Intent(this, ShowQrCodeActivity::class.java)
                     startActivity(intent)
                     return true

@@ -31,6 +31,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
 
     private var token: io.lab10.vallet.models.Token? = null
     private var tokenBox: Box<io.lab10.vallet.models.Token>? = null
+    var deleteMode = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.getContext())
@@ -68,16 +69,14 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
                 mListener?.onProductClickListner(product)
             }
         }
-        holder.mProductImage.setOnLongClickListener() {
-            mListener?.onProductLongClickListner(holder)
-            true
-        }
-        holder.mBackgroundArea.setOnClickListener() {
-            mListener?.onProductCancelRemoveListner(holder)
+
+        if(deleteMode) {
+            holder.mBackgroundArea.visibility = View.VISIBLE
+        } else {
+            holder.mBackgroundArea.visibility = View.GONE
         }
 
         holder.mDeleteProductImage.setOnClickListener() {
-            holder.mBackgroundArea.visibility = View.GONE
             removeProduct((holder.mItem as Product).id)
         }
 

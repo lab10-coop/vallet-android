@@ -5,22 +5,27 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityCompat.invalidateOptionsMenu
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.lab10.vallet.R
 import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
+import android.view.*
 import io.lab10.vallet.events.ProductRefreshEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
+import io.lab10.vallet.R.string.action_settings
+import android.view.MenuInflater
+
+
+
+
 
 
 class ProductListFragment : Fragment() {
@@ -38,9 +43,11 @@ class ProductListFragment : Fragment() {
         }    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-            val view = inflater!!.inflate(R.layout.fragment_product_list, container, false)
+        val view = inflater!!.inflate(R.layout.fragment_product_list, container, false)
 
-            // Set the adapter
+        setHasOptionsMenu(true)
+
+        // Set the adapter
             if (view.productList is RecyclerView) {
                 val context = view.productList.getContext()
                 recyclerView = view.productList as RecyclerView
@@ -88,6 +95,29 @@ class ProductListFragment : Fragment() {
         adapter!!.notifyDataSetChanged()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if(adapter!!.deleteMode) {
+            menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_done_white_24dp)
+        } else {
+            menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_delete_white_24dp)
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        when (id) {
+            R.id.menu_delete -> {
+                adapter!!.deleteMode = !adapter!!.deleteMode
+                adapter!!.notifyDataSetChanged()
+                invalidateOptionsMenu(activity)
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -99,8 +129,6 @@ class ProductListFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         fun onProductClickListner(item: Product)
-        fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder)
-        fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder)
     }
 
 }

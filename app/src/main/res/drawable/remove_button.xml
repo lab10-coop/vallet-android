@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:width="50dp" android:height="50dp" >
-        <shape
-            android:shape="rectangle"
+        <shape android:shape="oval"
             xmlns:android="http://schemas.android.com/apk/res/android">
-
-            <corners
-                android:radius="50dp" />
-
-            <size
-                android:height="10dp"
-                android:width="10dp" />
-            <solid
-                android:color="#CCFFFFFF" />
+            <corners android:radius="6dp" />
+            <gradient android:type="linear" android:startColor="#bb224af2" android:endColor="#bb00c0fd" android:angle="180" />
+            <item android:name="android:shadowColor">#33000000</item>
+            <!-- TextView shadow offsets do not respect scale. -->
+            <item android:name="android:shadowDx">0</item>
+            <item android:name="android:shadowDy">2</item>
         </shape>
     </item>
     <item android:width="24dp" android:height="24dp"
-        android:drawable="@drawable/close_button"
+        android:drawable="@drawable/ic_delete_white_24dp"
         android:gravity="center"/>
 </layer-list>
