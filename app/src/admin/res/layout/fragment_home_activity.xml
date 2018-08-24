@@ -127,6 +127,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginRight="5dp"
                                     android:background="@drawable/euro_icon_black"
+                                    android:visibility="gone"
                                     app:layout_constraintTop_toBottomOf="@+id/outgoing_label"
                                     app:layout_constraintRight_toLeftOf="@+id/outgoing_total"
                                     />
@@ -135,25 +136,25 @@
                                     style="@style/RegularText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text="0€"
                                     android:textAlignment="center"
-                                    android:textSize="16sp"
+                                    android:textSize="24sp"
                                     app:layout_constraintLeft_toLeftOf="parent"
                                     app:layout_constraintRight_toRightOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/outgoing_label" />
-
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/outgoing_history_recycler"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:minHeight="250dp"
-                                    android:layout_marginBottom="20dp"
+                                    android:layout_marginBottom="40dp"
                                     android:layout_marginTop="10dp"
                                     android:scrollbars="vertical"
                                     card_view:layout_constraintTop_toBottomOf="@+id/outgoing_total"
                                     card_view:layout_constraintLeft_toLeftOf="parent"
-                                    card_view:layout_constraintRight_toRightOf="parent"/>
+                                    card_view:layout_constraintRight_toRightOf="parent"
+                                    card_view:layout_constraintBottom_toBottomOf="parent"/>
 
                             </android.support.constraint.ConstraintLayout>
 
@@ -197,6 +198,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginRight="5dp"
                                     android:background="@drawable/euro_icon_black"
+                                    android:visibility="gone"
                                     app:layout_constraintTop_toBottomOf="@+id/incoming_label"
                                     app:layout_constraintRight_toLeftOf="@+id/incoming_total"
                                     />
@@ -208,7 +210,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="0€"
                                     android:textAlignment="center"
-                                    android:textSize="16sp"
+                                    android:textSize="24sp"
                                     app:layout_constraintLeft_toLeftOf="parent"
                                     app:layout_constraintRight_toRightOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/incoming_label" />

@@ -13,15 +13,11 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mName: TextView
         val mValue: TextView
-        val mVoucherTypeIcon: ImageView
         var mTransaction: ValletTransaction? = null
 
         init {
-            mName = mView.findViewById(R.id.name) as TextView
             mValue = mView.findViewById(R.id.value) as TextView
-            mVoucherTypeIcon = mView.findViewById(R.id.voucherTypeIcon) as ImageView
         }
 
         override fun toString(): String {
@@ -44,13 +40,11 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
         // TODO history could change in the background while we are setting the view and the app could crash
         try {
             if (history.size > 0 && history.size >= position) {
-                holder.mName.text = history[position].name
                 holder.mTransaction = history[position]
                 if (voucherType == 0) {
-                    holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString()
+                    holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString() + "€"
                 } else {
                     holder.mValue.text = history[position].value.toString()
-                    holder.mVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
                 }
             }
         } catch(e: Exception) {

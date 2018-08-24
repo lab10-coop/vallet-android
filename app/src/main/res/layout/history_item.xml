@@ -6,32 +6,6 @@
     android:maxHeight="50dp"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <View
-        android:id="@+id/separator"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="#ffe5e8eb"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Bough Piwo at Lab10"
-        android:layout_marginTop="15dp"
-        android:paddingLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:fontFamily="@font/work_sans"
-        app:layout_constraintTop_toBottomOf="@+id/separator"/>
-    <ImageView
-        android:id="@+id/voucherTypeIcon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/euro_icon_black"
-        app:layout_constraintTop_toBottomOf="@+id/separator"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/value"
-        />
     <TextView
         android:id="@+id/value"
         android:layout_width="wrap_content"
@@ -39,7 +13,8 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/work_sans"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
         android:paddingRight="20dp"
         tools:text="15"/>
 

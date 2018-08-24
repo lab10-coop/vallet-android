@@ -50,7 +50,7 @@ class HomeActivityFragment : Fragment() {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
                         if (ValletApp.activeToken!!.tokenType == 0) {
-                            circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString()
+                            circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString() + "€"
                         } else {
                             circulating_vouchers_value.text = sum.toString()
                         }
