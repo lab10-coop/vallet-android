@@ -211,7 +211,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         runOnUiThread {
             if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
                 if (ValletApp.activeToken!!.tokenType == 0) {
-                    circulating_vouchers_value.text = Wallet.convertATS2EUR(event.value).toString()
+                    circulating_vouchers_value.text = Wallet.convertATS2EUR(event.value).toString() + "€"
                 } else {
                     circulating_vouchers_value.text = event.value.toString()
                 }

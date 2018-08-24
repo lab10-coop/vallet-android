@@ -64,6 +64,7 @@
                                 android:layout_height="34dp"
                                 android:layout_marginRight="5dp"
                                 android:layout_marginTop="12dp"
+                                android:visibility="gone"
                                 android:background="@drawable/euro_icon_black" />
 
                             <TextView

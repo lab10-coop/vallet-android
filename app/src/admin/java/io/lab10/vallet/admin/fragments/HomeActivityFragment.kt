@@ -60,7 +60,7 @@ class HomeActivityFragment : Fragment() {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
                         if (ValletApp.activeToken!!.tokenType == 0) {
-                            outgoing_total.text = Wallet.convertATS2EUR(sum).toString()
+                            outgoing_total.text = Wallet.convertATS2EUR(sum).toString() + "€"
                         } else {
                             outgoing_total.text = sum.toString()
                         }
@@ -70,7 +70,7 @@ class HomeActivityFragment : Fragment() {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
                         if (ValletApp.activeToken!!.tokenType == 0) {
-                            incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString()
+                            incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString() + "€"
                         } else {
                             incoming_total.text = abs(sum).toString()
                         }
