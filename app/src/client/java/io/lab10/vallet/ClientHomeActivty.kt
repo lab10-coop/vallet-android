@@ -44,14 +44,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     // Used onActivityResult to refresh fragment since not always the state of activity is restored on time
     private var reloadOnResume = false
 
-    override fun onProductLongClickListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
-        // Do nothing client should not be able to remove item
-    }
-
-    override fun onProductCancelRemoveListner(holder: ProductRecyclerViewAdapter.ProductViewHolder) {
-        // Do nothing client should not be able to remove item
-    }
-
     override fun onProductClickListner(item: Product) {
         payFor(item)
     }
