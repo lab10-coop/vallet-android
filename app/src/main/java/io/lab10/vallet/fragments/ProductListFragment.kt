@@ -96,10 +96,12 @@ class ProductListFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(adapter!!.deleteMode) {
-            menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_done_white_24dp)
-        } else {
-            menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_delete_white_24dp)
+        if (menu.findItem(R.id.menu_delete) != null) {
+            if (adapter!!.deleteMode) {
+                menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_done_white_24dp)
+            } else {
+                menu.findItem(R.id.menu_delete).setIcon(R.drawable.ic_delete_white_24dp)
+            }
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
