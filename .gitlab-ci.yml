@@ -25,8 +25,6 @@ stages:
 
 releaseStagingClient:
   stage: release
-  only:
-    - client_master
   script:
     - ./gradlew assembleClientStaging
   artifacts:
@@ -35,8 +33,6 @@ releaseStagingClient:
 
 releaseStagingAdmin:
   stage: release
-  only:
-    - master
   script:
     - ./gradlew assembleAdminStaging
   artifacts:
