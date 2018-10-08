@@ -20,17 +20,17 @@ import io.lab10.vallet.admin.DiscoveryUserRecyclerViewAdapter
 import io.lab10.vallet.admin.events.BTScanningActivityEvent
 import io.lab10.vallet.admin.events.NewAddressEvent
 
-import io.lab10.vallet.admin.models.BTUsers
+import io.lab10.vallet.models.BTUsers
 import io.lab10.vallet.admin.recievers.BluetoothBroadcastReceiver
 import io.lab10.vallet.connectivity.BTUtils
 import kotlinx.android.synthetic.admin.fragment_user_list.*
-import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
 import android.content.Intent
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Wallet
+import kotlinx.android.synthetic.admin.fragment_user_list.view.*
 
 
 /**

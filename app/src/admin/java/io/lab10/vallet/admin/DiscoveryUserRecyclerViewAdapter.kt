@@ -9,7 +9,7 @@ import android.widget.TextView
 import io.lab10.vallet.R
 
 import io.lab10.vallet.admin.fragments.DiscoverUsersFragment.OnListFragmentInteractionListener
-import io.lab10.vallet.admin.models.BTUsers
+import io.lab10.vallet.models.BTUsers
 
 class DiscoveryUserRecyclerViewAdapter(private val mValues: List<BTUsers.User>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<DiscoveryUserRecyclerViewAdapter.ViewHolder>() {
 

@@ -9,15 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 
 import io.lab10.vallet.R
-import io.lab10.vallet.admin.models.BTUsers
+import io.lab10.vallet.models.BTUsers
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
-import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.IssueTokenEvent
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.utils.EuroInputFilter
+import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import org.greenrobot.eventbus.EventBus
 
 class IssueDialogFragment : DialogFragment() {

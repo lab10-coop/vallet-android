@@ -13,11 +13,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
-import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
-import io.lab10.vallet.admin.models.BTUsers
-import io.lab10.vallet.admin.models.User
+import io.lab10.vallet.models.BTUsers
+import io.lab10.vallet.models.User
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
@@ -283,7 +282,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     private fun addUserToAddressBook(address: String, name: String) {
         val userBox = ValletApp.getBoxStore().boxFor(User::class.java)
-        val user = User(0,name, address)
+        val user = User(0, name, address)
         userBox.put(user)
     }
 
