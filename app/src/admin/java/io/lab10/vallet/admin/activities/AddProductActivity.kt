@@ -91,7 +91,11 @@ class AddProductActivity : AppCompatActivity() {
         }
 
         if (product != null) {
-            productPriceInput.setText(Wallet.convertEUR2ATS((product as Product).price.toString()).toString())
+            if (token!!.tokenType == 0) {
+                productPriceInput.setText(Wallet.convertATS2EUR((product as Product).price).toString())
+            } else {
+                productPriceInput.setText(Wallet.convertEUR2ATS((product as Product).price.toString()).toString())
+            }
             productNameInput.setText((product as Product).name)
             productNfcTagInput.setText((product as Product).nfcTagId)
             var bmImg = BitmapFactory.decodeFile((product as Product).localImagePath);
