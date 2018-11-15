@@ -26,6 +26,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.view.View
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.models.*
 import io.objectbox.Box
@@ -66,10 +67,12 @@ class AddProductActivity : AppCompatActivity() {
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null){
+            productNfcTagInput.visibility = View.GONE
             Toast.makeText(this,
                     "NFC NOT supported on this devices!",
                     Toast.LENGTH_LONG).show();
         }else if(!nfcAdapter!!.isEnabled()){
+            productNfcTagInput.visibility = View.GONE
             Toast.makeText(this,
                     "To use NFC you have to enabled it!",
                     Toast.LENGTH_LONG).show();
