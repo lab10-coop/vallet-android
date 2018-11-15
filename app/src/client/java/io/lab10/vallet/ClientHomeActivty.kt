@@ -3,8 +3,8 @@ package io.lab10.vallet
 import android.app.Activity
 import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
@@ -21,6 +21,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
+import io.ValletUriParser
 import io.lab10.vallet.activites.HistoryActivity
 import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.*
@@ -36,6 +37,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import io.lab10.vallet.utils.PayDialog
+import java.lang.Exception
 
 
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
@@ -250,20 +252,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (requestCode == IntentIntegrator.REQUEST_CODE) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null && result.contents != null) {
-                val data = result.contents
-                val splitData = data.split(";")
-                if (splitData.size == 4) {
-                    val voucherName = splitData[0]
-                    val voucherType = splitData[1]
-                    val tokenAddress = splitData[2]
-                    val ipnsAddress = splitData[3]
-                    if (Wallet.isValidAddress(tokenAddress)) {
-                        storeTokenAddress(voucherName, voucherType.toInt(), tokenAddress, ipnsAddress)
-                    }
-                } else {
-                    Toast.makeText(this, "Invalid qr code, try different", Toast.LENGTH_SHORT).show()
+                try {
+                    val uri = Uri.parse(result.contents)
+                    ValletUriParser.invoke(uri)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
 
@@ -284,6 +278,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onErrorEvent(event: ErrorEvent) {
+        Toast.makeText(this, event.message, Toast.LENGTH_LONG).show()
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRefreshevent(event: ProductRefreshEvent) {
         refreshProductListView()
         reloadProductList()
@@ -300,6 +300,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Tokens.refresh()
         setPriceListHeader()
         reloadNavigation()
+    }
+
+    @Subscribe
+    fun onNewShopAddEvent(event: NewShopAddEvent) {
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -11,7 +11,7 @@ data class Product(@Id var id: Long = 0,
                    var price: Long = 0,
                    var imagePath: String = "",
                    var localImagePath: String = "",
-                   var nfcTagId: String = "")  {
+                   var nfcTagId: String? = "")  {
 
     lateinit var token: ToOne<Token>
 
@@ -34,5 +34,5 @@ data class ProductBase(
         val name: String,
         val price: Long,
         val imagePath: String,
-        val nfcTagId: String
+        val nfcTagId: String?
 )

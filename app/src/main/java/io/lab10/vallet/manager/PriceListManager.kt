@@ -41,7 +41,7 @@ class PriceListManager {
                     .subscribe ({
                         result ->
                         val response = (result as TokenBase)
-                        updateLocalDb(response.products)
+                        updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
                     }, { error ->
                         EventBus.getDefault().post(ErrorEvent(error.message.toString()))
                     })
@@ -54,26 +54,26 @@ class PriceListManager {
                     .subscribe ({
                         result ->
                         val response = (result as TokenBase)
-                        updateLocalDb(response.products)
+                        updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
                     }, { error ->
                         EventBus.getDefault().post(ErrorEvent(error.message.toString()))
                     })
         }
 
-        private fun updateLocalDb(products: List<ProductBase>) {
+        private fun updateLocalDb(tokenName: String, tokenType: Int, tokenAddres: String, products: List<ProductBase>) {
             val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-            val token = ValletApp.activeToken
-            if (token != null) {
-                token.products.clear()
-                products.forEach { item ->
-                    val product = Product(0, item.name, item.price, item.imagePath, "", item.nfcTagId)
-                    token.products.add(product)
-                }
-                tokenBox.put(token)
-                EventBus.getDefault().post(ProductChangedEvent())
-            } else {
-                EventBus.getDefault().post(ErrorEvent("No active token available"))
+            var token = tokenBox.query().equal(Token_.tokenAddress, tokenAddres).build().findFirst()
+            if (token == null) {
+                token = Token(0, tokenName, tokenAddres, 0, tokenType, "", false, 0, "")
             }
+
+            token.products.clear()
+            products.forEach { item ->
+                val product = Product(0, item.name, item.price, item.imagePath, "", item.nfcTagId)
+                token.products.add(product)
+            }
+            tokenBox.put(token)
+            EventBus.getDefault().post(ProductChangedEvent())
 
         }
     }

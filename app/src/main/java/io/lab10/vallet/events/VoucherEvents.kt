@@ -10,6 +10,7 @@ class TokenNameEvent(val name: String, val address: String)
 class TokenTotalSupplyEvent(val value: Long, val address: String)
 class TokenTypeEvent(val name: String, val address: String)
 class TokenBalanceEvent(val balance: Long, val address: String)
+class NewShopAddEvent(val address: String)
 class ProductsListEvent
 class ProductAddedEvent
 class ProductRefreshEvent

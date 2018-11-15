@@ -19,8 +19,10 @@ class ShowQrCodeActivity : AppCompatActivity() {
         closeButton.setOnClickListener() { _ ->
             finish()
         }
+        // TODO: add user name from first step of the registration
+        var uri = "valletadmin://user/" + voucherWalletAddress + "?user_name='" + getPhoneName() + "'"
 
-        generateWalletBarcode(voucherWalletAddress + ";" + getPhoneName())
+        generateWalletBarcode(uri)
     }
 
 
