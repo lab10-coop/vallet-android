@@ -8,8 +8,11 @@ import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.main.activity_show_qr_code.*
+import kotlinx.android.synthetic.main.token_balance.*
+import org.greenrobot.eventbus.EventBus
 
 class ShowQrCodeActivity : AppCompatActivity() {
 
@@ -30,13 +33,11 @@ class ShowQrCodeActivity : AppCompatActivity() {
 
         try {
             val barcodeEncoder = BarcodeEncoder()
-            val address = voucher!!.tokenAddress
-            val priceListIPNSAddress = voucher!!.ipnsAdddress
-            val data = voucher!!.name + ";" + voucher!!.tokenType + ";" + address + ";" + priceListIPNSAddress
-            val bitmap = barcodeEncoder.encodeBitmap(data, BarcodeFormat.QR_CODE, 400, 400)
+            val uri = "vallet://shop/" + voucher!!.tokenAddress
+            val bitmap = barcodeEncoder.encodeBitmap(uri, BarcodeFormat.QR_CODE, 400, 400)
             voucherQrcode.setImageBitmap(bitmap)
         } catch (e: Exception) {
-            // TODO handle exception
+            EventBus.getDefault().post(ErrorEvent(e.message.toString()))
         }
     }
 }
