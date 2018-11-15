@@ -373,25 +373,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  ValletApp.wallet!!.address)
         }
     }
-
-    private fun storeTokenAddress(voucherName: String, voucherType: Int, address: String, ipnsAddress: String) {
-        Web3jManager.INSTANCE.getClientBalance(this, address, ValletApp.wallet!!.address)
-        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        var token = tokenBox.query().equal(Token_.tokenAddress, address).build().findFirst()
-        if (token == null) {
-            token = Token(0, voucherName, address, 0, voucherType, ipnsAddress, false, 0.toLong())
-            tokenBox.put(token)
-        } else {
-            token.ipnsAdddress = ipnsAddress
-            token.name = voucherName
-            token.tokenType = voucherType
-            tokenBox.put(token)
-        }
-        ValletApp.activeToken = token
-        Tokens.refresh()
-        reloadNavigation()
-        reloadOnResume = true
-    }
+    
 
     private var scanningInProgress = false
 
