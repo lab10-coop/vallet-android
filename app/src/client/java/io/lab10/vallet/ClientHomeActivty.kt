@@ -373,7 +373,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  ValletApp.wallet!!.address)
         }
     }
-    
+
 
     private var scanningInProgress = false
 
