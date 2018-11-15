@@ -41,8 +41,8 @@ android {
     productFlavors {
         client {
             applicationId "io.lab10.vallet"
-            versionCode 21
-            versionName "1.2.1"
+            versionCode 22
+            versionName "2.0.0"
             dimension "free"
             signingConfig signingConfigs.release
         }
