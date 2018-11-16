@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
+import io.ValletUriParser
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.BTUsers
@@ -29,6 +30,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.math.BigInteger
 import io.lab10.vallet.admin.adapters.MainPagerAdapter
 import io.lab10.vallet.connectivity.BTUtils
+import java.lang.Exception
 
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
@@ -97,6 +99,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         tab_layout.setupWithViewPager(main_pager)
         prepareHeader()
+        EventBus.getDefault().register(this)
 
     }
 
@@ -218,13 +221,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
+    @Subscribe
+    fun onDeepLinkUserAddEvent(event: DeepLinkUserAddEvent) {
+        IssueDialogFragment.newInstance(event.user).show(supportFragmentManager, event.user.name)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         EventBus.getDefault().unregister(this);
     }
 
@@ -257,19 +260,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         if (requestCode == IntentIntegrator.REQUEST_CODE) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null && result.contents != null) {
-                if (result.contents.split(";").size == 2) {
-                    val address = result.contents.split(";")[0]
-                    val userName = result.contents.split(";")[1]
-                    if (Wallet.isValidAddress(address)) {
-                        var user = BTUsers.User(address, address, userName)
-                        IssueDialogFragment.newInstance(user).show(supportFragmentManager, userName)
-                    } else {
-                        EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))
-                    }
-                } else {
-                    EventBus.getDefault().post(ErrorEvent("Invalid QR code"))
-                }
+                try {
+                    val uri = Uri.parse(result.contents)
+                    ValletUriParser.invoke(uri)
 
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

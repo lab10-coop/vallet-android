@@ -1,5 +1,6 @@
 package io.lab10.vallet.events
 
+import io.lab10.vallet.models.BTUsers
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -17,6 +18,7 @@ class ProductRefreshEvent
 class ProductChangedEvent
 class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val secret: String = "")
+class DeepLinkUserAddEvent(val user: BTUsers.User)
 // TOOD This is for burning tokens but not idea why we should do it...
 class TokenRedeemEvent(val address: String)
 
