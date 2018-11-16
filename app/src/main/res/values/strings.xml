@@ -28,6 +28,7 @@
     <string name="product_name">Name</string>
     <string name="product_price">Price</string>
     <string name="add_product_button">Add a product</string>
+    <string name="save_product_button">Update</string>
     <string name="shared_pref_artis_node_address">server_node_ip</string>
     <string name="shared_pref_vallet_api_server_address">vallet_api_server_ip</string>
     <string name="default_vallet_api_server_address">https://vallet.mars.lab10.io</string>

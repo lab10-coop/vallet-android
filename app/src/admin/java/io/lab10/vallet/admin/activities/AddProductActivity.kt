@@ -97,6 +97,7 @@ class AddProductActivity : AppCompatActivity() {
             } else {
                 productPriceInput.setText(Wallet.convertEUR2ATS((product as Product).price.toString()).toString())
             }
+            saveProductBtn.text = resources.getString(R.string.save_product_button)
             productNameInput.setText((product as Product).name)
             productNfcTagInput.setText((product as Product).nfcTagId)
             var bmImg = BitmapFactory.decodeFile((product as Product).localImagePath);
