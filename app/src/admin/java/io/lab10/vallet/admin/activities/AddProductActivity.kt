@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.View
+import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.models.*
 import io.objectbox.Box
@@ -100,6 +101,7 @@ class AddProductActivity : AppCompatActivity() {
             productNfcTagInput.setText((product as Product).nfcTagId)
             var bmImg = BitmapFactory.decodeFile((product as Product).localImagePath);
             productPicture.setImageBitmap(bmImg);
+            Picasso.get().load("https://ipfs.io/ipfs/" + (product as Product).imagePath).into(productPicture)
         }
 
         saveProductBtn.setOnClickListener() {
