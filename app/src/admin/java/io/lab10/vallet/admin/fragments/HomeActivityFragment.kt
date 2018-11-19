@@ -155,7 +155,7 @@ class HomeActivityFragment : Fragment() {
             adapter = incomingViewAdapter
         }
 
-        viewHolder!!.voucherTypeIcon.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+        viewHolder!!.circulating_vouchers_value.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_DOWN -> {
                     debugCount += 1

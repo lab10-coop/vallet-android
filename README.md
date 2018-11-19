@@ -29,3 +29,16 @@ To compile project choose desired build variant to build and compile it.
 We are using `gradle-play-publisher` for deployment.
 Gitlab is handling our builds (tests in the future) and deployment to google play see `.gitlabci.yml` for details.
 Required secret variables for keystore password and keypassword. See `app/build.gradle` for details.
+
+# Debug mode
+
+The Admin app has debug mode screen. It is a special screen which allow
+you to configure specific attributes like node ip, contract address, api server
+ip, ipfs address, generate new token, request funds or get some verbose
+notification for the app.
+
+Most of those settings in the future would be moved to settings for regular
+users but for time being is hidden as by default none of the user needs access
+to it.
+
+To enable it on just tap 8 times on circulating value (home screen)
