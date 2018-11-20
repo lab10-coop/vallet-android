@@ -49,8 +49,8 @@ android {
 
         admin {
             applicationId "io.lab10.vallet.admin"
-            versionCode 25
-            versionName "1.2.2"
+            versionCode 26
+            versionName "2.0.0"
             dimension "free"
             signingConfig signingConfigs.release
         }
