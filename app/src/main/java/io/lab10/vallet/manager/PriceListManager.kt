@@ -38,10 +38,15 @@ class PriceListManager {
             val apiService = ValletApiService.create("https://vallet.mars.lab10.io")
             apiService.fetchPriceList(tokenContractAddress).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
+                    .onErrorReturn {
+                        EventBus.getDefault().post(ErrorEvent(it.message.toString()))
+                        TokenBase()
+                    }
                     .subscribe ({
                         result ->
                         val response = (result as TokenBase)
-                        updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
+                        if (response.token_name != null && response.token_contract_address != null && response.products != null && response.token_type != null)
+                            updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
                     }, { error ->
                         EventBus.getDefault().post(ErrorEvent(error.message.toString()))
                     })
@@ -51,10 +56,15 @@ class PriceListManager {
             val apiService = ValletApiService.create("https://vallet.mars.lab10.io")
             apiService.updatePriceList(token).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
+                    .onErrorReturn {
+                        EventBus.getDefault().post(ErrorEvent(it.message.toString()))
+                        TokenBase()
+                    }
                     .subscribe ({
                         result ->
                         val response = (result as TokenBase)
-                        updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
+                        if (response.token_name != null && response.token_contract_address != null && response.products != null && response.token_type != null)
+                            updateLocalDb(response.token_name, response.token_type, response.token_contract_address, response.products)
                     }, { error ->
                         EventBus.getDefault().post(ErrorEvent(error.message.toString()))
                     })

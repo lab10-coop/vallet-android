@@ -16,6 +16,7 @@ import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
+import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
@@ -104,7 +105,7 @@ class Web3jManager private constructor() {
             // and the active token is not set. When we will support multi tokens this could change
             tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).onErrorReturn {
-                        // If error occur we return empty token response and triggering event with error which we got
+                        // If error occur we return empty token create event response and triggering event with error which we got
                         EventBus.getDefault().post(ErrorEvent("getTokenContractAddress: " + it.message))
                         TokenFactory.TokenCreatedEventResponse()
                     }.subscribe() { event ->
@@ -129,7 +130,13 @@ class Web3jManager private constructor() {
             if (Wallet.isValidAddress(tokenContractAddress)) {
                 Single.fromCallable {
                     token.totalSupply().send()
-                }.subscribeOn(Schedulers.io()).subscribe { result ->
+                }.subscribeOn(Schedulers.io())
+                .onErrorReturn {
+                // If error occur we return zero value and triggering event with error which we got
+                    EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                BigInteger.ZERO
+                }
+                .subscribe { result ->
                     EventBus.getDefault().post(TokenTotalSupplyEvent(result.toLong(), tokenContractAddress))
                 }
             }
@@ -150,7 +157,13 @@ class Web3jManager private constructor() {
             var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.name().send()
-            }.subscribeOn(Schedulers.io()).subscribe { result ->
+            }
+            .onErrorReturn {
+                // If error occur we return empty string and triggering event with error which we got
+                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                ""
+            }
+            .subscribeOn(Schedulers.io()).subscribe { result ->
                 EventBus.getDefault().post(TokenNameEvent(result, tokenAddress))
             }
         } catch (e: Exception) {
@@ -167,7 +180,13 @@ class Web3jManager private constructor() {
             var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.symbol().send()
-            }.subscribeOn(Schedulers.io()).subscribe { result ->
+            }
+            .onErrorReturn {
+                // If error occur we return empty string and triggering event with error which we got
+                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                ""
+            }
+            .subscribeOn(Schedulers.io()).subscribe { result ->
                 EventBus.getDefault().post(TokenTypeEvent(result, tokenAddress))
             }
         } catch (e: Exception) {
@@ -197,10 +216,16 @@ class Web3jManager private constructor() {
                 } catch (e: ContractCallException) {
                     return@fromCallable BigInteger.ZERO;
                 }
-            }.subscribeOn(Schedulers.io())
-                    .subscribe() { result ->
-                        EventBus.getDefault().post(TokenBalanceEvent(result.toLong(), tokenContractAddress))
-                    }
+            }
+            .onErrorReturn {
+                // If error occur we return zero value and triggering event with error which we got
+                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                BigInteger.ZERO
+            }
+            .subscribeOn(Schedulers.io())
+            .subscribe() { result ->
+                EventBus.getDefault().post(TokenBalanceEvent(result.toLong(), tokenContractAddress))
+            }
         }
     }
 
@@ -210,13 +235,25 @@ class Web3jManager private constructor() {
             val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
             var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    .subscribeOn(Schedulers.io())
+                    .onErrorReturn {
+                        // If error occur we return empty token transfer response and triggering event with error which we got
+                        EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                        Token.TransferEventResponse()
+                    }
+                    .subscribe() { event ->
                         var log = event as Token.TransferEventResponse
                         emitTransactionEvent(log, tokenAddress)
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                    .subscribeOn(Schedulers.io()).subscribe() { event ->
+                    .subscribeOn(Schedulers.io())
+                    .onErrorReturn {
+                        // If error occur we return empty token redeem response and triggering event with error which we got
+                        EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                        Token.RedeemEventResponse()
+                    }
+                    .subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
                         emitRedeemEvent(log, tokenAddress)
                     }
@@ -236,12 +273,18 @@ class Web3jManager private constructor() {
         Single.fromCallable {
             tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
-                .subscribe() { result ->
-                    var respons = tokenFactory.getTokenCreatedEvents(result)
-                    // TODO check if I am the owner and how many events can get back, how to choose proper one?
-                    EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
-
-                }
+        .onErrorReturn {
+            // If error occur we return empty transaction receipt response and triggering event with error which we got
+            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            TransactionReceipt()
+        }
+        .subscribe() { result ->
+            if (result.transactionHash != null) {
+                var respons = tokenFactory.getTokenCreatedEvents(result)
+                // TODO check if I am the owner and how many events can get back, how to choose proper one?
+                EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
+            }
+        }
     }
 
     // TODO this probably won't be needed
@@ -253,54 +296,49 @@ class Web3jManager private constructor() {
         Single.fromCallable {
             getConnection(context).ethGetLogs(filter).send()
         }.subscribeOn(Schedulers.io())
-                .subscribe { result ->
-                    Log.i(TAG, result.toString())
-                }
+        .onErrorReturn {
+            // If error occur we return empty EthLog and triggering event with error which we got
+            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            EthLog()
+        }
+        .subscribe { result ->
+            Log.i(TAG, result.toString())
+        }
     }
 
     fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        try {
-
-            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-            Single.fromCallable {
-                try {
-                    EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
-                    token.issue(to, amount).send()
-                } catch (e: Exception) {
-                    if (e.message != null) {
-                        EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-                    } else {
-                        EventBus.getDefault().post(ErrorEvent("Unknown error"))
-                    }
-                }
-            }.subscribeOn(Schedulers.io()).subscribe { event ->
-                val transaction = event as TransactionReceipt
-                val log = event.logs.first()
-            }
-        } catch (e: Exception) {
-            if (e.message != null)
-                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        Single.fromCallable {
+                EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
+                token.issue(to, amount).send()
+        }
+        .onErrorReturn {
+            // If error occur we return empty transaction receipt response and triggering event with error which we got
+            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            TransactionReceipt()
+        }
+        .subscribeOn(Schedulers.io()).subscribe { event ->
+            val transaction = event as TransactionReceipt
+            val log = event.logs.first()
         }
     }
 
     fun redeemToken(context: Context, amount: BigInteger, tokenContractAddress: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        try {
-
-            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-            Single.fromCallable {
-                token.redeem(amount).send()
-            }.subscribeOn(Schedulers.io()).subscribe {
-                EventBus.getDefault().post(TokenRedeemEvent(tokenContractAddress))
-            }
-        } catch (e: Exception) {
-            if (e.message != null)
-                EventBus.getDefault().post(ErrorEvent(e.message.toString()))
-
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        Single.fromCallable {
+            token.redeem(amount).send()
+        }.subscribeOn(Schedulers.io())
+        .onErrorReturn {
+            // If error occur we return empty transaction receipt response and triggering event with error which we got
+            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            TransactionReceipt()
+        }
+        .subscribe {
+            EventBus.getDefault().post(TokenRedeemEvent(tokenContractAddress))
         }
     }
 

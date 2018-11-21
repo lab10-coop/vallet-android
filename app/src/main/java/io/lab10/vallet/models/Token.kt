@@ -69,10 +69,10 @@ data class TokenCreated(
 )
 
 data class TokenBase(
-        val token_name: String,
-        val token_type: Int,
-        val token_contract_address: String,
-        val products: List<ProductBase>
+        val token_name: String? = null,
+        val token_type: Int? = null,
+        val token_contract_address: String? = null,
+        val products: List<ProductBase>? = null
 )
 
 data class TokenUpdate(
