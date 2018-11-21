@@ -167,22 +167,25 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
         var tokenName = event.name
-        supportActionBar!!.title = tokenName
-        var tokenType = 0
-        if (event.type.equals(Tokens.Type.VOUCHER.toString()) ) {
-            tokenType = 1
+
+        if (ValletApp.activeToken == null || ValletApp.activeToken!!.tokenAddress != tokenContractaddress) {
+            supportActionBar!!.title = tokenName
+            var tokenType = 0
+            if (event.type.equals(Tokens.Type.VOUCHER.toString())) {
+                tokenType = 1
+            }
+            val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+            val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
+            tokenBox.put(voucher)
+
+            progress_overlay.setVisibility(View.GONE)
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+            // prepare remote storage
+            Thread(Runnable {
+                voucher.storage().create()
+            }).start()
         }
-        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
-        val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
-        tokenBox.put(voucher)
-
-        progress_overlay.setVisibility(View.GONE)
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-
-        // prepare remote storage
-        Thread(Runnable {
-           voucher.storage().create()
-        }).start()
     }
 
 
