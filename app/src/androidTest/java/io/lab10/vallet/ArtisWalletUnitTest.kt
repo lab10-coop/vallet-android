@@ -9,13 +9,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
-import org.web3j.crypto.CipherException
-import org.web3j.crypto.ContractUtils
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.Web3j
-import org.web3j.protocol.Web3jFactory
-import org.web3j.protocol.Web3jService
-import org.web3j.tx.Contract
 import java.io.File
 import java.math.BigInteger
 
@@ -51,7 +46,7 @@ class ArtisWalletUnitTest {
 
     @Test
     fun artis_fetchWalletAddress() {
-        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFileName)
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFileName)
         Assert.assertNotNull(walletAddress)
         Assert.assertTrue(WalletUtils.isValidAddress(walletAddress))
         Assert.assertEquals(walletAddress.length, WALLET_ADDRESS_SIZE)
@@ -77,7 +72,7 @@ class ArtisWalletUnitTest {
 
     @Test
     fun artis_getWalletBalance() {
-        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFileName)
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFileName)
         var balance = Web3jManager.INSTANCE.getBalance(appContext, walletAddress)
         val expected_balance = BigInteger.ZERO
         Assert.assertEquals(balance.balance, expected_balance)

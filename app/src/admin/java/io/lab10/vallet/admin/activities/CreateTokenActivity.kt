@@ -113,7 +113,7 @@ class CreateTokenActivity : AppCompatActivity() {
 
 
                     } else {
-                        Toast.makeText(activity, "Pleaes connect to the internet to continue", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity, "Please connect to the internet to continue", Toast.LENGTH_LONG).show()
                     }
                 }
             }

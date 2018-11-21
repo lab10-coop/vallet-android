@@ -67,12 +67,17 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_admin)
 
+        // When activity is tirggered from on boarding screen we create token with given name
         val tokenName = intent.getStringExtra("TOKEN_NAME")
         if (tokenName != null) {
             createToken(tokenName)
         }
 
-        Web3jManager.INSTANCE.getTokenContractAddress(this)
+        // Fetch created token and set it as a active one if non is set yet. This should be triggered
+        // only once when app is run first time
+        if (ValletApp.activeToken == null) {
+            Web3jManager.INSTANCE.getTokenContractAddress(this)
+        }
 
         val myPagerAdapter = MainPagerAdapter(supportFragmentManager)
         myPagerAdapter.addFragment(HomeActivityFragment(), resources.getString(R.string.tab_activity))
@@ -293,7 +298,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         var voucherType = Tokens.Type.EUR.toString()
         // TODO: Manage password for the key
         val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
-        val walletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+        val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
         ValletApp.wallet = Wallet(0, "Main", walletAddress, walletFile)
 
         // TODO trigger that only if balance is lower then needed amount for creating transaction.

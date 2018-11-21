@@ -6,7 +6,6 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
-import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -15,15 +14,12 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.Web3jFactory
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
-import rx.functions.Action1
-import rx.functions.Func1
 import rx.schedulers.Schedulers
 import java.io.File
 import java.math.BigInteger
@@ -32,15 +28,18 @@ import java.math.BigInteger
 /**
  * Created by mtfk on 01.02.18.
  */
-class Web3jManager private constructor(){
+class Web3jManager private constructor() {
 
-    init {}
+    init {
+    }
 
     var web3: Web3j? = null
     val TAG = Web3jManager::class.java.simpleName
 
 
-    private object Holder { val INSTANCE = Web3jManager() }
+    private object Holder {
+        val INSTANCE = Web3jManager()
+    }
 
     companion object {
         val INSTANCE: Web3jManager by lazy { Holder.INSTANCE }
@@ -56,8 +55,8 @@ class Web3jManager private constructor(){
         return sharedPref.getString(context.getString(R.string.shared_pref_factory_contract_address), context.getString(R.string.token_factory_contract_address))
     }
 
-    fun getConnection(context: Context): Web3j{
-       return Web3jFactory.build(HttpService(getNodeAddress(context)))
+    fun getConnection(context: Context): Web3j {
+        return Web3jFactory.build(HttpService(getNodeAddress(context)))
     }
 
     fun createWallet(context: Context, password: String): String {
@@ -81,12 +80,12 @@ class Web3jManager private constructor(){
 
     }
 
-    fun getWalletAddress(walletFileName: String): String {
+    fun getWalletAddressFromFile(walletFileName: String): String {
         var addr = walletFileName.split("--");
         return "0x" + addr.last().split(".").first()
     }
 
-    fun getBalance(context: Context, address: String) : EthGetBalance {
+    fun getBalance(context: Context, address: String): EthGetBalance {
         // send asynchronous requests to get balance
         return getConnection(context).ethGetBalance(address, DefaultBlockParameterName.LATEST)
                 .sendAsync()
@@ -95,19 +94,29 @@ class Web3jManager private constructor(){
     }
 
     fun getTokenContractAddress(context: Context) {
-        val voucherWalletAddress = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE).getString(context.resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
+        if (ValletApp.wallet != null) {
 
-        val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-        val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
-        tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).onErrorReturn(Func1 { t ->
-                    EventBus.getDefault().post(ErrorEvent("Error"))
-                }).subscribe() { event ->
-                    var log = event as TokenFactory.TokenCreatedEventResponse
-                    if (log._address != null && log._creator.equals(getWalletAddress(voucherWalletAddress)))
-                        EventBus.getDefault().post(TokenCreateEvent(log._address as String, log._name as String, log._symbol as String, log._decimals as BigInteger))
-
-                }
+            val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
+            val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            // TODO: Optimize the query and do not listen for whole ledger but specific some blocks which are
+            // since user joined (did first interaction with blockchain) the network
+            // Notice: that this would be triggered just once while user starts first time the app
+            // and the active token is not set. When we will support multi tokens this could change
+            tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                    .subscribeOn(Schedulers.io()).onErrorReturn {
+                        // If error occur we return empty token response and triggering event with error which we got
+                        EventBus.getDefault().post(ErrorEvent("getTokenContractAddress: " + it.message))
+                        TokenFactory.TokenCreatedEventResponse()
+                    }.subscribe() { event ->
+                        var log = event as TokenFactory.TokenCreatedEventResponse
+                        // if the creator address does not match the token which is active now we just ignore that event
+                        if (log._address != null && log._creator.equals(ValletApp.wallet!!.address)) {
+                            EventBus.getDefault().post(TokenCreateEvent(log._address as String, log._name as String, log._symbol as String, log._decimals as BigInteger))
+                        }
+                    }
+        } else {
+            EventBus.getDefault().post(ErrorEvent("Wallet was not properly created"))
+        }
     }
 
     fun getCirculatingVoucher(context: Context, tokenContractAddress: String) {
@@ -138,7 +147,7 @@ class Web3jManager private constructor(){
         val credentials = loadCredential(context)
         try {
 
-            var token = Token.Companion.load(tokenAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.name().send()
             }.subscribeOn(Schedulers.io()).subscribe { result ->
@@ -155,7 +164,7 @@ class Web3jManager private constructor(){
         val credentials = loadCredential(context)
         try {
 
-            var token = Token.Companion.load(tokenAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.symbol().send()
             }.subscribeOn(Schedulers.io()).subscribe { result ->
@@ -176,6 +185,7 @@ class Web3jManager private constructor(){
         return address.equals(walletAddress)
 
     }
+
     fun getClientBalance(context: Context, tokenContractAddress: String, address: String) {
         val credentials = loadCredential(context)
         var balance = BigInteger.ZERO
@@ -222,16 +232,16 @@ class Web3jManager private constructor(){
         val contractAddress = getContractAddress(context)
         val credentials = loadCredential(context)
         // TODO take care of the case when credential will be null.
-        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE,Contract.GAS_LIMIT)
+        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
-             tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
+            tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
-        .subscribe() { result ->
-            var respons = tokenFactory.getTokenCreatedEvents(result)
-            // TODO check if I am the owner and how many events can get back, how to choose proper one?
-            EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
+                .subscribe() { result ->
+                    var respons = tokenFactory.getTokenCreatedEvents(result)
+                    // TODO check if I am the owner and how many events can get back, how to choose proper one?
+                    EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
 
-        }
+                }
     }
 
     // TODO this probably won't be needed
@@ -243,9 +253,9 @@ class Web3jManager private constructor(){
         Single.fromCallable {
             getConnection(context).ethGetLogs(filter).send()
         }.subscribeOn(Schedulers.io())
-        .subscribe {
-            result -> Log.i(TAG, result.toString())
-        }
+                .subscribe { result ->
+                    Log.i(TAG, result.toString())
+                }
     }
 
     fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String) {
@@ -253,7 +263,7 @@ class Web3jManager private constructor(){
         // TODO validate if address is valid if not throw exception.
         try {
 
-            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 try {
                     EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
@@ -281,7 +291,7 @@ class Web3jManager private constructor(){
         // TODO validate if address is valid if not throw exception.
         try {
 
-            var token = Token.Companion.load(tokenContractAddress,getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.redeem(amount).send()
             }.subscribeOn(Schedulers.io()).subscribe {
