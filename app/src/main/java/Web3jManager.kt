@@ -22,6 +22,8 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract
 import org.web3j.tx.exceptions.ContractCallException
 import rx.Single
+import rx.functions.Action1
+import rx.functions.Func1
 import rx.schedulers.Schedulers
 import java.io.File
 import java.math.BigInteger
@@ -98,7 +100,9 @@ class Web3jManager private constructor(){
         val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
         val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
-                .subscribeOn(Schedulers.io()).subscribe() { event ->
+                .subscribeOn(Schedulers.io()).onErrorReturn(Func1 { t ->
+                    EventBus.getDefault().post(ErrorEvent("Error"))
+                }).subscribe() { event ->
                     var log = event as TokenFactory.TokenCreatedEventResponse
                     if (log._address != null && log._creator.equals(getWalletAddress(voucherWalletAddress)))
                         EventBus.getDefault().post(TokenCreateEvent(log._address as String, log._name as String, log._symbol as String, log._decimals as BigInteger))
