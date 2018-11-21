@@ -59,7 +59,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (ValletApp.wallet == null) {
             // TODO take care of the passoword. Auto generate it?
             val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
-            voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddress(walletFile)
+            voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
             ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
         }
 
