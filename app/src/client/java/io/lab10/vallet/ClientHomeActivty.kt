@@ -146,6 +146,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             item.setOnMenuItemClickListener { _ ->
                 ValletApp.activeToken = token
                 reloadProductList()
+                setPriceListHeader()
                 drawer_layout.closeDrawer(GravityCompat.START)
                 true
             }
