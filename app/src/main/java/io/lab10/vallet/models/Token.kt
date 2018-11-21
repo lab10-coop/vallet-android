@@ -63,9 +63,9 @@ data class Token(@Id var id: Long = 0,
 
 // NOTICE keep in mind that those data structure should have attribute names of the API calls
 data class TokenCreated(
-        val secret: String,
-        val token_name: String,
-        val products: List<ProductBase>
+        val secret: String? = null,
+        val token_name: String? = null,
+        val products: List<ProductBase>? = null
 )
 
 data class TokenBase(

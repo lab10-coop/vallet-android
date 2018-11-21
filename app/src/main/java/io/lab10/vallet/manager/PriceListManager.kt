@@ -19,13 +19,17 @@ class PriceListManager {
 
             apiService.createPriceList(token).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
+                    .onErrorReturn {
+                        EventBus.getDefault().post(ErrorEvent(it.message.toString()))
+                        TokenCreated()
+                    }
                     .subscribe ({
                         result ->
                         val response = (result as TokenCreated)
                         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
                         // TODO support multiple tokens
                         val token = tokenBox.query().build().findFirst()
-                        if (token != null) {
+                        if (token != null && response.secret != null) {
                             token.secret = response.secret
                             tokenBox.put(token)
                         }
