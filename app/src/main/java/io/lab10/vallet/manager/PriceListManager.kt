@@ -74,7 +74,7 @@ class PriceListManager {
                     })
         }
 
-        private fun updateLocalDb(tokenName: String, tokenType: Int, tokenAddres: String, products: List<ProductBase>) {
+        private fun updateLocalDb(tokenName: String, tokenType: String, tokenAddres: String, products: List<ProductBase>) {
             val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             var token = tokenBox.query().equal(Token_.tokenAddress, tokenAddres).build().findFirst()
             var isNewToken = false

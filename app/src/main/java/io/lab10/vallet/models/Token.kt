@@ -16,7 +16,7 @@ data class Token(@Id var id: Long = 0,
                  var name: String = "",
                  val tokenAddress: String = "",
                  var balance: Long = 0,
-                 var tokenType: Int = 0,
+                 var tokenType: String = Tokens.Type.EUR.toString(),
                  var ipnsAdddress: String = "",
                  var active: Boolean = true,
                  var lastBlockNumber: Long = 0,
@@ -71,7 +71,7 @@ data class TokenCreated(
 
 data class TokenBase(
         val token_name: String? = null,
-        val token_type: Int? = null,
+        val token_type: String? = null,
         val token_contract_address: String? = null,
         val products: List<ProductBase>? = null
 )

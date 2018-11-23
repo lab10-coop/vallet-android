@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.Wallet
 
-class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>, val voucherType: Int) :
+class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>, val voucherType: String) :
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
@@ -41,7 +42,7 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
         try {
             if (history.size > 0 && history.size >= position) {
                 holder.mTransaction = history[position]
-                if (voucherType == 0) {
+                if (voucherType.equals(Tokens.Type.EUR.type)) {
                     holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString() + "€"
                 } else {
                     holder.mValue.text = history[position].value.toString()

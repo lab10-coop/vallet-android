@@ -19,10 +19,7 @@ import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.admin.adapters.SimpleHistoryViewAdapter
-import io.lab10.vallet.models.History
-import io.lab10.vallet.models.ValletTransaction
-import io.lab10.vallet.models.ValletTransaction_
-import io.lab10.vallet.models.Wallet
+import io.lab10.vallet.models.*
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
 import kotlin.math.abs
@@ -49,7 +46,7 @@ class HomeActivityFragment : Fragment() {
         if (ValletApp.activeToken != null) {
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType == 0) {
+                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
                             circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString() + "€"
                         } else {
                             circulating_vouchers_value.text = sum.toString()
@@ -59,7 +56,7 @@ class HomeActivityFragment : Fragment() {
             // Outgoing
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType == 0) {
+                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
                             outgoing_total.text = Wallet.convertATS2EUR(sum).toString() + "€"
                         } else {
                             outgoing_total.text = sum.toString()
@@ -69,7 +66,7 @@ class HomeActivityFragment : Fragment() {
             // Incomming
             query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                     .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType == 0) {
+                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
                             incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString() + "€"
                         } else {
                             incoming_total.text = abs(sum).toString()
@@ -134,7 +131,7 @@ class HomeActivityFragment : Fragment() {
         var recentIncomingTransactions = History.getRecentIncoming()
 
 
-        if ((activity as AdminActivity).voucher?.tokenType == 1) {
+        if ((activity as AdminActivity).voucher?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
             incomingViewAdapter = SimpleHistoryViewAdapter(recentIncomingTransactions, 1)
             outgoingViewAdapter = SimpleHistoryViewAdapter(recentOutgoingTransactions, 1)
             incoming_total_value_type_icon.setBackgroundResource(R.drawable.voucher_icon_gray)

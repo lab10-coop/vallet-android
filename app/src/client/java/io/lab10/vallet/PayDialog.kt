@@ -11,6 +11,7 @@ import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.models.Product
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.client.pay_dialog.*
 
@@ -28,7 +29,7 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
         no = findViewById(R.id.close_button) as ImageButton
         (yes as Button).setOnClickListener(this)
         (no as ImageButton).setOnClickListener(this)
-        if (ValletApp.activeToken!!.tokenType == 0) {
+        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
             price_label.text = Wallet.convertATS2EUR(product.price).toString()
         } else {
             voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)

@@ -16,6 +16,7 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.IssueTokenEvent
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.utils.EuroInputFilter
 import kotlinx.android.synthetic.admin.fragment_issue_token.view.*
 import org.greenrobot.eventbus.EventBus
@@ -45,7 +46,7 @@ class IssueDialogFragment : DialogFragment() {
 
         view.issueUserName.text = userName
 
-        if (voucher!!.tokenType == 0) {
+        if (voucher!!.tokenType.equals(Tokens.Type.EUR)) {
             view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(4, 2)))
             view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }

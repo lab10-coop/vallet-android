@@ -167,13 +167,13 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     fun onTokenCreated(event: TokenCreateEvent) {
         var tokenContractaddress = event.address
         var tokenName = event.name
+        var tokenType = Tokens.Type.EUR.type
+        if (event.type.equals(Tokens.Type.VOUCHER.type)) {
+            tokenType = Tokens.Type.VOUCHER.type
+        }
 
         if (ValletApp.activeToken == null || ValletApp.activeToken!!.tokenAddress != tokenContractaddress) {
             supportActionBar!!.title = tokenName
-            var tokenType = 0
-            if (event.type.equals(Tokens.Type.VOUCHER.toString())) {
-                tokenType = 1
-            }
             val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
             tokenBox.put(voucher)
@@ -205,7 +205,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             userName = ""
         }
         addUserToAddressBook(event.userAddress, userName!!)
-        if (ValletApp.activeToken?.tokenType == 0) {
+        if (ValletApp.activeToken?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
             amount = BigInteger.valueOf(Wallet.convertEUR2ATS(event.amount).toLong())
         } else {
             amount = BigInteger(event.amount)
@@ -225,7 +225,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     fun onTotalSupplyEvent(event: TokenTotalSupplyEvent) {
         runOnUiThread {
             if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
-                if (ValletApp.activeToken!!.tokenType == 0) {
+                if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
                     circulating_vouchers_value.text = Wallet.convertATS2EUR(event.value).toString() + "€"
                 } else {
                     circulating_vouchers_value.text = event.value.toString()
@@ -298,7 +298,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     private fun createToken(tokenName: String) {
         val voucherDecimal = 12;
-        var voucherType = Tokens.Type.EUR.toString()
+        var voucherType = Tokens.Type.EUR.type
         // TODO: Manage password for the key
         val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
         val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)

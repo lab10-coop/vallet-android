@@ -86,13 +86,13 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
-        if (token!!.tokenType == 0) {
+        if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
             productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
         }
 
         if (product != null) {
-            if (token!!.tokenType == 0) {
+            if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
                 productPriceInput.setText(Wallet.convertATS2EUR((product as Product).price).toString())
             } else {
                 productPriceInput.setText(Wallet.convertEUR2ATS((product as Product).price.toString()).toString())
@@ -111,7 +111,7 @@ class AddProductActivity : AppCompatActivity() {
             var nfcTagId = productNfcTagInput.text.toString()
             var price = 0
             if (!priceString.trim().equals("")) {
-                if (token!!.tokenType == 0) {
+                if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
                     price = Wallet.convertEUR2ATS(priceString)
                 } else {
                     price = priceString.toInt()

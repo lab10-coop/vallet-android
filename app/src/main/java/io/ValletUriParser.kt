@@ -4,6 +4,7 @@ import android.net.Uri
 import io.lab10.vallet.events.*
 import io.lab10.vallet.models.BTUsers
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import org.greenrobot.eventbus.EventBus
 
@@ -51,7 +52,7 @@ class ValletUriParser {
 
         private fun addShop(tokenAddress: String) {
             if (Wallet.isValidAddress(tokenAddress)) {
-                val token = Token(0, "", tokenAddress, 0, 0, "", true, 0 )
+                val token = Token(0, "", tokenAddress, 0, Tokens.Type.EUR.type, "", true, 0 )
                 token.storage().fetch()
             } else {
                 throw ValletUriError("Invalid token address")

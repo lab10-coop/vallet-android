@@ -97,7 +97,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun showPriceListFragment() {
-        if (ValletApp.activeToken!!.tokenType != 0) {
+        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
             toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
         } else {
             toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)

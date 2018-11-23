@@ -8,8 +8,8 @@ object Tokens {
 
     private val ITEMS: MutableList<Token> = ArrayList()
 
-    enum class Type {
-        EUR, VOUCHER
+    enum class Type(val type: String) {
+        EUR("V-EUR"), VOUCHER("Voucher")
     }
 
     fun getVouchers(): MutableList<Token> {
