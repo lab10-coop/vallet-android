@@ -17,10 +17,9 @@ import io.lab10.vallet.models.Products
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.*
-import io.lab10.vallet.events.ProductRefreshEvent
+import io.lab10.vallet.events.RefreshProductsEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
-import io.lab10.vallet.R.string.action_settings
 import android.view.MenuInflater
 
 
@@ -56,11 +55,9 @@ class ProductListFragment : Fragment() {
                 recyclerView!!.adapter = adapter
             }
 
-        view.swiperefresh.setOnRefreshListener(
-                SwipeRefreshLayout.OnRefreshListener {
-                    EventBus.getDefault().post(ProductRefreshEvent())
-                }
-        )
+        view.swiperefresh.setOnRefreshListener {
+            EventBus.getDefault().post(RefreshProductsEvent())
+        }
 
         setupPermissions()
         return view

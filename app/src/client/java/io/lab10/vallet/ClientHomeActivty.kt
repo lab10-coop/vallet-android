@@ -43,8 +43,6 @@ import java.lang.Exception
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
 
     private var voucherWalletAddress : String = "";
-    // Used onActivityResult to refresh fragment since not always the state of activity is restored on time
-    private var reloadOnResume = false
 
     override fun onProductClickListner(item: Product) {
         payFor(item)
@@ -83,8 +81,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         burger.color = resources.getColor(R.color.black)
         toggle.syncState()
 
-        Tokens.refresh()
-
+        reloadProductListFromLocalStorage()
+        reloadProductListFromRemoteStorage()
         reloadNavigation()
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -105,11 +103,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
         }
         setPriceListHeader()
-        if (ValletApp.activeToken!!.remoteReadStoragePresent()) {
-            ValletApp.activeToken!!.storage().fetch()
-        } else {
-            EventBus.getDefault().post(ErrorEvent("Token does not have remote storage defined. Contact Admin"))
-        }
         val productListFragment = ProductListFragment.newInstance()
         toolbarVoucherTypeIcon.visibility = View.VISIBLE
         val transaction = supportFragmentManager.beginTransaction()
@@ -145,7 +138,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             view.voucherBalance.text = Wallet.convertATS2EUR(token.balance).toString()
             item.setOnMenuItemClickListener { _ ->
                 ValletApp.activeToken = token
-                reloadProductList()
+                reloadProductListFromLocalStorage()
+                reloadProductListFromRemoteStorage()
                 setPriceListHeader()
                 drawer_layout.closeDrawer(GravityCompat.START)
                 true
@@ -240,10 +234,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else {
             showPlaceHolderFragment()
         }
-        if (reloadOnResume) {
-            reloadOnResume = false
-            reloadProductList()
-        }
     }
 
     private val REQUEST_BT_ENABLE = 100
@@ -274,8 +264,10 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onProductchangedEvent(event: ProductChangedEvent) {
-        refreshProductListView()
+    fun onProductChangedEvent(event: ProductChangedEvent) {
+        showPriceListFragment()
+        reloadProductListFromLocalStorage()
+        reloadNavigation()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -283,11 +275,15 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Toast.makeText(this, event.message, Toast.LENGTH_LONG).show()
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNewTokenEvent(event: NewTokenEvent) {
+        reloadNavigation()
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onProductRefreshevent(event: ProductRefreshEvent) {
+    fun onProductRefreshEvent(event: RefreshProductsEvent) {
         refreshProductListView()
-        reloadProductList()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -298,14 +294,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             token.balance = event.balance
             tokenBox.put(token)
         }
-        Tokens.refresh()
         setPriceListHeader()
         reloadNavigation()
-    }
-
-    @Subscribe
-    fun onNewShopAddEvent(event: NewShopAddEvent) {
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -313,21 +303,28 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         refreshBalance()
     }
 
-    private fun reloadProductList() {
-
+    private fun reloadProductListFromLocalStorage() {
         if (ValletApp.activeToken != null) {
-            // Load first from local storage
             Products.refresh(ValletApp.activeToken!!)
             var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
             if (productFragment is ProductListFragment) {
                 productFragment.notifyAboutchange()
                 productFragment.swiperefresh.isRefreshing = false
-                if (ValletApp.activeToken!!.remoteReadStoragePresent())
-                    ValletApp.activeToken!!.storage().fetch()
             }
         }
     }
 
+    private fun reloadProductListFromRemoteStorage() {
+        if (ValletApp.activeToken != null) {
+            if (ValletApp.activeToken!!.remoteReadStoragePresent()) {
+                var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
+                if (productFragment is ProductListFragment) {
+                    productFragment.swiperefresh.isRefreshing = true
+                    ValletApp.activeToken!!.storage().fetch()
+                }
+            }
+        }
+    }
 
     private fun refreshProductListView() {
         var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)

@@ -3,12 +3,12 @@ package io.lab10.vallet.manager
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.interfaces.ValletApiService
 import io.lab10.vallet.events.ErrorEvent
+import io.lab10.vallet.events.NewTokenEvent
 import io.lab10.vallet.events.ProductChangedEvent
 import io.lab10.vallet.models.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
-import retrofit2.HttpException
 
 class PriceListManager {
 
@@ -77,8 +77,10 @@ class PriceListManager {
         private fun updateLocalDb(tokenName: String, tokenType: Int, tokenAddres: String, products: List<ProductBase>) {
             val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             var token = tokenBox.query().equal(Token_.tokenAddress, tokenAddres).build().findFirst()
+            var isNewToken = false
             if (token == null) {
                 token = Token(0, tokenName, tokenAddres, 0, tokenType, "", false, 0, "")
+                isNewToken = true
             }
 
             token.products.clear()
@@ -88,6 +90,8 @@ class PriceListManager {
             }
             tokenBox.put(token)
             EventBus.getDefault().post(ProductChangedEvent())
+            if(isNewToken)
+                EventBus.getDefault().post(NewTokenEvent())
 
         }
     }

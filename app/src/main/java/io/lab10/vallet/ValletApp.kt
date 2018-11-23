@@ -13,7 +13,18 @@ open class ValletApp: Application() {
         var activeToken: Token?
             get() {
                 val tokenBox = box!!.boxFor(Token::class.java)
-                return tokenBox.query().equal(Token_.active, true).build().findFirst()
+                var at = tokenBox.query().equal(Token_.active, true).build().findFirst()
+                // In case if there is no active token (at) we pick first and set it as active token
+                if (at == null) {
+                    var nat = tokenBox.query().build().findFirst()
+                    if (nat != null) {
+                        nat!!.active = true
+                        tokenBox.put(nat)
+                    }
+                    return nat
+                } else {
+                    return at
+                }
             }
             set(value) {
                 val tokenBox = box!!.boxFor(Token::class.java)

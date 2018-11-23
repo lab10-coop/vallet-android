@@ -1,6 +1,7 @@
 package io.lab10.vallet.events
 
 import io.lab10.vallet.models.BTUsers
+import io.lab10.vallet.models.Token
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -11,11 +12,11 @@ class TokenNameEvent(val name: String, val address: String)
 class TokenTotalSupplyEvent(val value: Long, val address: String)
 class TokenTypeEvent(val name: String, val address: String)
 class TokenBalanceEvent(val balance: Long, val address: String)
-class NewShopAddEvent(val address: String)
 class ProductsListEvent
 class ProductAddedEvent
-class ProductRefreshEvent
+class RefreshProductsEvent
 class ProductChangedEvent
+class NewTokenEvent
 class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val secret: String = "")
 class DeepLinkUserAddEvent(val user: BTUsers.User)

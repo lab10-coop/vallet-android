@@ -13,13 +13,10 @@ object Tokens {
     }
 
     fun getVouchers(): MutableList<Token> {
-        return ITEMS
-    }
-
-    fun refresh() {
         val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         ITEMS.clear()
         ITEMS.addAll(voucherBox.query().build().find())
+        return ITEMS
     }
 
     fun toJson(): String {
