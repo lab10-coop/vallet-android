@@ -118,7 +118,7 @@ class PriceListFragment : Fragment() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefresh(event: ProductRefreshEvent){
+    fun onRefresh(event: RefreshProductsEvent){
         reloadProducts()
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
