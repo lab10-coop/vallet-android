@@ -16,9 +16,13 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mValue: TextView
         var mTransaction: ValletTransaction? = null
+        var mIcon: ImageView
+        var mText: TextView
 
         init {
             mValue = mView.findViewById(R.id.value) as TextView
+            mText = mView.findViewById(R.id.text) as TextView
+            mIcon = mView.findViewById(R.id.icon) as ImageView
         }
 
         override fun toString(): String {
@@ -41,6 +45,10 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
             holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString() + "€"
         } else {
             holder.mValue.text = history[position].value.toString()
+        }
+        holder.mText.text = history[position].name.toString()
+        if (history[position].value < 0) {
+            holder.mIcon.setImageResource(R.drawable.ic_arrow_downward_24dp)
         }
     }
 
