@@ -32,9 +32,7 @@ class HomeActivityFragment : Fragment() {
     private var debugOn: Boolean = false
 
     private lateinit var outgoingRecyclerView: RecyclerView
-    private lateinit var incomingRecyclerView: RecyclerView
-    private lateinit var incomingViewAdapter: RecyclerView.Adapter<*>
-    private lateinit var outgoingViewAdapter: RecyclerView.Adapter<*>
+    private lateinit var transactionViewAdapter: RecyclerView.Adapter<*>
     private lateinit var outgointViewManager: RecyclerView.LayoutManager
     private lateinit var incomingViewManager: RecyclerView.LayoutManager
 
@@ -74,15 +72,10 @@ class HomeActivityFragment : Fragment() {
 
                     }
         }
-        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
+        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
                 .observer { recent ->
-                    (outgoingViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
-                    outgoingViewAdapter.notifyDataSetChanged()
-                }
-        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
-                .observer { recent ->
-                    (incomingViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
-                    incomingViewAdapter.notifyDataSetChanged()
+                    (transactionViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
+                    transactionViewAdapter.notifyDataSetChanged()
                 }
     }
 
@@ -99,8 +92,7 @@ class HomeActivityFragment : Fragment() {
             History.addTransaction(transaction)
             History.reloadTransactions()
             activity.runOnUiThread {
-                incomingViewAdapter.notifyDataSetChanged()
-                outgoingViewAdapter.notifyDataSetChanged()
+                transactionViewAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -112,8 +104,7 @@ class HomeActivityFragment : Fragment() {
             History.addTransaction(transaction)
             History.reloadTransactions()
             activity.runOnUiThread {
-                incomingViewAdapter.notifyDataSetChanged()
-                outgoingViewAdapter.notifyDataSetChanged()
+                transactionViewAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -127,29 +118,21 @@ class HomeActivityFragment : Fragment() {
         outgointViewManager = LinearLayoutManager(activity)
         incomingViewManager = LinearLayoutManager(activity)
 
-        var recentOutgoingTransactions = History.getRecentOutgoing()
-        var recentIncomingTransactions = History.getRecentIncoming()
+        var recentTransactions = History.getRecentOutgoing()
 
 
         if ((activity as AdminActivity).voucher?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
-            incomingViewAdapter = SimpleHistoryViewAdapter(recentIncomingTransactions, 1)
-            outgoingViewAdapter = SimpleHistoryViewAdapter(recentOutgoingTransactions, 1)
+            transactionViewAdapter = SimpleHistoryViewAdapter(recentTransactions, 1)
             incoming_total_value_type_icon.setBackgroundResource(R.drawable.voucher_icon_gray)
             outgoing_total_value_type_icon.setBackgroundResource(R.drawable.voucher_icon_gray)
         } else {
-            incomingViewAdapter = SimpleHistoryViewAdapter(recentIncomingTransactions, 0)
-            outgoingViewAdapter = SimpleHistoryViewAdapter(recentOutgoingTransactions, 0)
+            transactionViewAdapter = SimpleHistoryViewAdapter(recentTransactions, 0)
         }
 
         outgoingRecyclerView = viewHolder!!.outgoing_history_recycler.apply {
             setHasFixedSize(true)
             layoutManager = outgointViewManager
-            adapter = outgoingViewAdapter
-        }
-        incomingRecyclerView = viewHolder!!.incoming_history_recycler.apply {
-            setHasFixedSize(true)
-            layoutManager = incomingViewManager
-            adapter = incomingViewAdapter
+            adapter = transactionViewAdapter
         }
 
         viewHolder!!.circulating_vouchers_value.setOnTouchListener(View.OnTouchListener { view, motionEvent ->

@@ -18,10 +18,11 @@ object History {
         return valletTransactionBox.query().greater(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
     }
 
-    fun getRecentIncoming(): MutableList<ValletTransaction> {
+    fun getRecent(): MutableList<ValletTransaction> {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        return valletTransactionBox.query().less(ValletTransaction_.value, 0).orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
+        return valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
     }
+
 
     fun toJson(): String {
         val gson = Gson()

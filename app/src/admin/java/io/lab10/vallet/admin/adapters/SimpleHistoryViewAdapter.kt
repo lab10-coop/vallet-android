@@ -42,7 +42,7 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mTransaction = history[position]
         if (voucherType == 0) {
-            holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString() + "€"
+            holder.mValue.text = "€" + Wallet.convertATS2EUR(history[position].value).toString()
         } else {
             holder.mValue.text = history[position].value.toString()
         }
