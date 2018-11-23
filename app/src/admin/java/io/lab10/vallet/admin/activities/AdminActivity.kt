@@ -205,7 +205,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             userName = ""
         }
         addUserToAddressBook(event.userAddress, userName!!)
-        if (ValletApp.activeToken?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
+        if (ValletApp.activeToken?.tokenType.equals(Tokens.Type.EUR.type)) {
             amount = BigInteger.valueOf(Wallet.convertEUR2ATS(event.amount).toLong())
         } else {
             amount = BigInteger(event.amount)
