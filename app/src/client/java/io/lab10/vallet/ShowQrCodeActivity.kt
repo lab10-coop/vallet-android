@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.android.synthetic.main.activity_show_qr_code.*
+import java.net.URLEncoder
 
 class ShowQrCodeActivity : AppCompatActivity() {
 
@@ -20,7 +21,7 @@ class ShowQrCodeActivity : AppCompatActivity() {
             finish()
         }
         // TODO: add user name from first step of the registration
-        var uri = "valletadmin://user/" + voucherWalletAddress + "?user_name='" + getPhoneName() + "'"
+        var uri = "valletadmin://user/" + voucherWalletAddress + "?user_name=" + URLEncoder.encode(getPhoneName(), "UTF-8") + ""
 
         generateWalletBarcode(uri)
     }
