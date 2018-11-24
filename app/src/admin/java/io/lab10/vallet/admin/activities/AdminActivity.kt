@@ -34,9 +34,6 @@ import java.lang.Exception
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 
-
-
-
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
         IssueDialogFragment.OnFragmentInteractionListener,

@@ -1,5 +1,6 @@
 package io.lab10.vallet.admin.activities
 
+import android.Manifest
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
@@ -21,11 +22,14 @@ import android.widget.Toast
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.utils.EuroInputFilter
 import android.content.ContextWrapper
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.view.View
 import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductAddedEvent
@@ -132,6 +136,35 @@ class AddProductActivity : AppCompatActivity() {
 
         closeButton.setOnClickListener() {
             finish()
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), MY_PERMISSIONS_REQUEST_CAMERA );
+        }
+    }
+
+    var MY_PERMISSIONS_REQUEST_CAMERA = 101
+
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_CAMERA -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Do nothing
+                } else {
+                    finish()
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
         }
     }
 
