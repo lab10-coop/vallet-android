@@ -42,6 +42,7 @@
                         android:text="@string/circulating"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
+                        card_view:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
@@ -54,6 +55,7 @@
                         android:orientation="horizontal"
                         android:padding="0dp"
                         app:layout_constraintLeft_toLeftOf="parent"
+                        card_view:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/circulating">
 
 
@@ -81,12 +83,12 @@
 
                     <TextView
                         android:id="@+id/outgoing_label"
-                        style="@style/LabelText"
+                        style="@style/GrayLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="50dp"
                         android:layout_marginTop="10dp"
-                        android:text="@string/outgoing"
+                        android:text="@string/issued"
                         android:textAlignment="center"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toRightOf="parent"
@@ -110,19 +112,19 @@
                         android:layout_height="wrap_content"
                         android:text="0€"
                         android:textAlignment="center"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="@id/outgoing_label"
                         app:layout_constraintTop_toBottomOf="@id/outgoing_label"
                         card_view:layout_constraintRight_toRightOf="@+id/outgoing_label" />
 
                     <TextView
                         android:id="@+id/incoming_label"
-                        style="@style/LabelText"
+                        style="@style/GrayLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginRight="20dp"
-                        android:text="@string/incoming"
+                        android:layout_marginRight="50dp"
+                        android:text="@string/spent"
                         android:textAlignment="center"
                         android:textSize="16sp"
                         app:layout_constraintRight_toRightOf="parent"
@@ -147,7 +149,7 @@
                         android:layout_marginBottom="20dp"
                         android:text="0€"
                         android:textAlignment="center"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="@id/incoming_label"
                         app:layout_constraintTop_toBottomOf="@id/incoming_label"
                         card_view:layout_constraintBottom_toBottomOf="parent"

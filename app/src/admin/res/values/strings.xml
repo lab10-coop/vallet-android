@@ -30,7 +30,6 @@
     <string name="redeem">Redeem</string>
     <string name="tab_activity">Activity</string>
     <string name="tab_price_list">Price list</string>
-    <string name="outgoing">Outgoing</string>
-    <string name="incoming">Incoming</string>
-
+    <string name="spent">Spent</string>
+    <string name="issued">Issued</string>
 </resources>

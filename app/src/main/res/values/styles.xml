@@ -46,6 +46,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="GrayLabel" parent="@style/ValletFont">
+        <item name="android:fontFamily">Work Sans</item>
+        <item name="android:textColor">#ff9b9ea0</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="LabelText" parent="@style/ValletFont">
         <item name="android:fontFamily">@font/work_sans_medium</item>
         <item name="android:textColor">#FF0A9FFA</item>
