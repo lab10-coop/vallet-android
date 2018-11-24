@@ -9,6 +9,7 @@ import android.view.View
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.HistoryRecyclerViewAdapter
+import io.lab10.vallet.events.PendingTransactionEvent
 import io.lab10.vallet.events.RedeemVoucherEvent
 import io.lab10.vallet.events.TransferVoucherEvent
 import io.lab10.vallet.models.History
@@ -74,6 +75,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
             var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             managePlaceholder()
+            (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions())
             viewAdapter.notifyDataSetChanged()
         }
 

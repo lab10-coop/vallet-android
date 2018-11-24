@@ -24,17 +24,15 @@ object History {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
         val builder = valletTransactionBox.query();
         builder.equal(ValletTransaction_.transactionId, item.transactionId)
-        var transaction = builder.build().findUnique()
+        var transaction = builder.build().findFirst()
         if (transaction == null || item.transactionId.isBlank()) {
             // Find if the pending transaction is already in place, should always be the case
             val builder = valletTransactionBox.query();
-            builder.equal(ValletTransaction_.to, item.to).equal(ValletTransaction_.value, item.value.toLong())
+            builder.equal(ValletTransaction_.to, item.to).equal(ValletTransaction_.value, item.value.toLong()).equal(ValletTransaction_.blockNumber, 0)
             var transaction = builder.build().findFirst()
             if (transaction != null) {
-                transaction.name = item.name
-                transaction.blockNumber = item.blockNumber.toLong()
+                transaction.blockNumber = item.blockNumber
                 transaction.transactionId = item.transactionId
-
             } else {
                 transaction = item
             }

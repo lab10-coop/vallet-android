@@ -301,13 +301,19 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRedeemTokenEvent(event: TokenRedeemEvent) {
+    fun onRedeemTokenEvent(event: PendingTransactionEvent) {
         refreshBalance()
     }
 
     @Subscribe()
     fun onRefreshBalanceEvent(event: RefreshBalanceEvent) {
        refreshBalance()
+    }
+
+    @Subscribe
+    fun onPendingTransaction(event: PendingTransactionEvent) {
+        val transaction = ValletTransaction(0, event.name, event.amount, 0,  "", event.to)
+        History.addTransaction(transaction)
     }
 
     private fun reloadProductListFromLocalStorage() {
@@ -375,6 +381,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun refreshBalance() {
         doAsync {
             // Trigger balance check for each token
+            // copy the list to avoid ConcurrentModificationException
             val vouchers: MutableList<Token> = ArrayList()
 
             vouchers.addAll(Tokens.getVouchers())
@@ -388,7 +395,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun doAsync(f: () -> Unit) {
         Thread { f() }.start()
     }
-
 
     private var scanningInProgress = false
 

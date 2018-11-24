@@ -14,12 +14,9 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mValue: TextView
+        val mValue: TextView = mView.findViewById(R.id.value) as TextView
+        val mText: TextView = mView.findViewById(R.id.text) as TextView
         var mTransaction: ValletTransaction? = null
-
-        init {
-            mValue = mView.findViewById(R.id.value) as TextView
-        }
 
         override fun toString(): String {
             return super.toString() + " '" + mTransaction!!.id + "'"
@@ -47,6 +44,7 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
                 } else {
                     holder.mValue.text = history[position].value.toString()
                 }
+                holder.mText.text = history[position].name.toString()
             }
         } catch(e: Exception) {
             // TODO do nothing handle the crash by solving changing history

@@ -87,7 +87,7 @@ class HomeActivityFragment : Fragment() {
 
     @Subscribe
     fun onPendingTransaction(event: PendingTransactionEvent) {
-        val transaction = ValletTransaction(0, "Pending", event.amount.toLong(), 0,  "", event.to)
+        val transaction = ValletTransaction(0, event.name, event.amount, 0,  "", event.to)
         History.addTransaction(transaction)
         activity.runOnUiThread {
             (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())

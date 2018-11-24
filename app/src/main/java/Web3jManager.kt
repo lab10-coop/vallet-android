@@ -311,7 +311,7 @@ class Web3jManager private constructor() {
         // TODO validate if address is valid if not throw exception.
         var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
-                EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
+                EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "Pending"))
                 token.issue(to, amount).send()
 
         }
@@ -326,11 +326,12 @@ class Web3jManager private constructor() {
         }
     }
 
-    fun redeemToken(context: Context, amount: BigInteger, tokenContractAddress: String) {
+    fun redeemToken(context: Context, amount: BigInteger, tokenContractAddress: String, productName: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
         var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
+            EventBus.getDefault().post(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName))
             token.redeem(amount).send()
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
@@ -339,7 +340,6 @@ class Web3jManager private constructor() {
             TransactionReceipt()
         }
         .subscribe {
-            EventBus.getDefault().post(TokenRedeemEvent(tokenContractAddress))
         }
     }
 

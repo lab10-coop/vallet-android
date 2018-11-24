@@ -43,7 +43,7 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
         when (v.getId()) {
             // TODO chanage the action here
             R.id.pay_button -> {
-                Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress)
+                Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
                 Toast.makeText(activity, "Paid", Toast.LENGTH_SHORT).show()
             }
             R.id.close_button -> dismiss()
