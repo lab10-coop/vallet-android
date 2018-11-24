@@ -17,7 +17,7 @@ object History {
 
     fun getRecent(): MutableList<ValletTransaction> {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        return valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,10)
+        return valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,6)
     }
 
     fun addTransaction(item: ValletTransaction){

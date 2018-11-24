@@ -38,44 +38,11 @@ class HomeActivityFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
-        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        val query = valletTransactionBox.query().build()
         if (ValletApp.activeToken != null) {
-            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
-                    .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                            circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString() + "€"
-                        } else {
-                            circulating_vouchers_value.text = sum.toString()
-                        }
-
-                    }
-            // Outgoing
-            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
-                    .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                            outgoing_total.text = Wallet.convertATS2EUR(sum).toString() + "€"
-                        } else {
-                            outgoing_total.text = sum.toString()
-                        }
-
-                    }
-            // Incomming
-            query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
-                    .observer { sum ->
-                        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                            incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString() + "€"
-                        } else {
-                            incoming_total.text = abs(sum).toString()
-                        }
-
-                    }
+            reloadStats()
+            reloadTransactions()
         }
-        query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
-                .observer { recent ->
-                    (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(recent)
-                    transactionViewAdapter.notifyDataSetChanged()
-                }
+
     }
 
     override fun onStop() {
@@ -83,15 +50,58 @@ class HomeActivityFragment : Fragment() {
         EventBus.getDefault().unregister(this)
     }
 
+    private fun reloadStats() {
+        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+        val query = valletTransactionBox.query().build()
+        query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
+                .observer { sum ->
+                    if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
+                        circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString() + "€"
+                    } else {
+                        circulating_vouchers_value.text = sum.toString()
+                    }
+
+                }
+        // Outgoing
+        query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
+                .observer { sum ->
+                    if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
+                        outgoing_total.text = Wallet.convertATS2EUR(sum).toString() + "€"
+                    } else {
+                        outgoing_total.text = sum.toString()
+                    }
+
+                }
+        // Incomming
+        query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
+                .observer { sum ->
+                    if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
+                        incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString() + "€"
+                    } else {
+                        incoming_total.text = abs(sum).toString()
+                    }
+
+                }
+    }
+
+    private fun reloadTransactions() {
+        val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
+        val query = valletTransactionBox.query().build()
+        query.subscribe().on(AndroidScheduler.mainThread()).onlyChanges().transform { transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0, 6) }
+                .observer { recent ->
+                    (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(recent)
+                    transactionViewAdapter.notifyDataSetChanged()
+                }
+    }
 
 
     @Subscribe
     fun onPendingTransaction(event: PendingTransactionEvent) {
-        val transaction = ValletTransaction(0, event.name, event.amount, 0,  "", event.to)
+        val transaction = ValletTransaction(0, event.name, event.amount, 0, "", event.to)
         History.addTransaction(transaction)
         activity.runOnUiThread {
-            (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
-            transactionViewAdapter.notifyDataSetChanged()
+            reloadStats()
+            reloadTransactions()
         }
     }
 
@@ -109,11 +119,12 @@ class HomeActivityFragment : Fragment() {
             var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             activity.runOnUiThread {
-                (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
-                transactionViewAdapter.notifyDataSetChanged()
+                reloadStats()
+                reloadTransactions()
             }
         }
     }
+
     @Subscribe
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         if (isAdded) {
@@ -121,8 +132,8 @@ class HomeActivityFragment : Fragment() {
             var transaction = ValletTransaction(0, transfer, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
             activity.runOnUiThread {
-                (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
-                transactionViewAdapter.notifyDataSetChanged()
+                reloadStats()
+                reloadTransactions()
             }
         }
     }
@@ -130,7 +141,7 @@ class HomeActivityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        viewHolder =  inflater.inflate(R.layout.fragment_home_activity, container, false) as View
+        viewHolder = inflater.inflate(R.layout.fragment_home_activity, container, false) as View
 
 
         transactionsViewManager = LinearLayoutManager(activity)
@@ -154,7 +165,7 @@ class HomeActivityFragment : Fragment() {
         }
 
         viewHolder!!.circulating_vouchers_value.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-            when (motionEvent.action){
+            when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
                     debugCount += 1
                     if (debugCount > 5) {
@@ -234,6 +245,6 @@ class HomeActivityFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance() =
-           HomeActivityFragment()
+                HomeActivityFragment()
     }
 }
