@@ -230,7 +230,7 @@ class Web3jManager private constructor() {
     }
 
     // TODO combine that with all circulating and balance as all those methods depend on same events.
-    fun fetchAllTransaction(context: Context, tokenAddress: String) {
+    fun fetchAllTransaction(context: Context, tokenAddress: String, walletAddress: String) {
         try {
             val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
             var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
@@ -243,7 +243,7 @@ class Web3jManager private constructor() {
                     }
                     .subscribe() { event ->
                         var log = event as Token.TransferEventResponse
-                        emitTransactionEvent(log, tokenAddress)
+                        emitTransactionEvent(log, walletAddress)
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
@@ -255,7 +255,7 @@ class Web3jManager private constructor() {
                     }
                     .subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log, tokenAddress)
+                        emitRedeemEvent(log, walletAddress)
                     }
 
         } catch (e: Exception) {
@@ -345,12 +345,14 @@ class Web3jManager private constructor() {
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
-            EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
+            if(log._to.equals(address))
+                EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
         if (log._value != null)
-            EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
+            if(log._from.equals(address))
+                EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
 }

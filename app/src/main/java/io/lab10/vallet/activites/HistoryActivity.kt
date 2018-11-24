@@ -64,7 +64,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
     // TODO add latest block
     private fun fetchHistory() {
-        Web3jManager.INSTANCE.fetchAllTransaction(this, ValletApp.activeToken!!.tokenAddress)
+        Web3jManager.INSTANCE.fetchAllTransaction(this, ValletApp.activeToken!!.tokenAddress, ValletApp.wallet!!.address)
     }
 
     @Subscribe
