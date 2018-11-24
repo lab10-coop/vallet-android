@@ -21,7 +21,6 @@ import org.greenrobot.eventbus.Subscribe
 class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
     override fun onRefresh() {
         runOnUiThread {
-            History.clear()
             fetchHistory()
             viewAdapter.notifyDataSetChanged()
             swipe_container.setRefreshing(false);

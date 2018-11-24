@@ -21,7 +21,6 @@ import io.lab10.vallet.events.RefreshProductsEvent
 import io.lab10.vallet.models.Product
 import org.greenrobot.eventbus.EventBus
 import android.view.MenuInflater
-import io.lab10.vallet.ClientHomeActivty
 import io.lab10.vallet.events.RefreshBalanceEvent
 
 

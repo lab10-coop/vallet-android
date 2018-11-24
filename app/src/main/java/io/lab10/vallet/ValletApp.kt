@@ -10,6 +10,7 @@ import io.objectbox.BoxStore
 open class ValletApp: Application() {
     companion object {
         var box: BoxStore? = null
+        var isAdmin: Boolean = false
         var activeToken: Token?
             get() {
                 val tokenBox = box!!.boxFor(Token::class.java)
@@ -57,11 +58,16 @@ open class ValletApp: Application() {
     override fun onCreate() {
         super.onCreate()
         initBox()
+        isAdmin()
     }
 
     fun initBox() {
         if (box == null) {
            box = MyObjectBox.builder().androidContext(this).build()
         }
+    }
+
+    fun isAdmin() {
+        isAdmin = packageName.equals("io.lab10.vallet.admin")
     }
 }

@@ -97,7 +97,7 @@ class HomeActivityFragment : Fragment() {
 
     @Subscribe
     fun onHistoryRefresh(event: RefreshHistoryEvent) {
-        Web3jManager.INSTANCE.fetchAllTransaction(context, ValletApp.activeToken!!.tokenAddress)
+        Web3jManager.INSTANCE.fetchAllTransaction(context, ValletApp.activeToken!!.tokenAddress, ValletApp.wallet!!.address)
         swipe_container.isRefreshing = false
     }
 

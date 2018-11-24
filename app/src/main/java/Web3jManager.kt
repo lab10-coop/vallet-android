@@ -345,13 +345,13 @@ class Web3jManager private constructor() {
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
-            if(log._to.equals(address))
+            if(log._to.equals(address) || ValletApp.isAdmin)
                 EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
         if (log._value != null)
-            if(log._from.equals(address))
+            if(log._from.equals(address) || ValletApp.isAdmin )
                 EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
     }
 
