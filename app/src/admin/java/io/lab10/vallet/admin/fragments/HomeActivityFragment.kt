@@ -11,17 +11,17 @@ import android.view.*
 import io.lab10.vallet.activites.HistoryActivity
 import io.lab10.vallet.R
 import io.lab10.vallet.admin.activities.DebugActivity
-import io.lab10.vallet.events.RedeemVoucherEvent
-import io.lab10.vallet.events.TransferVoucherEvent
 import kotlinx.android.synthetic.admin.fragment_home_activity.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.admin.adapters.SimpleHistoryViewAdapter
+import io.lab10.vallet.events.*
 import io.lab10.vallet.models.*
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import kotlin.math.abs
 
 class HomeActivityFragment : Fragment() {
