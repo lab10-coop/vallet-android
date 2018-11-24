@@ -15,6 +15,7 @@ class TokenBalanceEvent(val balance: Long, val address: String)
 class ProductsListEvent
 class ProductAddedEvent
 class RefreshProductsEvent
+class RefreshBalanceEvent
 class ProductChangedEvent
 class NewTokenEvent
 class ProductRemoveEvent

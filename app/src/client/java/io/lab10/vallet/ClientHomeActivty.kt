@@ -83,6 +83,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         reloadProductListFromLocalStorage()
         reloadProductListFromRemoteStorage()
+        refreshBalance()
         reloadNavigation()
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -267,7 +268,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun onProductChangedEvent(event: ProductChangedEvent) {
         showPriceListFragment()
         reloadProductListFromLocalStorage()
-        reloadNavigation()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -283,6 +283,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRefreshEvent(event: RefreshProductsEvent) {
+        reloadProductListFromLocalStorage()
+        reloadProductListFromRemoteStorage()
         refreshProductListView()
     }
 
@@ -301,6 +303,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRedeemTokenEvent(event: TokenRedeemEvent) {
         refreshBalance()
+    }
+
+    @Subscribe()
+    fun onRefreshBalanceEvent(event: RefreshBalanceEvent) {
+       refreshBalance()
     }
 
     private fun reloadProductListFromLocalStorage() {
@@ -366,10 +373,17 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun refreshBalance() {
-        // Trigger balance check for each token
-        Tokens.getVouchers().forEach { e ->
-            Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress,  ValletApp.wallet!!.address)
+        doAsync {
+            // Trigger balance check for each token
+            Tokens.getVouchers().forEach { e ->
+                Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress, ValletApp.wallet!!.address)
+            }
         }
+    }
+
+    // TODO move to utils: Helper mthod for calling stuff in async
+    private fun doAsync(f: () -> Unit) {
+        Thread { f() }.start()
     }
 
 
