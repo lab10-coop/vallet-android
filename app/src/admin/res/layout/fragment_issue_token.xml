@@ -36,7 +36,7 @@
         android:id="@+id/voucherTypeIcon"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:background="@drawable/voucher_icon"
+        android:background="@drawable/euro_icon"
         android:layout_marginTop="30dp"
         app:layout_constraintRight_toLeftOf="@+id/voucherAmountInput"
         app:layout_constraintTop_toBottomOf="@+id/issueLabel"/>
