@@ -32,12 +32,25 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.squareup.picasso.Picasso
+import com.vansuita.pickimage.bean.PickResult
+import com.vansuita.pickimage.bundle.PickSetup
+import com.vansuita.pickimage.dialog.PickImageDialog
+import com.vansuita.pickimage.listeners.IPickResult
+import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.models.*
 import io.objectbox.Box
 import org.greenrobot.eventbus.EventBus
 
-class AddProductActivity : AppCompatActivity() {
+class AddProductActivity : AppCompatActivity(), IPickResult {
+    override fun onPickResult(p0: PickResult?) {
+            if (p0!!.getError() == null) {
+                productPicture.setImageBitmap(p0.bitmap)
+            } else {
+                EventBus.getDefault().post(ErrorEvent("Pick image: " + p0!!.error.message))
+            }
+    }
+
     val REQUEST_IMAGE_CAPTURE = 101;
 
     val TAG = AddProductActivity::class.java.name
@@ -84,10 +97,13 @@ class AddProductActivity : AppCompatActivity() {
         }
 
         productPicture.setOnClickListener() {
-            var takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            PickImageDialog.build(PickSetup()).show(this);
+
+
+          /*  var takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+            }*/
         }
 
         if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
@@ -164,16 +180,6 @@ class AddProductActivity : AppCompatActivity() {
             // permissions this app might request.
             else -> {
                 // Ignore all other requests.
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                val extras = data.extras
-                val imageBitmap = extras!!.get("data") as Bitmap
-                productPicture.setImageBitmap(imageBitmap)
             }
         }
     }
@@ -277,5 +283,7 @@ class AddProductActivity : AppCompatActivity() {
             throw IllegalArgumentException ("unsupported drawable type");
         }
     }
+
+
 
 }

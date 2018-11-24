@@ -37,6 +37,7 @@
         android:ems="10"
         android:hint="@string/product_name"
         android:inputType="textPersonName"
+
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:layout_margin="20dp"
