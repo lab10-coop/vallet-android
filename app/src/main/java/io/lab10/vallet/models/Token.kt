@@ -66,7 +66,7 @@ data class TokenCreated(
         val secret: String? = null,
         val token_name: String? = null,
         val products: List<ProductBase>? = null,
-        val token_type: Int? = null
+        val token_type: String? = null
 )
 
 data class TokenBase(

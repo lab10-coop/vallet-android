@@ -34,7 +34,7 @@ class PriceListManager {
                             tokenBox.put(token)
                         }
                     }, { error ->
-                        EventBus.getDefault().post(ErrorEvent(error.message.toString()))
+                        EventBus.getDefault().post(ErrorEvent("Create Price List:" + error.message.toString()))
                     })
         }
 
