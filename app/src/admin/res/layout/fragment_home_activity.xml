@@ -169,7 +169,7 @@
 
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/outgoing_history_recycler"
+                    android:id="@+id/transactions_history_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -193,7 +193,7 @@
                 android:textAllCaps="true"
                 android:textSize="16sp" />
 
-            
+
         </LinearLayout>
 
     </ScrollView>

@@ -54,7 +54,7 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
 
     override fun getItemCount() = history.size
 
-    fun setTransaction(transactons: MutableList<ValletTransaction>) {
+    fun setTransactions(transactons: MutableList<ValletTransaction>) {
         history.clear()
         history.addAll(transactons)
     }

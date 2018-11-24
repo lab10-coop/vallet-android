@@ -313,6 +313,7 @@ class Web3jManager private constructor() {
         Single.fromCallable {
                 EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong()))
                 token.issue(to, amount).send()
+
         }
         .onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got

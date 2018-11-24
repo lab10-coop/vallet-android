@@ -73,7 +73,6 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
             val transfer = resources.getString(R.string.transfer)
             var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
-            History.reloadTransactions()
             managePlaceholder()
             viewAdapter.notifyDataSetChanged()
         }
@@ -86,7 +85,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
             val redeem = resources.getString(R.string.redeem)
             var transaction = ValletTransaction(0, redeem, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
-            History.reloadTransactions()
+            (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions())
             viewAdapter.notifyDataSetChanged()
         }
     }

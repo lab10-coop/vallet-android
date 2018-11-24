@@ -89,7 +89,9 @@ class ProductListFragment : Fragment() {
     }
 
     fun notifyAboutchange() {
-        adapter!!.notifyDataSetChanged()
+        if (adapter != null) {
+            adapter!!.notifyDataSetChanged()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

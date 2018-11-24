@@ -26,3 +26,4 @@ class TokenRedeemEvent(val address: String)
 
 class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)
 class PendingTransactionEvent(val to: String, val amount: Long)
+class RefreshHistoryEvent

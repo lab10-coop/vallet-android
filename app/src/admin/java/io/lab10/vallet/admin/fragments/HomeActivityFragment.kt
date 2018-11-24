@@ -21,7 +21,6 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.models.*
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
-import kotlinx.android.synthetic.main.fragment_product_list.view.*
 import kotlin.math.abs
 
 class HomeActivityFragment : Fragment() {
@@ -31,9 +30,9 @@ class HomeActivityFragment : Fragment() {
     private var debugCount: Int = 0
     private var debugOn: Boolean = false
 
-    private lateinit var outgoingRecyclerView: RecyclerView
+    private lateinit var transactonsRecyclerView: RecyclerView
     private lateinit var transactionViewAdapter: RecyclerView.Adapter<*>
-    private lateinit var outgointViewManager: RecyclerView.LayoutManager
+    private lateinit var transactionsViewManager: RecyclerView.LayoutManager
     private lateinit var incomingViewManager: RecyclerView.LayoutManager
 
     override fun onStart() {
@@ -74,7 +73,7 @@ class HomeActivityFragment : Fragment() {
         }
         query.subscribe().on(AndroidScheduler.mainThread()).transform{ transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0,10)}
                 .observer { recent ->
-                    (transactionViewAdapter as SimpleHistoryViewAdapter).setTransaction(recent)
+                    (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(recent)
                     transactionViewAdapter.notifyDataSetChanged()
                 }
     }
@@ -84,14 +83,33 @@ class HomeActivityFragment : Fragment() {
         EventBus.getDefault().unregister(this)
     }
 
+
+
+    @Subscribe
+    fun onPendingTransaction(event: PendingTransactionEvent) {
+        val transaction = ValletTransaction(0, "Pending", event.amount.toLong(), 0,  "", event.to)
+        History.addTransaction(transaction)
+        activity.runOnUiThread {
+            (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
+            transactionViewAdapter.notifyDataSetChanged()
+        }
+    }
+
+    @Subscribe
+    fun onHistoryRefresh(event: RefreshHistoryEvent) {
+        Web3jManager.INSTANCE.fetchAllTransaction(context, ValletApp.activeToken!!.tokenAddress)
+        swipe_container.isRefreshing = false
+    }
+
+
     @Subscribe
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         if (isAdded) {
             val transfer = resources.getString(R.string.transfer)
             var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
-            History.reloadTransactions()
             activity.runOnUiThread {
+                (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
                 transactionViewAdapter.notifyDataSetChanged()
             }
         }
@@ -102,8 +120,8 @@ class HomeActivityFragment : Fragment() {
             val transfer = resources.getString(R.string.redeem)
             var transaction = ValletTransaction(0, transfer, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
             History.addTransaction(transaction)
-            History.reloadTransactions()
             activity.runOnUiThread {
+                (transactionViewAdapter as SimpleHistoryViewAdapter).setTransactions(History.getTransactions())
                 transactionViewAdapter.notifyDataSetChanged()
             }
         }
@@ -115,10 +133,10 @@ class HomeActivityFragment : Fragment() {
         viewHolder =  inflater.inflate(R.layout.fragment_home_activity, container, false) as View
 
 
-        outgointViewManager = LinearLayoutManager(activity)
+        transactionsViewManager = LinearLayoutManager(activity)
         incomingViewManager = LinearLayoutManager(activity)
 
-        var recentTransactions = History.getRecentOutgoing()
+        var recentTransactions = History.getRecent()
 
 
         if ((activity as AdminActivity).voucher?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
@@ -129,9 +147,9 @@ class HomeActivityFragment : Fragment() {
             transactionViewAdapter = SimpleHistoryViewAdapter(recentTransactions, 0)
         }
 
-        outgoingRecyclerView = viewHolder!!.outgoing_history_recycler.apply {
+        transactonsRecyclerView = viewHolder!!.transactions_history_recycler.apply {
             setHasFixedSize(true)
-            layoutManager = outgointViewManager
+            layoutManager = transactionsViewManager
             adapter = transactionViewAdapter
         }
 
@@ -159,6 +177,10 @@ class HomeActivityFragment : Fragment() {
             startActivity(intent)
         }
 
+        viewHolder!!.swipe_container.setOnRefreshListener {
+            EventBus.getDefault().post(RefreshProductsEvent())
+        }
+
         if (ValletApp.activeToken == null) {
             activity.findViewById<View>(R.id.progress_overlay).setVisibility(View.VISIBLE);
             activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -166,6 +188,11 @@ class HomeActivityFragment : Fragment() {
         } else {
             Web3jManager.INSTANCE.getCirculatingVoucher(activity, ValletApp.activeToken!!.tokenAddress)
         }
+
+        viewHolder!!.swipe_container.setOnRefreshListener {
+            EventBus.getDefault().post(RefreshHistoryEvent())
+        }
+
         return viewHolder
     }
 

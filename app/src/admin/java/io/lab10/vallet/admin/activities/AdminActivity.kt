@@ -188,14 +188,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }
     }
 
-
-    @Subscribe
-    fun onPendingTransaction(event: PendingTransactionEvent) {
-        val transaction = ValletTransaction(0, "Pending", event.amount.toLong(), 0, "", event.to)
-        val transactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        transactionBox.put(transaction)
-    }
-
     @Subscribe
     fun onIssueTokenEvent(event: IssueTokenEvent) {
         var address = Wallet.formatAddress(event.userAddress)
