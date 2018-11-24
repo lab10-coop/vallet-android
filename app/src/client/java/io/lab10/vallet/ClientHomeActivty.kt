@@ -375,7 +375,10 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun refreshBalance() {
         doAsync {
             // Trigger balance check for each token
-            Tokens.getVouchers().forEach { e ->
+            val vouchers: MutableList<Token> = ArrayList()
+
+            vouchers.addAll(Tokens.getVouchers())
+            vouchers.forEach { e ->
                 Web3jManager.INSTANCE.getClientBalance(this, e.tokenAddress, ValletApp.wallet!!.address)
             }
         }
