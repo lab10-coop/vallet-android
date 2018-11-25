@@ -1,5 +1,7 @@
 package io.lab10.vallet.admin.adapters
 
+import android.graphics.PorterDuff
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import io.lab10.vallet.R
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.models.User
+import io.lab10.vallet.models.User_
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.Wallet
 
@@ -14,16 +19,10 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
         RecyclerView.Adapter<SimpleHistoryViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mValue: TextView
+        val mValue: TextView = mView.findViewById(R.id.value) as TextView
         var mTransaction: ValletTransaction? = null
-        var mIcon: ImageView
-        var mText: TextView
-
-        init {
-            mValue = mView.findViewById(R.id.value) as TextView
-            mText = mView.findViewById(R.id.text) as TextView
-            mIcon = mView.findViewById(R.id.icon) as ImageView
-        }
+        var mIcon: ImageView = mView.findViewById(R.id.icon) as ImageView
+        var mText: TextView = mView.findViewById(R.id.text) as TextView
 
         override fun toString(): String {
             return super.toString() + " '" + mTransaction!!.id + "'"
@@ -46,7 +45,7 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
         } else {
             holder.mValue.text = history[position].value.toString()
         }
-        holder.mText.text = history[position].name.toString()
+        holder.mText.text = history[position].description()
         if (history[position].value < 0) {
             holder.mIcon.setImageResource(R.drawable.ic_arrow_downward_24dp)
         }

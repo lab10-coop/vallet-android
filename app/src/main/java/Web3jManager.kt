@@ -306,14 +306,12 @@ class Web3jManager private constructor() {
         }
     }
 
-    fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String) {
+    fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String, userName: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
         var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
-                EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "Pending"))
                 token.issue(to, amount).send()
-
         }
         .onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got
@@ -323,6 +321,7 @@ class Web3jManager private constructor() {
         .subscribeOn(Schedulers.io()).subscribe { event ->
             val transaction = event as TransactionReceipt
             val log = event.logs.first()
+            EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "Transfer"))
         }
     }
 

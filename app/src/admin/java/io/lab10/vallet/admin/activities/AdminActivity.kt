@@ -200,7 +200,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             amount = BigInteger(event.amount)
         }
         if (amount > BigInteger.ZERO) {
-            Web3jManager.INSTANCE.issueTokensTo(this, address, amount, ValletApp.activeToken!!.tokenAddress)
+            Web3jManager.INSTANCE.issueTokensTo(this, address, amount, ValletApp.activeToken!!.tokenAddress, userName)
             // Request funds for user to be able to consume tokens
             // TODO calculate how much we should request base on the amount
             // TODO check balance before
