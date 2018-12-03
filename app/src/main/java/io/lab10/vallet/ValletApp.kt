@@ -1,11 +1,13 @@
 package io.lab10.vallet
 
 import android.app.Application
+import android.widget.Toast
 import io.lab10.vallet.models.MyObjectBox
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Token_
 import io.lab10.vallet.models.Wallet
 import io.objectbox.BoxStore
+import io.objectbox.exception.DbException
 
 open class ValletApp: Application() {
     companion object {
@@ -63,7 +65,11 @@ open class ValletApp: Application() {
 
     fun initBox() {
         if (box == null) {
-           box = MyObjectBox.builder().androidContext(this).build()
+            try {
+                box = MyObjectBox.builder().androidContext(this).build()
+            } catch (e: DbException) {
+                Toast.makeText(this, "Problem initializing DB: " + e.message + "\n Try to remove old data and start from scratch", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
