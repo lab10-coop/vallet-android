@@ -1,11 +1,13 @@
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
+import io.lab10.vallet.utils.Base58Util
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
 import org.web3j.crypto.Credentials
@@ -285,6 +287,28 @@ class Web3jManager private constructor() {
                 EventBus.getDefault().post(TokenCreateEvent(respons.last()._address as String, respons.last()._name as String, respons.last()._symbol as String, respons.last()._decimals as BigInteger))
             }
         }
+    }
+
+    fun storePriceList(context: Context, voucherId: Long, tokenContractAddress: String, ipfsAddress: String) {
+        val credentials = loadCredential(context)
+        // TODO validate if address is valid if not throw exception.
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        Single.fromCallable {
+                var base32ipfsAddress =  Base58Util.decode(ipfsAddress)
+               token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
+        }.subscribeOn(Schedulers.io())
+                .onErrorReturn {
+                    EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                    TransactionReceipt()
+
+                }
+                .subscribeOn(Schedulers.io()).subscribe { event ->
+                    val transaction = event as TransactionReceipt
+                    if (event.logs != null) {
+                        val log = event.logs.first()
+                        Toast.makeText(context, "Price list updated", Toast.LENGTH_SHORT).show()
+                    }
+                }
     }
 
     // TODO this probably won't be needed

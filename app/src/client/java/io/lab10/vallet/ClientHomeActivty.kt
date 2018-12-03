@@ -20,6 +20,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
 import io.lab10.vallet.activites.HistoryActivity

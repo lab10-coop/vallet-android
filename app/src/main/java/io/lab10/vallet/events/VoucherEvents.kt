@@ -19,7 +19,7 @@ class RefreshBalanceEvent
 class ProductChangedEvent
 class NewTokenEvent
 class ProductRemoveEvent
-class ProductListPublishedEvent(val voucherId: Long, val secret: String = "")
+class ProductListPublishedEvent(val voucherId: Long, val ipfsAddress: String = "")
 class DeepLinkUserAddEvent(val user: BTUsers.User)
 
 class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)

@@ -64,7 +64,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_admin)
 
-        // When activity is tirggered from on boarding screen we create token with given name
+        // When activity is triggered from on boarding screen we create token with given name
         val tokenName = intent.getStringExtra("TOKEN_NAME")
         if (tokenName != null) {
             createToken(tokenName)
@@ -153,10 +153,10 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         var voucher = voucherBox.query().equal(Token_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
-            // TODO if we are using ValletApi we store here uuid if ipfs ipnsAddress
-            voucher.ipnsAddress = event.secret
+            // TODO if we are using ValletApi we store here uuid instead of ipfs/ipnsAddress
+            voucher.ipnsAddress = event.ipfsAddress
             voucherBox.put(voucher)
-            Toast.makeText(this, "Ipfs address created", Toast.LENGTH_SHORT).show()
+            Web3jManager.INSTANCE.storePriceList(this, voucher.id, voucher.tokenAddress, voucher.ipnsAddress)
         }
     }
 
@@ -175,8 +175,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             val voucher = Token(0, tokenName!!, tokenContractaddress!!, 0, tokenType, "", true, 0, "")
             tokenBox.put(voucher)
 
-            progress_overlay.setVisibility(View.GONE)
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            progress_overlay.visibility = View.GONE
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
             // prepare remote storage
             Thread(Runnable {

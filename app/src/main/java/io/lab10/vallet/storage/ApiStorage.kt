@@ -18,7 +18,7 @@ class ApiStorage(val token: Token) : TokenStorageBase{
         PriceListManager.updatePriceList(tokenUpdate)
     }
 
-    override fun fetch() {
+    override fun fetch(notUsed: String?) {
         PriceListManager.fetchPriceList(token!!.tokenAddress)
     }
 }

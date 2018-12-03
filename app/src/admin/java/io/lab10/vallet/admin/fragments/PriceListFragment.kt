@@ -130,8 +130,8 @@ class PriceListFragment : Fragment() {
     @Subscribe
     fun onProductListPublished(event: ProductListPublishedEvent) {
         val token = ValletApp.activeToken
-        if (token != null && token.ipnsAddress != null && token.ipnsAddress.isBlank()) {
-            token.ipnsAddress = event.secret
+        if (token != null && event.ipfsAddress != null) {
+            token.ipnsAddress = event.ipfsAddress
             val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             voucherBox.put(token)
         }
@@ -168,7 +168,7 @@ class PriceListFragment : Fragment() {
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
             if (token!!.remoteWriteStoragePresent()) {
-                token.storage().fetch()
+                token.storage().fetch(token.ipnsAddress)
             } else {
                 token.storage().create()
             }

@@ -53,7 +53,7 @@ class ValletUriParser {
         private fun addShop(tokenAddress: String) {
             if (Wallet.isValidAddress(tokenAddress)) {
                 val token = Token(0, "", tokenAddress, 0, "", "", true, 0 )
-                token.storage().fetch()
+                token.storage().fetch(tokenAddress)
             } else {
                 throw ValletUriError("Invalid token address")
             }

@@ -1,7 +1,9 @@
 import android.content.Context
 import io.ipfs.kotlin.IPFS
 import io.lab10.vallet.R
+import io.lab10.vallet.models.PriceList
 import io.lab10.vallet.models.Products
+import io.lab10.vallet.models.Token
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -22,7 +24,7 @@ class IPFSManager private constructor() {
 
     private fun getServerAddress(context: Context): String {
         // TODO to avoid passing context we could store all configs in DB
-      return context.getString(R.string.ipfs_server)
+      return "http://ipfs.mars.lab10.io:5001/api/v0/"
     }
 
     fun getIPFSConnection(context: Context): IPFS {
@@ -34,23 +36,29 @@ class IPFSManager private constructor() {
         return ipfs
     }
 
-    fun publishProductList(context: Context): String? {
+    fun publishProductList(context: Context, token: Token): String? {
         var productListFile = File.createTempFile("productList", null)
-        //productListFile.writeText(Products.toJson())
+        productListFile.writeText(PriceList(token.name, token.products, token.tokenType, token.tokenAddress).toJson())
         val address = getIPFSConnection(context).add.file(productListFile)
-        return getIPFSConnection(context).name.publish(address.Hash)
+        // TODO if we would be able to resolve performance issues with ipns we could use ipns here instead
+        // For time being we store always actual ipfs address of the file.
+        //return getIPFSConnection(context).name.publish(address.Hash)
+        return address.Hash
     }
 
-    fun fetchProductList(context: Context, priceListIPNSAddress: String, tokenAddress: String, clean: Boolean = false): String {
-        if (priceListIPNSAddress.length > 0) {
-            val priceListIPFSAddress = getIPFSConnection(context).name.resolve(priceListIPNSAddress)
+    fun fetchProductList(context: Context, priceListAddress: String, ipns: Boolean) {
+        // IF IPNS is provided we are trying to resolve it otherwise we take the direct address
+        if (ipns) {
+            val priceListIPFSAddress = getIPFSConnection(context).name.resolve(priceListAddress)
             if (priceListIPFSAddress != null) {
                 val hash = priceListIPFSAddress.split("/")[2]
                 val productListJson = getIPFSConnection(context).get.cat(hash)
-                //Products.fromJson(productListJson, tokenAddress, clean)
+                //PriceList.fromJson(productListJson)
             }
+        } else {
+            val productListJson = getIPFSConnection(context).get.cat(priceListAddress)
+            //PriceList.fromJson(productListJson)
         }
-        return ""
     }
 
 

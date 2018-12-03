@@ -27,7 +27,7 @@ data class Token(@Id var id: Long = 0,
 
     fun storage() : TokenStorageBase {
         // TODO Allow to configure storage type
-        if (true) {
+        if (false) {
             return ApiStorage(this)
         } else {
             return IPFSStorage(this)
