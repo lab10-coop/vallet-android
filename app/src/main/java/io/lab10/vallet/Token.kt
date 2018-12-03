@@ -39,6 +39,16 @@ import rx.Observable
  */
 class Token : Contract {
 
+    val priceListAddress: RemoteCall<ByteArray>
+        get() {
+            val function = Function("getPriceListAddress",
+                    Arrays.asList(),
+                    Arrays.asList<TypeReference<*>>(object : TypeReference<Bytes32>() {
+
+                    }))
+            return executeRemoteCallSingleValueReturn(function, ByteArray::class.java)
+        }
+
     protected constructor(contractAddress: String, web3j: Web3j, credentials: Credentials, gasPrice: BigInteger, gasLimit: BigInteger) : super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit) {}
 
     protected constructor(contractAddress: String, web3j: Web3j, transactionManager: TransactionManager, gasPrice: BigInteger, gasLimit: BigInteger) : super(BINARY, contractAddress, web3j, transactionManager, gasPrice, gasLimit) {}
@@ -173,6 +183,38 @@ class Token : Contract {
         }
     }
 
+    fun getPriceListUpdateEvents(transactionReceipt: TransactionReceipt): List<PriceListUpdateEventResponse> {
+        val event = Event("PriceListUpdate",
+                Arrays.asList<TypeReference<*>>(object : TypeReference<Bytes32>() {
+
+                }),
+                Arrays.asList())
+        val valueList = extractEventParameters(event, transactionReceipt)
+        val responses = ArrayList<PriceListUpdateEventResponse>(valueList.size)
+        for (eventValues in valueList) {
+            val typedResponse = PriceListUpdateEventResponse()
+            typedResponse._address = eventValues.indexedValues[0].value as ByteArray
+            responses.add(typedResponse)
+        }
+        return responses
+    }
+
+    fun priceListUpdateEventObservable(startBlock: DefaultBlockParameter, endBlock: DefaultBlockParameter): Observable<PriceListUpdateEventResponse> {
+        val event = Event("PriceListUpdate",
+                Arrays.asList<TypeReference<*>>(object : TypeReference<Bytes32>() {
+
+                }),
+                Arrays.asList())
+        val filter = EthFilter(startBlock, endBlock, contractAddress)
+        filter.addSingleTopic(EventEncoder.encode(event))
+        return web3j.ethLogObservable(filter).map { log ->
+            val eventValues = extractEventParameters(event, log)
+            val typedResponse = PriceListUpdateEventResponse()
+            typedResponse._address = eventValues.indexedValues[0].value as ByteArray
+            typedResponse
+        }
+    }
+
     fun name(): RemoteCall<String> {
         val function = Function("name",
                 Arrays.asList(),
@@ -269,6 +311,14 @@ class Token : Contract {
         return executeRemoteCallTransaction(function)
     }
 
+    fun setPriceListAddress(addr: ByteArray): RemoteCall<TransactionReceipt> {
+        val function = Function(
+                "setPriceListAddress",
+                Arrays.asList<Type<*>>(org.web3j.abi.datatypes.generated.Bytes32(addr)),
+                emptyList())
+        return executeRemoteCallTransaction(function)
+    }
+
     fun transfer(_to: String, _value: BigInteger): RemoteCall<TransactionReceipt> {
         val function = Function(
                 "transfer",
@@ -358,6 +408,10 @@ class Token : Contract {
         var _spender: String? = null
 
         var _value: BigInteger? = null
+    }
+
+    class PriceListUpdateEventResponse {
+        var _address: ByteArray? = null
     }
 
     companion object {
