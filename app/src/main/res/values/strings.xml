@@ -39,7 +39,7 @@
 
     <!-- Admin only but since we are sharing Web3jManager we need to keep it here -->
     <string name="shared_pref_factory_contract_address">token_factory_contract_address</string>
-    <string name="token_factory_contract_address">0x0fd1fa8112f205d5c2754ece65eb43deb3592214</string>
+    <string name="token_factory_contract_address">0xf764a976aa3e4623b5724fa22a3058ad78960b58</string>
     <string name="message_voucher_issued">Voucher issued.</string>
     <string name="scanningHint">Let the admin find you via bluetooth or show them your QR code to add money to your vallet.</string>
     <string name="broadcasting_wallet_address">Broadcasting wallet address via BT</string>
@@ -54,5 +54,4 @@
     <string name="place_holder_label">You do not have any store in your wallet. Please scan QR code to add new.</string>
     <string name="no_token_available">Empty</string>
     <string name="no_data_available">No data available</string>
-
 </resources>
