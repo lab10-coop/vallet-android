@@ -154,7 +154,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         var voucher = voucherBox.query().equal(Token_.id, event.voucherId).build().findFirst()
         if (voucher != null) {
             // TODO if we are using ValletApi we store here uuid if ipfs ipnsAddress
-            voucher.ipnsAdddress = event.secret
+            voucher.ipnsAddress = event.secret
             voucherBox.put(voucher)
             Toast.makeText(this, "Ipfs address created", Toast.LENGTH_SHORT).show()
         }

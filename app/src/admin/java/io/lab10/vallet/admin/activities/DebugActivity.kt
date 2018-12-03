@@ -80,7 +80,7 @@ class DebugActivity : AppCompatActivity() {
         try {
             val barcodeEncoder = BarcodeEncoder()
             val address = voucher!!.tokenAddress
-            val priceListIPNSAddress = voucher!!.ipnsAdddress
+            val priceListIPNSAddress = voucher!!.ipnsAddress
             val data = voucher!!.name + ";" + voucher!!.tokenType + ";" + address + ";" + priceListIPNSAddress
             val bitmap = barcodeEncoder.encodeBitmap(data, BarcodeFormat.QR_CODE, 400, 400)
             voucherQrcode.setImageBitmap(bitmap)
@@ -119,8 +119,8 @@ class DebugActivity : AppCompatActivity() {
     }
 
     private fun refreshIPNSAddress() {
-        if (voucher?.ipnsAdddress != null)
-            ipnsAddresLabel.text = voucher!!.ipnsAdddress
+        if (voucher?.ipnsAddress != null)
+            ipnsAddresLabel.text = voucher!!.ipnsAddress
     }
 
     private fun refreshName() {

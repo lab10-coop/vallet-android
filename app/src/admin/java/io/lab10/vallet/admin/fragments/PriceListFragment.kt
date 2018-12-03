@@ -130,8 +130,8 @@ class PriceListFragment : Fragment() {
     @Subscribe
     fun onProductListPublished(event: ProductListPublishedEvent) {
         val token = ValletApp.activeToken
-        if (token != null && token.ipnsAdddress != null && token.ipnsAdddress.isBlank()) {
-            token.ipnsAdddress = event.secret
+        if (token != null && token.ipnsAddress != null && token.ipnsAddress.isBlank()) {
+            token.ipnsAddress = event.secret
             val voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
             voucherBox.put(token)
         }

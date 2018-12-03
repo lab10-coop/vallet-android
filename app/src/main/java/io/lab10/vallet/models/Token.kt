@@ -17,7 +17,7 @@ data class Token(@Id var id: Long = 0,
                  val tokenAddress: String = "",
                  var balance: Long = 0,
                  var tokenType: String = Tokens.Type.EUR.toString(),
-                 var ipnsAdddress: String = "",
+                 var ipnsAddress: String = "",
                  var active: Boolean = true,
                  var lastBlockNumber: Long = 0,
                  var secret: String = "") {
@@ -47,12 +47,12 @@ data class Token(@Id var id: Long = 0,
     // Check if any remote storage is already created
     // Use by admin to store data
     fun remoteWriteStoragePresent(): Boolean {
-        return !secret.isNullOrEmpty() or !ipnsAdddress.isNullOrEmpty()
+        return !secret.isNullOrEmpty() or !ipnsAddress.isNullOrEmpty()
     }
 
     // Use for reading by client
     fun remoteReadStoragePresent() : Boolean {
-        return !tokenAddress.isNullOrEmpty() or !ipnsAdddress.isNullOrEmpty()
+        return !tokenAddress.isNullOrEmpty() or !ipnsAddress.isNullOrEmpty()
     }
 
 }
