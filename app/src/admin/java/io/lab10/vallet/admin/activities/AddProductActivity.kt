@@ -139,12 +139,14 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
             }
 
             if (price > 0 && name.isNotEmpty()) {
-                val bitmap = getBitmapFromDrawable(productPicture.getDrawable())
+                if (productPicture.drawable != null) {
+                    val bitmap = getBitmapFromDrawable(productPicture.getDrawable())
 
-                storeProduct(name, price.toLong(), bitmap, nfcTagId)
-                var resultIntent = Intent();
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
+                    storeProduct(name, price.toLong(), bitmap, nfcTagId)
+                    var resultIntent = Intent()
+                    setResult(Activity.RESULT_OK, resultIntent)
+                }
+                finish()
             } else {
                 Toast.makeText(this, "Fill the name and the price", Toast.LENGTH_SHORT).show()
             }
