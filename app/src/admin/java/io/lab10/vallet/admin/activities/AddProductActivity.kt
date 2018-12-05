@@ -140,7 +140,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
 
             if (price > 0 && name.isNotEmpty()) {
                 if (productPicture.drawable != null) {
-                    val bitmap = getBitmapFromDrawable(productPicture.getDrawable())
+                    val bitmap = getBitmapFromDrawable(productPicture.drawable)
 
                     storeProduct(name, price.toLong(), bitmap, nfcTagId)
                     var resultIntent = Intent()
@@ -223,7 +223,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         // to avoid potential memory leaks. In this case we also should check
         // response and handle case where response will fail and inform user.
         Thread(Runnable {
-            val address = IPFSManager.INSTANCE.getIPFSConnection(this).add.file(image, name)
+            val address = IPFSManager.INSTANCE.getIPFSConnection().add.file(image, name)
             if (product != null) {
                 product!!.imagePath = address.Hash
                 productBox!!.put(product)

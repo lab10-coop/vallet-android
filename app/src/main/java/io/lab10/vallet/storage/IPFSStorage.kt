@@ -10,12 +10,10 @@ import org.greenrobot.eventbus.EventBus
 
 class IPFSStorage(val token: Token) : TokenStorageBase {
     private val TAG: String = IPFSStorage::class.java.name
-    // TODO fix that and pass context to ipfs storage from above or move config to db
-    private val context: Context = Application()
 
     override fun create() {
         Thread(Runnable {
-            var addressName = IPFSManager.INSTANCE.publishProductList(context, token);
+            var addressName = IPFSManager.INSTANCE.publishProductList(token);
             if (addressName != null) {
                 EventBus.getDefault().post(ProductListPublishedEvent(token!!.id, addressName))
             }
@@ -24,7 +22,7 @@ class IPFSStorage(val token: Token) : TokenStorageBase {
 
     override fun store() {
         Thread(Runnable {
-            var addressName = IPFSManager.INSTANCE.publishProductList(context, token)
+            var addressName = IPFSManager.INSTANCE.publishProductList(token)
             if (addressName != null && addressName.isNotBlank())
                 EventBus.getDefault().post(ProductListPublishedEvent(token!!.id, addressName))
         }).start()
@@ -33,7 +31,7 @@ class IPFSStorage(val token: Token) : TokenStorageBase {
     override fun fetch(address: String?) {
         Thread(Runnable {
             if (address != null)
-                IPFSManager.INSTANCE.fetchProductList(context, address, false)
+                IPFSManager.INSTANCE.fetchProductList(address, false)
         }).start()
     }
 }

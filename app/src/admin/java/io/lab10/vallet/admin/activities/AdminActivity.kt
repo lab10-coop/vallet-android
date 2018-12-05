@@ -64,6 +64,9 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_admin)
 
+
+        setDefaultConfiguration()
+
         // When activity is triggered from on boarding screen we create token with given name
         val tokenName = intent.getStringExtra("TOKEN_NAME")
         if (tokenName != null) {
@@ -108,6 +111,12 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         prepareHeader()
         EventBus.getDefault().register(this)
 
+    }
+
+    private fun setDefaultConfiguration() {
+        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
+        // TODO do not override if will be already set
+        configBox.put(Configuration(0, "ipfsAddress", resources.getString(R.string.ipfs_server)))
     }
 
     private fun deleteProductVisible(visible: Boolean) {
