@@ -39,17 +39,19 @@ object Products {
         val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         // TODO
         val token = tokenBox.query().equal(Token_.tokenAddress, tokenAddress).build().findFirst()
-        try {
-            val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
-            val products = gson.fromJson(json, Array<Product>::class.java)
-            if (false)
-                token!!.products.clear()
-            products.forEach { v ->
-                v.id = 0
-                token!!.products.add(v)
+        if (token != null ) {
+            try {
+                val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
+                val products = gson.fromJson(json, Array<Product>::class.java)
+                if (false)
+                    token!!.products.clear()
+                products.forEach { v ->
+                    v.id = 0
+                    token!!.products.add(v)
+                }
+            } catch (err: Exception) {
+                EventBus.getDefault().post(ErrorEvent("Can't parse json price list object for "+ token.tokenAddress +" contact Administrator"))
             }
-        } catch (err: Exception) {
-            EventBus.getDefault().post(ErrorEvent("Can't parse json price list object: contact Administrator"))
         }
     }
 }
