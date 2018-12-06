@@ -6,6 +6,8 @@ import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.TokenBase
 import io.lab10.vallet.models.TokenUpdate
 
+
+// TODO remove
 class ApiStorage(val token: Token) : TokenStorageBase{
 
     override fun create() {

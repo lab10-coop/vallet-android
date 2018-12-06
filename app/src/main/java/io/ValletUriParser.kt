@@ -1,5 +1,6 @@
 package io
 
+import android.app.Application
 import android.net.Uri
 import io.lab10.vallet.events.*
 import io.lab10.vallet.models.BTUsers
@@ -52,8 +53,7 @@ class ValletUriParser {
 
         private fun addShop(tokenAddress: String) {
             if (Wallet.isValidAddress(tokenAddress)) {
-                val token = Token(0, "", tokenAddress, 0, "", "", true, 0 )
-                token.storage().fetch(tokenAddress)
+                EventBus.getDefault().post(AddNewStoreEvent(tokenAddress))
             } else {
                 throw ValletUriError("Invalid token address")
             }

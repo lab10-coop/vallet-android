@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import io.lab10.vallet.utils.PayDialog
 import java.lang.Exception
+import java.lang.Thread.sleep
 
 
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
@@ -54,6 +55,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_client_home_activty)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        setDefaultConfiguration()
 
         if (ValletApp.wallet == null) {
             // TODO take care of the passoword. Auto generate it?
@@ -87,6 +90,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         refreshBalance()
         reloadNavigation()
         nav_view.setNavigationItemSelectedListener(this)
+    }
+
+    private fun setDefaultConfiguration() {
+            val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
+            // TODO do not override if will be already set
+            configBox.put(Configuration(0, "ipfsAddress", resources.getString(R.string.ipfs_server)))
     }
 
     private fun showPlaceHolderFragment() {
@@ -247,7 +256,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (result != null && result.contents != null) {
                 try {
                     val uri = Uri.parse(result.contents)
-                    ValletUriParser.invoke(uri)
+                    Thread {
+                        // TODO find out how to trigger events while client activity is sleeping
+                        sleep(1000)
+                        ValletUriParser.invoke(uri)
+                    }.start()
                 } catch (e: Exception) {
                     Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
                 }
@@ -263,8 +276,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductChangedEvent(event: ProductChangedEvent) {
         showPriceListFragment()
@@ -279,6 +290,20 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNewTokenEvent(event: NewTokenEvent) {
         reloadNavigation()
+        showPriceListFragment()
+        reloadProductListFromLocalStorage()
+    }
+
+    @Subscribe
+    fun onPriceListEvent(event: PriceListAddressEvent) {
+        val token = Token(0, "", event.tokenAddress, 0, "", "", true, 0 )
+        token.storage().fetch(event.ipfsAddress)
+    }
+
+    @Subscribe
+    fun onAddNewStore(event: AddNewStoreEvent) {
+        Web3jManager.INSTANCE.fetchPriceListAddress(this, event.tokenAddress)
+        // TODO inform user that store is adding?
     }
 
 
@@ -334,7 +359,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
                 if (productFragment is ProductListFragment) {
                     productFragment.swiperefresh.isRefreshing = true
-                    ValletApp.activeToken!!.storage().fetch()
+                    ValletApp.activeToken!!.storage().fetch(ValletApp.activeToken!!.ipnsAddress)
                 }
             }
         }

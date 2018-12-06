@@ -18,6 +18,8 @@ class RefreshProductsEvent
 class RefreshBalanceEvent
 class ProductChangedEvent
 class NewTokenEvent
+class PriceListAddressEvent(val tokenAddress: String, val ipfsAddress: String)
+class AddNewStoreEvent(val tokenAddress: String)
 class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val ipfsAddress: String = "")
 class DeepLinkUserAddEvent(val user: BTUsers.User)

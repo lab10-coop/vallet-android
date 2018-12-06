@@ -1,6 +1,4 @@
-import android.content.Context
 import io.ipfs.kotlin.IPFS
-import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.*
@@ -60,11 +58,11 @@ class IPFSManager private constructor() {
             if (priceListIPFSAddress != null) {
                 val hash = priceListIPFSAddress.split("/")[2]
                 val productListJson = getIPFSConnection().get.cat(hash)
-                //PriceList.fromJson(productListJson)
+                PriceList.fromJson(productListJson, priceListAddress)
             }
         } else {
             val productListJson = getIPFSConnection().get.cat(priceListAddress)
-            //PriceList.fromJson(productListJson)
+            PriceList.fromJson(productListJson, priceListAddress)
         }
     }
 

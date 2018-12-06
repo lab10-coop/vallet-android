@@ -296,19 +296,36 @@ class Web3jManager private constructor() {
         Single.fromCallable {
                 var base32ipfsAddress =  Base58Util.decode(ipfsAddress)
                token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
-        }.subscribeOn(Schedulers.io())
-                .onErrorReturn {
+        }.onErrorReturn {
                     EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
                     TransactionReceipt()
 
-                }
-                .subscribeOn(Schedulers.io()).subscribe { event ->
-                    val transaction = event as TransactionReceipt
-                    if (event.logs != null) {
-                        val log = event.logs.first()
-                        Toast.makeText(context, "Price list updated", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        }
+        .subscribeOn(Schedulers.io()).subscribe { event ->
+            val transaction = event as TransactionReceipt
+            if (event.logs != null) {
+                val log = event.logs.first()
+                Toast.makeText(context, "Price list updated", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun fetchPriceListAddress(context: Context, tokenContractAddress: String) {
+        val credentials = loadCredential(context)
+        // TODO validate if address is valid if not throw exception.
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        Single.fromCallable {
+            token.priceListAddress.send()
+        }.onErrorReturn {
+            EventBus.getDefault().post((ErrorEvent("fetchPriceListAddress: " + it.message)))
+            "".toByteArray()
+        }
+        .subscribeOn(Schedulers.io()).subscribe { address ->
+            val refiiled = address.toMutableList()
+            refiiled.addAll(0, byteArrayOf(18,32).toList())
+            val ipfsAddress = Base58Util.encode(refiiled.toByteArray())
+            EventBus.getDefault().post(PriceListAddressEvent(tokenContractAddress, ipfsAddress))
+        }
     }
 
     // TODO this probably won't be needed
