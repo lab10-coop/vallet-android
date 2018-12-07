@@ -19,9 +19,6 @@ import android.widget.Toast
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import android.net.ConnectivityManager
-import io.lab10.vallet.admin.events.CreateTokenEvent
-import org.greenrobot.eventbus.EventBus
-
 
 class CreateTokenActivity : AppCompatActivity() {
 
@@ -104,8 +101,6 @@ class CreateTokenActivity : AppCompatActivity() {
                         // TODO add voucher.valid? before submitting
 
                         val name = inputVoucherName.text.toString()
-                        EventBus.getDefault().post(CreateTokenEvent(name))
-
 
                         val intent = Intent(view?.context, AdminActivity::class.java)
                         intent.putExtra("TOKEN_NAME", name)
