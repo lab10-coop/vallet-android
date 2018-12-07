@@ -365,7 +365,7 @@ class Web3jManager private constructor() {
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->
             val transaction = event as TransactionReceipt
-            EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash))
+            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash))
         }
     }
 

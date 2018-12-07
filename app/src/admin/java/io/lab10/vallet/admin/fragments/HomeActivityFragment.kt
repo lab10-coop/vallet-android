@@ -21,6 +21,7 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.models.*
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
+import org.greenrobot.eventbus.ThreadMode
 import kotlin.math.abs
 
 class HomeActivityFragment : Fragment() {
@@ -95,11 +96,12 @@ class HomeActivityFragment : Fragment() {
     }
 
 
-    @Subscribe
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onPendingTransaction(event: PendingTransactionEvent) {
-        val transaction = ValletTransaction(0, event.name, event.amount, 0, "", event.to)
-        History.addTransaction(transaction)
-        activity.runOnUiThread {
+        val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
+        if ( stickyEvent != null) {
+            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber, event.transactionId, event.to)
+            History.addTransaction(transaction)
             reloadStats()
             reloadTransactions()
         }
