@@ -13,7 +13,7 @@ data class ValletTransaction(@Id var id: Long, var name: String, val value: Long
             var user = userBox.query().equal(User_.address, this.to).build().findFirst()
             var what = "Sent to "
             if (this.value < 0)
-                what = "Spend by "
+                what = "Spent by "
             var text = what + this.to.subSequence(0, 5)
 
             if (user != null) {
@@ -21,7 +21,19 @@ data class ValletTransaction(@Id var id: Long, var name: String, val value: Long
             }
             return text
         } else {
-            return name
+            var what = "Received"
+            if (this.value < 0) {
+                if (name.isNotEmpty()) {
+                    if (name.length > 15) {
+                        what = "Spent on " + name.slice(IntRange(0, 15)) + "..."
+                    } else {
+                        what = "Spent on $name"
+                    }
+                } else {
+                    what = "Spent"
+                }
+            }
+            return what
         }
     }
 }

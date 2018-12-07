@@ -362,8 +362,7 @@ class Web3jManager private constructor() {
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->
             val transaction = event as TransactionReceipt
-            val log = event.logs.first()
-            EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "Transfer"))
+            EventBus.getDefault().post(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash))
         }
     }
 
@@ -372,15 +371,15 @@ class Web3jManager private constructor() {
         // TODO validate if address is valid if not throw exception.
         var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
-            EventBus.getDefault().post(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName))
             token.redeem(amount).send()
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got
-            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            EventBus.getDefault().post(ErrorEvent("redeemToken: " + it.message))
             TransactionReceipt()
         }
         .subscribe {
+            EventBus.getDefault().postSticky(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName, it.blockNumber.toLong(), it.transactionHash))
         }
     }
 

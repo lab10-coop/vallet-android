@@ -351,19 +351,20 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRedeemTokenEvent(event: PendingTransactionEvent) {
-        refreshBalance()
-    }
-
-    @Subscribe()
     fun onRefreshBalanceEvent(event: RefreshBalanceEvent) {
        refreshBalance()
     }
 
-    @Subscribe
+    @Subscribe(sticky = true)
     fun onPendingTransaction(event: PendingTransactionEvent) {
-        val transaction = ValletTransaction(0, event.name, event.amount, 0,  "", event.to)
-        History.addTransaction(transaction)
+
+        val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
+        if(stickyEvent != null) {
+            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber,  event.transactionId, event.to)
+            History.addTransaction(transaction)
+            EventBus.getDefault().post(RefreshBalanceEvent())
+        }
+
     }
 
     private fun reloadProductListFromLocalStorage() {

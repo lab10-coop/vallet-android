@@ -25,7 +25,7 @@ class ProductListPublishedEvent(val voucherId: Long, val ipfsAddress: String = "
 class DeepLinkUserAddEvent(val user: BTUsers.User)
 
 class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)
-class PendingTransactionEvent(val to: String, val amount: Long, val name: String)
+class PendingTransactionEvent(val to: String, val amount: Long, val name: String, val blockNumber: Long, val transactionId: String)
 class RefreshHistoryEvent
 
 

@@ -26,18 +26,14 @@ object History {
         builder.equal(ValletTransaction_.transactionId, item.transactionId)
         var transaction = builder.build().findFirst()
         if (transaction == null || item.transactionId.isBlank()) {
-            // Find if the pending transaction is already in place, should always be the case
-            val builder = valletTransactionBox.query();
-            builder.equal(ValletTransaction_.to, item.to).equal(ValletTransaction_.value, item.value.toLong()).equal(ValletTransaction_.blockNumber, 0)
-            var transaction = builder.build().findFirst()
-            if (transaction != null) {
-                transaction.blockNumber = item.blockNumber
-                transaction.transactionId = item.transactionId
-            } else {
-                transaction = item
-            }
-            valletTransactionBox.put(transaction)
+            transaction = item
+        } else {
+            transaction.blockNumber = item.blockNumber
+            transaction.transactionId = item.transactionId
+            if (item.name.isNotEmpty())
+                transaction.name = item.name
         }
+        valletTransactionBox.put(transaction)
     }
 
     fun clear() {
