@@ -120,8 +120,6 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
             saveProductBtn.text = resources.getString(R.string.save_product_button)
             productNameInput.setText((product as Product).name)
             productNfcTagInput.setText((product as Product).nfcTagId)
-            var bmImg = BitmapFactory.decodeFile((product as Product).localImagePath);
-            productPicture.setImageBitmap(bmImg);
             Picasso.get().load("https://ipfs.io/ipfs/" + (product as Product).imagePath).into(productPicture)
         }
 
@@ -193,6 +191,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
     private fun storeProduct(name: String, price: Long, data: Bitmap, nfcTagId: String) {
 
         val cw = ContextWrapper(applicationContext)
+        // TODO find out if we can push file directly to IPFS without storing it on local disk
         // path to /data/data/yourapp/app_data/imageDir
         val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
         val image = File(directory, name + ".jpg")
@@ -210,7 +209,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         }
 
         if (product == null) {
-            product = Product(0, name, price, "", image.absolutePath, nfcTagId)
+            product = Product(0, name, price, "", nfcTagId)
         } else {
             (product as Product).name = name
             (product as Product).price = price
