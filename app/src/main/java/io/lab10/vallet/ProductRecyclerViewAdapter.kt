@@ -56,9 +56,6 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
 
         holder.mProductNfcTagId.setText(mValues.get(position).nfcTagId.toString())
         val imageIPFSAddress = mValues.get(position).imagePath
-        // First load cached local file
-        var bmImg = BitmapFactory.decodeFile(mValues.get(position).localImagePath);
-        holder.mProductImage.setImageBitmap(bmImg);
         Picasso.get().load("https://ipfs.io/ipfs/" + imageIPFSAddress).into(holder.mProductImage)
 
         holder.mProductImage.setOnClickListener {

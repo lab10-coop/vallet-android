@@ -85,7 +85,7 @@ class PriceListManager {
 
             token.products.clear()
             products.forEach { item ->
-                val product = Product(0, item.name, item.price, item.imagePath, "", item.nfcTagId)
+                val product = Product(0, item.name, item.price, item.imagePath, item.nfcTagId)
                 token.products.add(product)
             }
             tokenBox.put(token)

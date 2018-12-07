@@ -32,7 +32,7 @@ class PriceList(@Expose val tokenName: String,
                     token.name = priceList.tokenName
                     token.products.clear()
                     priceList.products.forEach {
-                        token!!.products.add(Product(0, it.name, it.price, it.imagePath, it.localImagePath, it.nfcTagId))
+                        token!!.products.add(Product(0, it.name, it.price, it.imagePath, it.nfcTagId))
                     }
                     tokenBox.put(token)
                     EventBus.getDefault().post(ProductChangedEvent())

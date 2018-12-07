@@ -11,7 +11,6 @@ data class Product(@Expose @Id var id: Long = 0,
                    @Expose var name: String = "",
                    @Expose var price: Long = 0,
                    @Expose var imagePath: String = "",
-                   @Expose var localImagePath: String = "",
                    @Expose var nfcTagId: String? = "")  {
 
     lateinit var token: ToOne<Token>
