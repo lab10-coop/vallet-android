@@ -67,7 +67,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             val passwordConfig = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()
 
-            val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig.value)
+            val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
             ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
         }
