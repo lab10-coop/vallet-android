@@ -32,4 +32,5 @@
     <string name="tab_price_list">Price list</string>
     <string name="spent">Spent</string>
     <string name="issued">Issued</string>
+    <string name="nfc_hint">TIP: If you will enable NFC you can attach tags to your products</string>
 </resources>

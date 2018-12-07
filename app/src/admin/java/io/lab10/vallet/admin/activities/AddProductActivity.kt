@@ -86,8 +86,10 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null){
             productNfcTagInput.visibility = View.GONE
+            nfc_tip.visibility = View.VISIBLE
         }else if(!nfcAdapter!!.isEnabled()){
             productNfcTagInput.visibility = View.GONE
+            nfc_tip.visibility = View.VISIBLE
         }
 
         productPicture.setOnClickListener() {
@@ -253,10 +255,11 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (nfcAdapter != null) {
-            if (!nfcAdapter!!.isEnabled())
-                Toast.makeText(this,
-                        "To use NFC you have to enabled it!",
-                        Toast.LENGTH_SHORT).show()
+            if (!nfcAdapter!!.isEnabled()) {
+                nfc_tip.visibility = View.VISIBLE
+            } else {
+                nfc_tip.visibility = View.GONE
+            }
 
             nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
         }

@@ -90,4 +90,15 @@
         android:text="@string/add_product_button" />
 
 
+    <TextView
+        android:id="@+id/nfc_tip"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/GrayLabel"
+        app:layout_constraintBottom_toTopOf="@+id/saveProductBtn"
+        android:layout_margin="20dp"
+        android:text="@string/nfc_hint"/>
+
+
 </android.support.constraint.ConstraintLayout>
