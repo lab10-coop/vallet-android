@@ -7,6 +7,8 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.TokenFactory
 import io.lab10.vallet.models.Wallet
 import io.lab10.vallet.events.*
+import io.lab10.vallet.models.Configuration
+import io.lab10.vallet.models.Configuration_
 import io.lab10.vallet.utils.Base58Util
 import io.lab10.vallet.utils.ReadonlyTransactionManager
 import org.greenrobot.eventbus.EventBus
@@ -72,8 +74,9 @@ class Web3jManager private constructor() {
     }
 
     fun loadCredential(context: Context): Credentials? {
-        // TODO take care of it
-        val password = "123"
+        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
+        val password = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()!!.value
+
         val walletFile = ValletApp.wallet!!.filePath
         if (walletFile != "") {
             val walletPath = File(context.filesDir, walletFile)
