@@ -11,6 +11,7 @@ import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.MessageEvent
+import io.lab10.vallet.events.ProductPaidEvent
 import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
@@ -47,6 +48,7 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
             R.id.pay_button -> {
                 Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
                 EventBus.getDefault().post(MessageEvent("You paid for " + product.name))
+                EventBus.getDefault().post(ProductPaidEvent(product.price))
             }
             R.id.close_button -> dismiss()
             else -> {

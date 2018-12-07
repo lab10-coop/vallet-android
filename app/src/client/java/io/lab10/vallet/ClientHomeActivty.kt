@@ -317,6 +317,16 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         token.storage().fetch(event.ipfsAddress)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProductPaid(event: ProductPaidEvent) {
+        // Reduce the balance on the view as soon as user will take the action.
+        // This is not persitant and we should mark it somehow
+        if (toolbarBalance != null) {
+            toolbarBalance.text = (Wallet.convertATS2EUR(ValletApp.activeToken!!.balance - event.price)).toString() + " ..."
+        }
+
+    }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onAddNewStore(event: AddNewStoreEvent) {
 

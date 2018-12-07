@@ -34,3 +34,4 @@ class PriceListEndRefreshEvent()
 
 
 class StartRefreshingEvent()
+class ProductPaidEvent(val price: Long)
