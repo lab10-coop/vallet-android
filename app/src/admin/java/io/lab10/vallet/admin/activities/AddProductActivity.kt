@@ -86,14 +86,8 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null){
             productNfcTagInput.visibility = View.GONE
-            Toast.makeText(this,
-                    "NFC NOT supported on this devices!",
-                    Toast.LENGTH_LONG).show();
         }else if(!nfcAdapter!!.isEnabled()){
             productNfcTagInput.visibility = View.GONE
-            Toast.makeText(this,
-                    "To use NFC you have to enabled it!",
-                    Toast.LENGTH_LONG).show();
         }
 
         productPicture.setOnClickListener() {

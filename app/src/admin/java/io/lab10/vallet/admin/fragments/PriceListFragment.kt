@@ -44,15 +44,6 @@ class PriceListFragment : Fragment() {
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
-        if(nfcAdapter == null){
-            Toast.makeText(activity,
-                    "NFC NOT supported on this devices!",
-                    Toast.LENGTH_LONG).show();
-        }else if(!nfcAdapter!!.isEnabled()){
-            Toast.makeText(activity,
-                    "To use NFC you have to enabled it!",
-                    Toast.LENGTH_LONG).show();
-        }
 
         reloadProducts()
 
