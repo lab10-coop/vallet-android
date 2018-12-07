@@ -190,10 +190,6 @@ class HomeActivityFragment : Fragment() {
             startActivity(intent)
         }
 
-        viewHolder!!.swipe_container.setOnRefreshListener {
-            EventBus.getDefault().post(RefreshProductsEvent())
-        }
-
         if (ValletApp.activeToken == null) {
             activity.findViewById<View>(R.id.progress_overlay).setVisibility(View.VISIBLE);
             activity.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
