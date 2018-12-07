@@ -8,7 +8,7 @@ import io.lab10.vallet.events.NewTokenEvent
 import io.lab10.vallet.events.ProductChangedEvent
 import org.greenrobot.eventbus.EventBus
 
-class PriceList(@Expose val token_name: String, @Expose val products: MutableList<Product>, @Expose val token_type: String, @Expose val token_contract_address: String) {
+class PriceList(@Expose val tokenName: String, @Expose val products: MutableList<Product>, @Expose val tokenType: String, @Expose val tokenContractAddress: String) {
 
     fun toJson(): String {
         val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
@@ -22,10 +22,10 @@ class PriceList(@Expose val token_name: String, @Expose val products: MutableLis
             try {
                 val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
                 val priceList = gson.fromJson(json, PriceList::class.java)
-                var token = tokenBox.query().equal(Token_.tokenAddress, (priceList as PriceList).token_contract_address).build().findFirst()
+                var token = tokenBox.query().equal(Token_.tokenAddress, (priceList as PriceList).tokenContractAddress).build().findFirst()
                 if (token != null) {
-                    token.tokenType = priceList.token_type
-                    token.name = priceList.token_name
+                    token.tokenType = priceList.tokenType
+                    token.name = priceList.tokenName
                     token.products.clear()
                     priceList.products.forEach {
                         token!!.products.add(Product(0, it.name, it.price, it.imagePath, it.localImagePath, it.nfcTagId))
@@ -33,7 +33,7 @@ class PriceList(@Expose val token_name: String, @Expose val products: MutableLis
                     tokenBox.put(token)
                     EventBus.getDefault().post(ProductChangedEvent())
                 } else {
-                    token = Token(0, priceList.token_name, priceList.token_contract_address, 0, priceList.token_type, ipfsAddress, true, 0, "")
+                    token = Token(0, priceList.tokenName, priceList.tokenContractAddress, 0, priceList.tokenType, ipfsAddress, true, 0, "")
                     tokenBox.put(token)
                     EventBus.getDefault().post(NewTokenEvent())
                 }
