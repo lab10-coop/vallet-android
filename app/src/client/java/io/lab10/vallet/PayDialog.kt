@@ -10,10 +10,12 @@ import android.widget.ImageButton
 import android.widget.Toast
 import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.events.MessageEvent
 import io.lab10.vallet.models.Product
 import io.lab10.vallet.models.Tokens
 import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.client.pay_dialog.*
+import org.greenrobot.eventbus.EventBus
 
 
 class PayDialog(var activity: Activity, val product: Product) : Dialog(activity), android.view.View.OnClickListener {
@@ -44,7 +46,7 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
             // TODO chanage the action here
             R.id.pay_button -> {
                 Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
-                Toast.makeText(activity, "Paid", Toast.LENGTH_SHORT).show()
+                EventBus.getDefault().post(MessageEvent("You paid for " + product.name))
             }
             R.id.close_button -> dismiss()
             else -> {

@@ -295,6 +295,16 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDebug(event: DebugEvent) {
+        Toast.makeText(this, "Debug: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessage(event: MessageEvent) {
+        Toast.makeText(this, "Info: " + event.message, Toast.LENGTH_LONG).show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNewTokenEvent(event: NewTokenEvent) {
         reloadNavigation()
         showPriceListFragment()
