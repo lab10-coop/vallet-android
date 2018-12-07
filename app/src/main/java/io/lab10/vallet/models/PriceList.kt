@@ -8,7 +8,11 @@ import io.lab10.vallet.events.NewTokenEvent
 import io.lab10.vallet.events.ProductChangedEvent
 import org.greenrobot.eventbus.EventBus
 
-class PriceList(@Expose val tokenName: String, @Expose val products: MutableList<Product>, @Expose val tokenType: String, @Expose val tokenContractAddress: String) {
+class PriceList(@Expose val tokenName: String,
+                @Expose val products: MutableList<Product>,
+                @Expose val tokenType: String,
+                @Expose val tokenContractAddress: String,
+                @Expose val version: String) {
 
     fun toJson(): String {
         val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()

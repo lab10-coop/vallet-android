@@ -305,7 +305,7 @@ class Web3jManager private constructor() {
             val transaction = event as TransactionReceipt
             if (event.logs != null) {
                 val log = event.logs.first()
-                Toast.makeText(context, "Price list updated", Toast.LENGTH_SHORT).show()
+                EventBus.getDefault().post(MessageEvent("Price list address updated"))
             }
         }
     }

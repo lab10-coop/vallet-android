@@ -1,4 +1,5 @@
 import io.ipfs.kotlin.IPFS
+import io.lab10.vallet.BuildConfig
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.*
@@ -43,7 +44,10 @@ class IPFSManager private constructor() {
 
     fun publishProductList(token: Token): String? {
         var productListFile = File.createTempFile("productList", null)
-        productListFile.writeText(PriceList(token.name, token.products, token.tokenType, token.tokenAddress).toJson())
+        val versionName = BuildConfig.VERSION_NAME
+
+
+        productListFile.writeText(PriceList(token.name, token.products, token.tokenType, token.tokenAddress, versionName).toJson())
         val address = getIPFSConnection().add.file(productListFile)
         // TODO if we would be able to resolve performance issues with ipns we could use ipns here instead
         // For time being we store always actual ipfs address of the file.
