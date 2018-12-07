@@ -168,7 +168,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
         menu.addSubMenu("Settings")
-        val scanMenu = menu.add(resources.getString(R.string.tap_to_search_for_admin))
+        val scanMenu = menu.add(resources.getString(R.string.add_new_store))
         scanMenu.setOnMenuItemClickListener { _ ->
             val integrator = IntentIntegrator(this)
             integrator.setBeepEnabled(false);

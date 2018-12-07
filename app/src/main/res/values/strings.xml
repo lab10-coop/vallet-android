@@ -49,7 +49,7 @@
     <string name="label_scan_token"><![CDATA[Scan token >]]></string>
     <string name="placeholder_no_recent_activities">No recent activities</string>
     <string name="history">History</string>
-    <string name="tap_to_search_for_admin">Add new store</string>
+    <string name="add_new_store">Add new store</string>
     <string name="add_store_button">Add store</string>
     <string name="place_holder_label">You do not have any store in your wallet. Please scan QR code to add new.</string>
     <string name="no_token_available">Empty</string>
