@@ -72,13 +72,17 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         // When activity is triggered from on boarding screen we create token with given name
         val tokenName = intent.getStringExtra("TOKEN_NAME")
         if (tokenName != null) {
-            createToken(tokenName)
+            Thread {
+                createToken(tokenName)
+            }.start()
         }
 
         // Fetch created token and set it as a active one if non is set yet. This should be triggered
         // only once when app is run first time
         if (ValletApp.activeToken == null) {
-            Web3jManager.INSTANCE.getTokenContractAddress(this)
+            Thread {
+                Web3jManager.INSTANCE.getTokenContractAddress(this)
+            }.start()
         }
 
         val myPagerAdapter = MainPagerAdapter(supportFragmentManager)
