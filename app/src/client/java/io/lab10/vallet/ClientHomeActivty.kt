@@ -383,7 +383,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
                 if (productFragment is ProductListFragment) {
                     productFragment.swiperefresh.isRefreshing = true
-                    ValletApp.activeToken!!.storage().fetch(ValletApp.activeToken!!.ipnsAddress)
+                    doAsync {
+                        Web3jManager.INSTANCE.fetchPriceListAddress(this, ValletApp.activeToken!!.tokenAddress)
+                    }
+
+
                 }
             }
         }
