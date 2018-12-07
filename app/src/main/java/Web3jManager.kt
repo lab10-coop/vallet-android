@@ -38,6 +38,7 @@ class Web3jManager private constructor() {
 
     var web3: Web3j? = null
     val TAG = Web3jManager::class.java.simpleName
+    val GAS_PRICE = BigInteger.valueOf(2200L)
 
 
     private object Holder {
@@ -100,7 +101,7 @@ class Web3jManager private constructor() {
         if (ValletApp.wallet != null) {
 
             val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-            val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            val tokenFactory = TokenFactory.load(getContractAddress(context), getConnection(context), readOnlyTransactionManager, GAS_PRICE, Contract.GAS_LIMIT)
             // TODO: Optimize the query and do not listen for whole ledger but specific some blocks which are
             // since user joined (did first interaction with blockchain) the network
             // Notice: that this would be triggered just once while user starts first time the app
@@ -128,7 +129,7 @@ class Web3jManager private constructor() {
         // TODO find out why ^
         val credentials = loadCredential(context)
         try {
-            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
             if (Wallet.isValidAddress(tokenContractAddress)) {
                 Single.fromCallable {
                     token.totalSupply().send()
@@ -156,7 +157,7 @@ class Web3jManager private constructor() {
         val credentials = loadCredential(context)
         try {
 
-            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.name().send()
             }
@@ -179,7 +180,7 @@ class Web3jManager private constructor() {
         val credentials = loadCredential(context)
         try {
 
-            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.Companion.load(tokenAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 token.symbol().send()
             }
@@ -211,7 +212,7 @@ class Web3jManager private constructor() {
         val credentials = loadCredential(context)
         var balance = BigInteger.ZERO
         if (credentials != null) {
-            var token = Token.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
                 try {
                     token.balanceOf(address).send()
@@ -235,7 +236,7 @@ class Web3jManager private constructor() {
     fun fetchAllTransaction(context: Context, tokenAddress: String, walletAddress: String) {
         try {
             val readOnlyTransactionManager = ReadonlyTransactionManager(getConnection(context))
-            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+            var token = Token.load(tokenAddress, getConnection(context), readOnlyTransactionManager, GAS_PRICE, Contract.GAS_LIMIT)
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io())
                     .onErrorReturn {
@@ -271,7 +272,7 @@ class Web3jManager private constructor() {
         val contractAddress = getContractAddress(context)
         val credentials = loadCredential(context)
         // TODO take care of the case when credential will be null.
-        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var tokenFactory = TokenFactory.load(contractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
             tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
@@ -292,7 +293,7 @@ class Web3jManager private constructor() {
     fun storePriceList(context: Context, voucherId: Long, tokenContractAddress: String, ipfsAddress: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
                 var base32ipfsAddress =  Base58Util.decode(ipfsAddress)
                token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
@@ -313,7 +314,7 @@ class Web3jManager private constructor() {
     fun fetchPriceListAddress(context: Context, tokenContractAddress: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
             token.priceListAddress.send()
         }.onErrorReturn {
@@ -350,7 +351,7 @@ class Web3jManager private constructor() {
     fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String, userName: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
                 token.issue(to, amount).send()
         }
@@ -369,7 +370,7 @@ class Web3jManager private constructor() {
     fun redeemToken(context: Context, amount: BigInteger, tokenContractAddress: String, productName: String) {
         val credentials = loadCredential(context)
         // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, Contract.GAS_PRICE, Contract.GAS_LIMIT)
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
             EventBus.getDefault().post(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName))
             token.redeem(amount).send()
