@@ -33,6 +33,8 @@ import io.lab10.vallet.connectivity.BTUtils
 import java.lang.Exception
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
+import it.lamba.random.nextAlphanumericString
+import kotlin.random.Random
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
         DiscoverUsersFragment.OnListFragmentInteractionListener,
@@ -297,8 +299,14 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     private fun createToken(tokenName: String) {
         val voucherDecimal = 12;
         var voucherType = Tokens.Type.EUR.type
-        // TODO: Manage password for the key
-        val walletFile = Web3jManager.INSTANCE.createWallet(this, "123")
+        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
+        val alhpanum: String = Random.nextAlphanumericString()
+
+        configBox.put(Configuration(0, "walletPassword", alhpanum))
+
+        val passwordConfig = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()
+
+        val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
         val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
         ValletApp.wallet = Wallet(0, "Main", walletAddress, walletFile)
 
