@@ -37,6 +37,7 @@ class ProductListFragment : Fragment() {
             val fragment = ProductListFragment()
             return fragment
         }    }
+    
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_product_list, container, false)

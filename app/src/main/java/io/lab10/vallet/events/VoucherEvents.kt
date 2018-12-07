@@ -27,3 +27,10 @@ class DeepLinkUserAddEvent(val user: BTUsers.User)
 class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)
 class PendingTransactionEvent(val to: String, val amount: Long, val name: String)
 class RefreshHistoryEvent
+
+
+class PriceListStartRefreshEvent()
+class PriceListEndRefreshEvent()
+
+
+class StartRefreshingEvent()

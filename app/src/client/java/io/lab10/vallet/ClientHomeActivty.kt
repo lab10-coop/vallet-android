@@ -39,7 +39,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import io.lab10.vallet.utils.PayDialog
 import java.lang.Exception
-import java.lang.Thread.sleep
 
 
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
@@ -108,10 +107,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun showPriceListFragment() {
-        if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
-            toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
-        } else {
-            toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+        if (ValletApp.activeToken != null) {
+            if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
+            } else {
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+            }
         }
         setPriceListHeader()
         val productListFragment = ProductListFragment.newInstance()
@@ -128,12 +129,22 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun reloadNavigation() {
+    private fun reloadNavigation(newToken: Boolean? = null) {
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
         val menu = navigationView.menu
         menu.clear()
-        if(ValletApp.activeToken == null){
+
+        // If we having adding token in progress we show it here
+        if (newToken != null) {
+            val i = menu.add(resources.getString(R.string.adding_new_token))
+            val txt = resources.getString(R.string.adding_new_token)
+            val s = SpannableString(txt)
+            s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.gray)), 0, txt.length, 0);
+            i.title = s
+        }
+
+        if(ValletApp.activeToken == null && newToken == null){
             val i = menu.add(resources.getString(R.string.no_token_available))
             val txt = resources.getString(R.string.no_token_available)
             val s = SpannableString(txt)
@@ -256,11 +267,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (result != null && result.contents != null) {
                 try {
                     val uri = Uri.parse(result.contents)
-                    Thread {
-                        // TODO find out how to trigger events while client activity is sleeping
-                        sleep(1000)
-                        ValletUriParser.invoke(uri)
-                    }.start()
+                    ValletUriParser.invoke(uri)
                 } catch (e: Exception) {
                     Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
                 }
@@ -300,15 +307,32 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         token.storage().fetch(event.ipfsAddress)
     }
 
-    @Subscribe
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onAddNewStore(event: AddNewStoreEvent) {
-        Web3jManager.INSTANCE.fetchPriceListAddress(this, event.tokenAddress)
-        // TODO inform user that store is adding?
+
+        val stickyEvent = EventBus.getDefault().removeStickyEvent(AddNewStoreEvent::class.java)
+        if ( stickyEvent != null) {
+            reloadNavigation(newToken = true)
+            drawer_layout.openDrawer(GravityCompat.START)
+            doAsync {
+                Web3jManager.INSTANCE.fetchPriceListAddress(this, event.tokenAddress)
+            }
+        }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPriceListStartRefresh(event: PriceListStartRefreshEvent) {
+        reloadProductListFromRemoteStorage()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onStartRefreshingEvent(event: StartRefreshingEvent) {
+        showPriceListFragment()
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductRefreshEvent(event: RefreshProductsEvent) {
+        showPriceListFragment()
         reloadProductListFromLocalStorage()
         reloadProductListFromRemoteStorage()
         refreshProductListView()

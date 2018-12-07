@@ -53,7 +53,7 @@ class ValletUriParser {
 
         private fun addShop(tokenAddress: String) {
             if (Wallet.isValidAddress(tokenAddress)) {
-                EventBus.getDefault().post(AddNewStoreEvent(tokenAddress))
+                EventBus.getDefault().postSticky(AddNewStoreEvent(tokenAddress))
             } else {
                 throw ValletUriError("Invalid token address")
             }
