@@ -88,8 +88,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
-        val burger = toggle.drawerArrowDrawable
-        burger.color = resources.getColor(R.color.black)
         toggle.syncState()
 
         reloadProductListFromLocalStorage()
@@ -119,7 +117,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
                 toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
             } else {
-                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_black)
+                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
             }
         }
         setPriceListHeader()

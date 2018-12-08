@@ -54,7 +54,7 @@
     <string name="add_store_button">Add store</string>
     <string name="place_holder_label">You do not have any store in your wallet. Please scan QR code to add new.</string>
     <string name="no_token_available">Empty</string>
-    <string name="adding_new_token">Adding new token ...</string>
+    <string name="adding_new_token">+ Adding new token ...</string>
     <string name="no_data_available">No data available</string>
     <string name="add_product_title">Add product</string>
 </resources>
