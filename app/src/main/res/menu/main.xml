@@ -4,7 +4,7 @@
     <item
         android:id="@+id/menu_qr_code"
         android:title="@string/your_qrcode"
-        android:icon="@drawable/qr_icon"
+        android:icon="@drawable/qrcode"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_delete"

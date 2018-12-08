@@ -114,6 +114,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
                 productPriceInput.setText(Wallet.convertEUR2ATS((product as Product).price.toString()).toString())
             }
             saveProductBtn.text = resources.getString(R.string.save_product_button)
+            add_product_title.text = "Edit product"
             productNameInput.setText((product as Product).name)
             productNfcTagInput.setText((product as Product).nfcTagId)
             Picasso.get().load("https://ipfs.io/ipfs/" + (product as Product).imagePath).into(productPicture)

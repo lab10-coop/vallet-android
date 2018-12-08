@@ -44,6 +44,7 @@
     <string name="scanningHint">Let the admin find you via bluetooth or show them your QR code to add money to your vallet.</string>
     <string name="broadcasting_wallet_address">Broadcasting wallet address via BT</string>
     <string name="your_qrcode">Your QR-Code</string>
+    <string name="shops_qrcode_title">Shop\'s QR Code</string>
     <string name="product_nfc_placeholder">Scan NFC tag</string>
     <string name="label_view_history"><![CDATA[View all history >]]></string>
     <string name="label_scan_token"><![CDATA[Scan token >]]></string>
@@ -55,4 +56,5 @@
     <string name="no_token_available">Empty</string>
     <string name="adding_new_token">Adding new token ...</string>
     <string name="no_data_available">No data available</string>
+    <string name="add_product_title">Add product</string>
 </resources>

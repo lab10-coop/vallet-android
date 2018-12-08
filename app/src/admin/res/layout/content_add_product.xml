@@ -19,16 +19,41 @@
        app:layout_constraintTop_toTopOf="parent"
        android:background="@drawable/close_button"/>
 
+   <TextView
+       android:id="@+id/add_product_title"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintLeft_toRightOf="@+id/closeButton"
+       app:layout_constraintTop_toTopOf="parent"
+       android:layout_marginTop="35dp"
+       android:layout_marginLeft="20dp"
+       style="@style/ValletFont"
+       android:textSize="24sp"
+       android:text="@string/add_product_title"/>
+
+   <View
+       android:id="@+id/divider"
+       android:layout_width="match_parent"
+       style="@style/Divider"
+       app:layout_constraintTop_toBottomOf="@+id/closeButton"
+       app:layout_constraintRight_toLeftOf="parent"
+       app:layout_constraintRight_toRightOf="parent"
+       android:layout_marginTop="20dp"
+       android:layout_marginBottom="20dp"/>
+
 
     <ImageView
         android:id="@+id/productPicture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="186dp"
+        android:layout_height="186dp"
+        android:padding="20dp"
         android:clickable="true"
-        android:minHeight="100dp"
         android:layout_marginTop="@dimen/label_margin"
-        app:layout_constraintTop_toBottomOf="@+id/closeButton"
-        app:srcCompat="@drawable/ic_menu_camera" />
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/add_photo_icon" />
 
     <EditText
         android:id="@+id/productNameInput"

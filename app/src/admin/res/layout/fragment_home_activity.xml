@@ -33,7 +33,7 @@
 
                     <TextView
                         android:id="@+id/circulating"
-                        style="@style/LabelText"
+                        style="@style/GrayLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
@@ -42,8 +42,7 @@
                         android:text="@string/circulating"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        card_view:layout_constraintRight_toRightOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:id="@+id/valueLabel"
@@ -55,8 +54,7 @@
                         android:orientation="horizontal"
                         android:padding="0dp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/circulating"
-                        card_view:layout_constraintRight_toRightOf="parent">
+                        app:layout_constraintTop_toBottomOf="@+id/circulating">
 
 
                         <ImageView
@@ -77,7 +75,7 @@
                             android:lineSpacingMultiplier="1.5"
                             android:text="0"
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            android:textSize="30sp" />
                     </LinearLayout>
 
 

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="22dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -25,8 +25,30 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
+        style="@style/ValletFont"
         android:textSize="24sp"
-        android:text="@string/your_qrcode"/>
+        android:text="@string/shops_qrcode_title"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        style="@style/Divider"
+        app:layout_constraintTop_toBottomOf="@+id/closeButton"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/hint_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@style/RegularText"
+        android:layout_margin="20dp"
+        tools:text="This is the QR code of the shop: lab10-drinks \nShow this QR code to your user for them to add your shop to their app."
+        />
 
     <ImageView
         android:id="@+id/voucherQrcode"
@@ -34,7 +56,7 @@
         android:layout_height="300dp"
         android:layout_margin="40dp"
         android:paddingBottom="50dp"
-        app:layout_constraintTop_toBottomOf="@+id/closeButton"
+        app:layout_constraintTop_toBottomOf="@+id/hint_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />

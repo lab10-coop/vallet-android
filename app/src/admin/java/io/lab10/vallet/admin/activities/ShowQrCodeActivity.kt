@@ -27,9 +27,15 @@ class ShowQrCodeActivity : AppCompatActivity() {
         var voucherBox = ValletApp.getBoxStore().boxFor(Token::class.java)
         voucher = voucherBox.query().build().findFirst()
 
+        if (voucher == null) {
+            finish()
+        }
+
         closeButton.setOnClickListener() { _ ->
             finish()
         }
+
+        hint_text.text = "This is QR code for shop: ${voucher!!.name} \n\nShow this QR code to your user for them to add your shop to their app."
 
         try {
             val barcodeEncoder = BarcodeEncoder()

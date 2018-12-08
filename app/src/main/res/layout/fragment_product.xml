@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="10dp"
-        android:layout_gravity="center"
         card_view:cardCornerRadius="5dp">
 
         <android.support.constraint.ConstraintLayout
@@ -25,6 +24,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="0dp"
+                android:scaleType="centerCrop"
+                card_view:layout_constraintLeft_toLeftOf="parent"
+                card_view:layout_constraintRight_toRightOf="parent"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
 
             <android.support.constraint.ConstraintLayout
