@@ -24,11 +24,21 @@ For more details check build `productFlavors` in `app/build.gradle`
 
 To compile project choose desired build variant to build and compile it.
 
-# CI/CD
+# Upgrading smart contract
 
-We are using `gradle-play-publisher` for deployment.
-Gitlab is handling our builds (tests in the future) and deployment to google play see `.gitlabci.yml` for details.
-Required secret variables for keystore password and keypassword. See `app/build.gradle` for details.
+Everything is handle by TokenFactory Smart contract. If something will change in that contract ABI needs to be updated within the project.
+Get latest version of ABI json, should be found in the contract repository.
+
+Use web3j to generate new java class wrapper:
+
+    web3j solidity generate a.bin TokenFactoryJSONABI.json --package io.lab10.vallet.admin -o TokenFactoryNew.java
+
+Where a.bin - is empty file (requred by command line tool)
+TOkenFactoryJSONABI.json - is latest json ABI of the contract
+
+Since we are using Kotlin as a main language java file needs to be converted to kotlin, can be don via Android Studio.
+
+Same procedure is for Token smart contract.
 
 # Debug mode
 
