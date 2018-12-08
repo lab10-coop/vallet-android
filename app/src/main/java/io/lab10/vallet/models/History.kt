@@ -5,9 +5,9 @@ import io.lab10.vallet.ValletApp
 
 object History {
 
-    fun getTransactions(): MutableList<ValletTransaction> {
+    fun getTransactions(tokenAddress: String): MutableList<ValletTransaction> {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
-        return valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find()
+        return valletTransactionBox.query().equal(ValletTransaction_.tokenAddress, tokenAddress).orderDesc(ValletTransaction_.blockNumber).build().find()
     }
 
     fun getRecentOutgoing(): MutableList<ValletTransaction> {

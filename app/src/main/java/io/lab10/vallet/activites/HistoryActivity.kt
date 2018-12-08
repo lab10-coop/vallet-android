@@ -17,6 +17,7 @@ import io.lab10.vallet.models.ValletTransaction
 import kotlinx.android.synthetic.main.activity_history.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
     override fun onRefresh() {
@@ -42,7 +43,7 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
         viewManager = LinearLayoutManager(this)
         if (ValletApp.activeToken?.tokenType != null) {
-            viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(), ValletApp.activeToken!!.tokenType)
+            viewAdapter = HistoryRecyclerViewAdapter(History.getTransactions(ValletApp.activeToken!!.tokenAddress), ValletApp.activeToken!!.tokenType)
             recyclerView = findViewById<RecyclerView>(R.id.historyRecycler).apply {
                 setHasFixedSize(true)
                 layoutManager = viewManager
@@ -67,25 +68,29 @@ class HistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         Web3jManager.INSTANCE.fetchAllTransaction(this, ValletApp.activeToken!!.tokenAddress, ValletApp.wallet!!.address)
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         runOnUiThread {
-            var transaction = ValletTransaction(0, "", event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            var transaction = ValletTransaction(0, "", event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             managePlaceholder()
-            (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions())
-            viewAdapter.notifyDataSetChanged()
+            if (ValletApp.activeToken != null && ValletApp.activeToken!!.tokenAddress.equals(event.tokenAddress)) {
+                (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions(ValletApp.activeToken!!.tokenAddress))
+                viewAdapter.notifyDataSetChanged()
+            }
         }
 
 
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         runOnUiThread {
-            var transaction = ValletTransaction(0, "", -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            var transaction = ValletTransaction(0, "", -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
-            (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions())
-            viewAdapter.notifyDataSetChanged()
+            if (ValletApp.activeToken != null && ValletApp.activeToken!!.tokenAddress.equals(event.tokenAddress)) {
+                (viewAdapter as HistoryRecyclerViewAdapter).setTransactions(History.getTransactions(ValletApp.activeToken!!.tokenAddress))
+                viewAdapter.notifyDataSetChanged()
+            }
         }
     }
 

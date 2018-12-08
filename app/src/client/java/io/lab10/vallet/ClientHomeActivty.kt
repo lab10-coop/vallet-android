@@ -388,7 +388,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
         if(stickyEvent != null) {
-            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber,  event.transactionId, event.to)
+            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber,  event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             EventBus.getDefault().post(RefreshBalanceEvent())
         }

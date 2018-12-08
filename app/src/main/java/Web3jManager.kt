@@ -249,7 +249,7 @@ class Web3jManager private constructor() {
                     }
                     .subscribe() { event ->
                         var log = event as Token.TransferEventResponse
-                        emitTransactionEvent(log, walletAddress)
+                        emitTransactionEvent(log, walletAddress, tokenAddress)
 
                     }
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
@@ -261,7 +261,7 @@ class Web3jManager private constructor() {
                     }
                     .subscribe() { event ->
                         var log = event as Token.RedeemEventResponse
-                        emitRedeemEvent(log, walletAddress)
+                        emitRedeemEvent(log, walletAddress, tokenAddress)
                     }
 
         } catch (e: Exception) {
@@ -365,7 +365,7 @@ class Web3jManager private constructor() {
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->
             val transaction = event as TransactionReceipt
-            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash))
+            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash, tokenContractAddress))
         }
     }
 
@@ -382,20 +382,20 @@ class Web3jManager private constructor() {
             TransactionReceipt()
         }
         .subscribe {
-            EventBus.getDefault().postSticky(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName, it.blockNumber.toLong(), it.transactionHash))
+            EventBus.getDefault().postSticky(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName, it.blockNumber.toLong(), it.transactionHash, tokenContractAddress))
         }
     }
 
-    private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String) {
+    private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String, tokenAddress: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
             if(log._to.equals(address) || ValletApp.isAdmin)
-                EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger))
+                EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger, tokenAddress))
     }
 
-    private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String) {
+    private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String, tokenAddress: String) {
         if (log._value != null)
             if(log._from.equals(address) || ValletApp.isAdmin )
-                EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger))
+                EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger, tokenAddress))
     }
 
 }
