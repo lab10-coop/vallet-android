@@ -46,7 +46,9 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
         when (v.getId()) {
             // TODO chanage the action here
             R.id.pay_button -> {
-                Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
+                Thread {
+                    Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
+                }.start()
                 EventBus.getDefault().post(MessageEvent("You paid for " + product.name))
                 EventBus.getDefault().post(ProductPaidEvent(product.price))
             }
