@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/home_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,8 +42,8 @@
                         android:text="@string/circulating"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        card_view:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        card_view:layout_constraintRight_toRightOf="parent" />
 
                     <LinearLayout
                         android:id="@+id/valueLabel"
@@ -55,8 +55,8 @@
                         android:orientation="horizontal"
                         android:padding="0dp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        card_view:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/circulating">
+                        app:layout_constraintTop_toBottomOf="@+id/circulating"
+                        card_view:layout_constraintRight_toRightOf="parent">
 
 
                         <ImageView
@@ -165,20 +165,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill"
                 android:layout_margin="10dp"
                 card_view:cardCornerRadius="5dp">
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/transactions_history_recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="40dp"
-                    android:minHeight="250dp"
-                    android:scrollbars="vertical" />
+                    android:layout_marginBottom="40dp" />
+
+                <TextView
+                    android:id="@+id/no_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/no_data_available"
+                    android:textAlignment="center"
+                    android:theme="@style/GrayLabel" />
+
 
             </android.support.v7.widget.CardView>
+
 
             <TextView
                 android:id="@+id/view_history_label"
@@ -196,7 +205,5 @@
 
 
         </LinearLayout>
-
-    </ScrollView>
-
+    </android.support.v4.widget.NestedScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

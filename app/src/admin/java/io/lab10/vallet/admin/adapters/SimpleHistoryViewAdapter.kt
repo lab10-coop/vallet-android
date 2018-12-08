@@ -48,6 +48,8 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
         holder.mText.text = history[position].description()
         if (history[position].value < 0) {
             holder.mIcon.setImageResource(R.drawable.ic_arrow_downward_24dp)
+        } else {
+            holder.mIcon.setImageResource(R.drawable.ic_arrow_upward_24dp)
         }
     }
 

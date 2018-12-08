@@ -31,7 +31,7 @@ class HomeActivityFragment : Fragment() {
     private var debugCount: Int = 0
     private var debugOn: Boolean = false
 
-    private lateinit var transactonsRecyclerView: RecyclerView
+    private lateinit var transactionsRecyclerView: RecyclerView
     private lateinit var transactionViewAdapter: RecyclerView.Adapter<*>
     private lateinit var transactionsViewManager: RecyclerView.LayoutManager
     private lateinit var incomingViewManager: RecyclerView.LayoutManager
@@ -99,7 +99,7 @@ class HomeActivityFragment : Fragment() {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onPendingTransaction(event: PendingTransactionEvent) {
         val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
-        if ( stickyEvent != null) {
+        if (stickyEvent != null) {
             val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber, event.transactionId, event.to)
             History.addTransaction(transaction)
             reloadStats()
@@ -151,6 +151,9 @@ class HomeActivityFragment : Fragment() {
 
         var recentTransactions = History.getRecent()
 
+        if (recentTransactions.size > 0) {
+            viewHolder!!.no_history.visibility = View.GONE
+        }
 
         if ((activity as AdminActivity).voucher?.tokenType.equals(Tokens.Type.VOUCHER.type)) {
             transactionViewAdapter = SimpleHistoryViewAdapter(recentTransactions, 1)
@@ -160,11 +163,12 @@ class HomeActivityFragment : Fragment() {
             transactionViewAdapter = SimpleHistoryViewAdapter(recentTransactions, 0)
         }
 
-        transactonsRecyclerView = viewHolder!!.transactions_history_recycler.apply {
+        transactionsRecyclerView = viewHolder!!.transactions_history_recycler.apply {
             setHasFixedSize(true)
             layoutManager = transactionsViewManager
             adapter = transactionViewAdapter
         }
+        transactionsRecyclerView.setNestedScrollingEnabled(false)
 
         viewHolder!!.circulating_vouchers_value.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
@@ -197,6 +201,7 @@ class HomeActivityFragment : Fragment() {
         } else {
             Web3jManager.INSTANCE.getCirculatingVoucher(activity, ValletApp.activeToken!!.tokenAddress)
         }
+
 
         viewHolder!!.swipe_container.setOnRefreshListener {
             EventBus.getDefault().post(RefreshHistoryEvent())
