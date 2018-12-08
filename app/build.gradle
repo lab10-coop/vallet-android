@@ -8,11 +8,6 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 26
 
-    playAccountConfigs {
-        defaultAccountConfig {
-            jsonFile = file('GitLabCI.json')
-        }
-    }
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
@@ -24,7 +19,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
         multiDexEnabled true
         signingConfigs {
             release {
