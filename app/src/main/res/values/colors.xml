@@ -13,4 +13,5 @@
     <color name="menu_selected">#1C0A9F</color>
     <color name="semitransparent_background">#a8000000</color>
     <color name="transparent">#00000000</color>
+    <color name="blue">#ff0a9ffa</color>
 </resources>

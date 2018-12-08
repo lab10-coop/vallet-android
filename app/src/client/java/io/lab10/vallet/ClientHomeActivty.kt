@@ -175,6 +175,10 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
         menu.addSubMenu("Settings")
         val scanMenu = menu.add(resources.getString(R.string.add_new_store))
+        var txt = resources.getString(R.string.add_new_store)
+        var s = SpannableString(txt)
+        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.blue)), 0, txt.length, 0);
+        scanMenu.title = s
         scanMenu.setOnMenuItemClickListener { _ ->
             val integrator = IntentIntegrator(this)
             integrator.setBeepEnabled(false);
@@ -183,6 +187,10 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             true
         }
         val qrMenu = menu.add(resources.getString(R.string.your_qrcode))
+        txt = resources.getString(R.string.your_qrcode)
+        s = SpannableString(txt)
+        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.blue)), 0, txt.length, 0);
+        qrMenu.title = s
         qrMenu.setOnMenuItemClickListener { _ ->
             val intent = Intent(this, ShowQrCodeActivity::class.java)
             startActivity(intent)
