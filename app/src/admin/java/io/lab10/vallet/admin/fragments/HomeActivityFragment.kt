@@ -103,7 +103,7 @@ class HomeActivityFragment : Fragment() {
     fun onPendingTransaction(event: PendingTransactionEvent) {
         val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
         if (stickyEvent != null) {
-            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber, event.transactionId, event.to)
+            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber, event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             reloadStats()
             reloadTransactions()
@@ -121,7 +121,7 @@ class HomeActivityFragment : Fragment() {
     fun onTransferVoucherEvent(event: TransferVoucherEvent) {
         if (isAdded) {
             val transfer = resources.getString(R.string.transfer)
-            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            var transaction = ValletTransaction(0, transfer, event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             activity.runOnUiThread {
                 reloadStats()
@@ -134,7 +134,7 @@ class HomeActivityFragment : Fragment() {
     fun onTransferVoucherEvent(event: RedeemVoucherEvent) {
         if (isAdded) {
             val transfer = resources.getString(R.string.redeem)
-            var transaction = ValletTransaction(0, transfer, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to)
+            var transaction = ValletTransaction(0, transfer, -event.value.toLong(), event.blockNumber.toLong(), event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             activity.runOnUiThread {
                 reloadStats()
