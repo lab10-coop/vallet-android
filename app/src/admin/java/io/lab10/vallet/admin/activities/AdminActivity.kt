@@ -151,6 +151,10 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onError(event: ErrorEvent) {
         Toast.makeText(this, "Error: " + event.message, Toast.LENGTH_LONG).show()
+        if (progress_overlay.visibility == View.VISIBLE) {
+            progress_overlay.visibility = View.GONE
+            finish()
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
