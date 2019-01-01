@@ -30,7 +30,7 @@ class FaucetManager private constructor() {
             val client = OkHttpClient()
 
             val request = Request.Builder()
-                    .url(getServerAddress(context) + "addr/" + addr)
+                    .url(getServerAddress(context) + addr)
                     .build()
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
@@ -52,7 +52,7 @@ class FaucetManager private constructor() {
                 val client = OkHttpClient()
 
                 val request = Request.Builder()
-                        .url(getServerAddress(context) + "addr/" + addr)
+                        .url(getServerAddress(context) + addr)
                         .build()
                 val response = client.newCall(request).execute()
                 if (response.isSuccessful) {

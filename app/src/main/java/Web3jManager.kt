@@ -40,7 +40,7 @@ class Web3jManager private constructor() {
 
     var web3: Web3j? = null
     val TAG = Web3jManager::class.java.simpleName
-    val GAS_PRICE = BigInteger.valueOf(2200L)
+    val GAS_PRICE = Contract.GAS_PRICE
 
 
     private object Holder {
@@ -281,7 +281,7 @@ class Web3jManager private constructor() {
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got
-            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            EventBus.getDefault().post(ErrorEvent("generateNewToken: " + it.message))
             TransactionReceipt()
         }
         .subscribe() { result ->
@@ -365,7 +365,7 @@ class Web3jManager private constructor() {
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->
             val transaction = event as TransactionReceipt
-            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.blockNumber.toLong(), transaction.transactionHash, tokenContractAddress))
+            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.getBlockNumber().toLong(), transaction.transactionHash, tokenContractAddress))
         }
     }
 
@@ -382,7 +382,9 @@ class Web3jManager private constructor() {
             TransactionReceipt()
         }
         .subscribe {
-            EventBus.getDefault().postSticky(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName, it.blockNumber.toLong(), it.transactionHash, tokenContractAddress))
+            if (it.transactionHash != null && it.blockNumberRaw != null) {
+                EventBus.getDefault().postSticky(PendingTransactionEvent(tokenContractAddress, -amount.toLong(), productName, it.getBlockNumber().toLong(), it.transactionHash, tokenContractAddress))
+            }
         }
     }
 

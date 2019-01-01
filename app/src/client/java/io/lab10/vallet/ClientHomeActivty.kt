@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import io.lab10.vallet.utils.PayDialog
 import it.lamba.random.nextAlphanumericString
+import java.math.BigInteger
 import kotlin.random.Random
 
 
@@ -70,6 +71,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
             ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
+            FaucetManager.INSTANCE.getFounds(this, ValletApp!!.wallet!!.address)
+        } else {
+            var balance = Web3jManager.INSTANCE.getBalance(this, ValletApp!!.wallet!!.address)
+            if (balance.balance < BigInteger.valueOf(9977274220000)) {
+                FaucetManager.INSTANCE.getFounds(this, ValletApp!!.wallet!!.address)
+            }
         }
 
         // TODO move that to settings
@@ -306,6 +313,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onErrorEvent(event: ErrorEvent) {
         Toast.makeText(this, event.message, Toast.LENGTH_LONG).show()
+        EventBus.getDefault().post(RefreshBalanceEvent())
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
