@@ -1,8 +1,6 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.triplet.play'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -20,14 +18,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        signingConfigs {
-            release {
-                storeFile file("../Lab10.jks")
-                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
-                storePassword System.getenv('ANDROID_STORE_PASSWORD')
-                keyAlias "key0"
-            }
-        }
     }
 
     flavorDimensions "free", "environment"
@@ -38,7 +28,6 @@ android {
             versionCode 28
             versionName "5.0.0"
             dimension "free"
-            signingConfig signingConfigs.release
         }
 
         admin {
@@ -46,7 +35,6 @@ android {
             versionCode 32
             versionName "5.0.0"
             dimension "free"
-            signingConfig signingConfigs.release
         }
         staging {
             dimension "environment"
@@ -60,7 +48,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 
