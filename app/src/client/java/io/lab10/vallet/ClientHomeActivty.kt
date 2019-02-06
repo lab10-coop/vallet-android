@@ -290,7 +290,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     val uri = Uri.parse(result.contents)
                     ValletUriParser.invoke(uri)
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -468,7 +468,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun payFor(product: Product) {
         if (product.price > ValletApp.activeToken!!.balance) {
-            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_LONG).show()
         } else {
             val cdd = PayDialog(this, product)
             cdd.show()

@@ -286,7 +286,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                     ValletUriParser.invoke(uri)
 
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Invalid uri: " + e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
