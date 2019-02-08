@@ -71,11 +71,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
             ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
-            FaucetManager.INSTANCE.getFounds(this, ValletApp!!.wallet!!.address)
+            FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
         } else {
-            var balance = Web3jManager.INSTANCE.getBalance(this, ValletApp!!.wallet!!.address)
+            var balance = Web3jManager.INSTANCE.getBalance(this, ValletApp.wallet!!.address)
             if (balance.balance < BigInteger.valueOf(9977274220000)) {
-                FaucetManager.INSTANCE.getFounds(this, ValletApp!!.wallet!!.address)
+                FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
             }
         }
 
@@ -85,7 +85,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             Toast.makeText(this,
                     "NFC NOT supported on this devices!",
                     Toast.LENGTH_SHORT).show();
-        }else if(!nfcAdapter!!.isEnabled()){
+        }else if(!nfcAdapter.isEnabled()){
             Toast.makeText(this,
                     "NFC NOT Enabled!",
                     Toast.LENGTH_SHORT).show();
@@ -260,8 +260,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
         if (nfcAdapter != null) {
-            if (nfcAdapter!!.isEnabled())
-                nfcAdapter!!.enableForegroundDispatch(this, pendingIntent, null, null);
+            if (nfcAdapter.isEnabled())
+                nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
         }
     }
 
