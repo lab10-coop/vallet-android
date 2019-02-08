@@ -102,11 +102,6 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
             }*/
         }
 
-        if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
-            productPriceInput.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-            productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
-        }
-
         if (product != null) {
             if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
                 productPriceInput.setText(Wallet.convertATS2EUR((product as Product).price).toString())
