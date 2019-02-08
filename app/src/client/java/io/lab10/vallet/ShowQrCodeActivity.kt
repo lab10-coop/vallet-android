@@ -17,6 +17,10 @@ class ShowQrCodeActivity : AppCompatActivity() {
 
         val voucherWalletAddress = ValletApp.wallet!!.address
 
+        activity_title.text = resources.getString(R.string.activity_show_qr_code_title)
+        hint_text.text = resources.getString(R.string.activity_show_qr_code_hint)
+
+
         closeButton.setOnClickListener() { _ ->
             finish()
         }

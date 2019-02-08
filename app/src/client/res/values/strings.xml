@@ -11,4 +11,6 @@
     <string name="pay_for">for</string>
     <string name="pay_label">Pay</string>
     <string name="pay_button">Pay</string>
+    <string name="activity_show_qr_code_title">Your QR code</string>
+    <string name="activity_show_qr_code_hint">Show this QR code to the shop owner to receive vouchers.</string>
 </resources>
