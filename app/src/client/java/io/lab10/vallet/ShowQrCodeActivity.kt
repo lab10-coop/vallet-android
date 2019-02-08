@@ -25,7 +25,7 @@ class ShowQrCodeActivity : AppCompatActivity() {
             finish()
         }
         // TODO: add user name from first step of the registration
-        var uri = "valletadmin://user/" + voucherWalletAddress + "?user_name=" + URLEncoder.encode(getPhoneName(), "UTF-8") + ""
+        var uri = "valletadmin://user/" + voucherWalletAddress + "?user_name=" + URLEncoder.encode(ValletApp.wallet!!.name, "UTF-8") + ""
 
         generateWalletBarcode(uri)
     }
@@ -39,12 +39,6 @@ class ShowQrCodeActivity : AppCompatActivity() {
         } catch (e: Exception) {
 
         }
-    }
-
-
-    private fun getPhoneName(): String {
-        val myDevice = BluetoothAdapter.getDefaultAdapter()
-        return myDevice.name
     }
 
 }

@@ -13,4 +13,9 @@
     <string name="pay_button">Pay</string>
     <string name="activity_show_qr_code_title">Your QR code</string>
     <string name="activity_show_qr_code_hint">Show this QR code to the shop owner to receive vouchers.</string>
+    <string name="welcome_text">Welcome!\nEnter your name to start using the app.</string>
+    <string name="welcome_username_label">Name</string>
+    <string name="welcome_username_input_hint">Name</string>
+    <string name="welcome_get_started_button">Get started</string>
+    <string name="create_user_error" type="id">Name should be at least 3 characters.</string>
 </resources>

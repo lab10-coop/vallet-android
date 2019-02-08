@@ -59,6 +59,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         setDefaultConfiguration()
 
+        val username = intent.extras.getString(CreateUserActivity.NAME_EXTRA)
+
         if (ValletApp.wallet == null) {
 
             val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
@@ -70,7 +72,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
-            ValletApp.wallet = Wallet(0, "Main", voucherWalletAddress, walletFile)
+            ValletApp.wallet = Wallet(0, username, voucherWalletAddress, walletFile)
             FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
         } else {
             var balance = Web3jManager.INSTANCE.getBalance(this, ValletApp.wallet!!.address)
@@ -488,7 +490,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    // TODO move to utils: Helper mthod for calling stuff in async
+    // TODO move to utils: Helper method for calling stuff in async
     private fun doAsync(f: () -> Unit) {
         Thread { f() }.start()
     }
