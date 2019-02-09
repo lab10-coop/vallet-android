@@ -33,4 +33,12 @@
     <string name="spent">Spent</string>
     <string name="issued">Issued</string>
     <string name="nfc_hint">TIP: If you will enable NFC you can attach tags to your products</string>
+    <string name="add_product_nfc_tag_hint">Scan NFC tag to attach it to your product</string>
+    <string name="add_product_add_nfc_tag_add_button">Add NFC tag manually</string>
+    <string name="add_product_nfc_tag_label">NFC tag:</string>
+    <string name="add_product_add_nfc_tag_remove_button">Remove NFC tag</string>
+
+    <string name="nfc_tag_dialog_label">NFC tag</string>
+    <string name="add_nfc_tag">Add</string>
+    <string name="add_nfc_tag_input_hint">NFC ID</string>
 </resources>

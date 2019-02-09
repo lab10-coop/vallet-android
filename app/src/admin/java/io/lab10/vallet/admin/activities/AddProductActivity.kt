@@ -1,54 +1,61 @@
 package io.lab10.vallet.admin.activities
 
+import IPFSManager
 import android.Manifest
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
-import io.lab10.vallet.R
-import kotlinx.android.synthetic.admin.content_add_product.*
-import android.graphics.Bitmap
-import java.io.*
-import android.graphics.drawable.BitmapDrawable
-import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.os.Parcelable
-import android.text.InputFilter
-import android.text.InputType
-import android.widget.Toast
-import io.lab10.vallet.ValletApp
-import io.lab10.vallet.utils.EuroInputFilter
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.os.Bundle
+import android.os.Parcelable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
+import android.text.InputFilter
+import android.text.InputType
 import android.view.View
+import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.vansuita.pickimage.bean.PickResult
 import com.vansuita.pickimage.bundle.PickSetup
 import com.vansuita.pickimage.dialog.PickImageDialog
 import com.vansuita.pickimage.listeners.IPickResult
+import io.lab10.vallet.R
+import io.lab10.vallet.ValletApp
+import io.lab10.vallet.admin.fragments.NFCTagDialogFragment
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.events.ProductAddedEvent
 import io.lab10.vallet.models.*
+import io.lab10.vallet.utils.EuroInputFilter
 import io.objectbox.Box
+import kotlinx.android.synthetic.admin.content_add_product.*
 import org.greenrobot.eventbus.EventBus
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
-class AddProductActivity : AppCompatActivity(), IPickResult {
+class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragment.OnFragmentInteractionListener {
+    override fun onNFCTagAdded(nfcTag: String) {
+        setNFCTag(nfcTag)
+    }
+
     override fun onPickResult(p0: PickResult?) {
-            if (p0!!.getError() == null) {
-                productPicture.setImageBitmap(p0.bitmap)
-            } else {
-                EventBus.getDefault().post(ErrorEvent("Pick image: " + p0!!.error.message))
-            }
+        if (p0!!.getError() == null) {
+            productPicture.setImageBitmap(p0.bitmap)
+        } else {
+            EventBus.getDefault().post(ErrorEvent("Pick image: " + p0!!.error.message))
+        }
     }
 
     val REQUEST_IMAGE_CAPTURE = 101;
@@ -58,7 +65,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
     private var nfcAdapter: NfcAdapter? = null
     private var token: Token? = null
     private var product: Product? = null
-    private var tokenBox: Box<Token> ? = null
+    private var tokenBox: Box<Token>? = null
     private var productBox: Box<Product>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +74,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
 
         productBox = ValletApp.getBoxStore().boxFor(Product::class.java)
         if (intent.hasExtra("PRODUCT_ID")) {
-            var productID = intent.getLongExtra("PRODUCT_ID",0)
+            var productID = intent.getLongExtra("PRODUCT_ID", 0)
             product = productBox!!.query().equal(Product_.id, productID).build().findFirst()
         }
         tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
@@ -84,24 +91,23 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if(nfcAdapter == null){
-            productNfcTagInput.visibility = View.GONE
-            nfc_tip.visibility = View.VISIBLE
-        }else if(!nfcAdapter!!.isEnabled()){
-            productNfcTagInput.visibility = View.GONE
+        if (nfcAdapter == null || !nfcAdapter!!.isEnabled) {
+            nfcLabel.visibility = View.GONE
+            nfcAddTagButton.visibility = View.GONE
             nfc_tip.visibility = View.VISIBLE
         }
-
         productPicture.setOnClickListener() {
             PickImageDialog.build(PickSetup()).show(this);
-
-
-          /*  var takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }*/
         }
 
+        nfcRemoveTagButton.setOnClickListener {
+            removeNFCTag()
+        }
+
+        nfcAddTagButton.setOnClickListener {
+            NFCTagDialogFragment.newInstance().show(supportFragmentManager, "")
+
+        }
         if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
             productPriceInput.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
             productPriceInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(5, 2)))
@@ -116,14 +122,21 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
             saveProductBtn.text = resources.getString(R.string.save_product_button)
             add_product_title.text = "Edit product"
             productNameInput.setText((product as Product).name)
-            productNfcTagInput.setText((product as Product).nfcTagId)
+            var nfcTag = (product as Product).nfcTagId
+            if(nfcTag != null  && nfcTag.length > 0) {
+                setNFCTag(nfcTag)
+            } else {
+                removeNFCTag()
+            }
+
+            nfcTagValue.text = (product as Product).nfcTagId
             Picasso.get().load("https://ipfs.io/ipfs/" + (product as Product).imagePath).into(productPicture)
         }
 
         saveProductBtn.setOnClickListener() {
             var name = productNameInput.text.toString()
             var priceString = productPriceInput.text.toString()
-            var nfcTagId = productNfcTagInput.text.toString()
+            var nfcTagId = nfcTagValue.text.toString()
             var price = 0
             if (!priceString.trim().equals("")) {
                 if (token!!.tokenType.equals(Tokens.Type.EUR.type)) {
@@ -151,9 +164,8 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
             finish()
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), MY_PERMISSIONS_REQUEST_CAMERA );
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), MY_PERMISSIONS_REQUEST_CAMERA);
         }
     }
 
@@ -194,13 +206,13 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
         val image = File(directory, name + ".jpg")
         try {
             val outputStream = FileOutputStream(image);
-            data.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+            data.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
         } catch (e: FileNotFoundException) {
             // TODO handle errors
             e.printStackTrace()
-        } catch ( e: IOException) {
+        } catch (e: IOException) {
             // TODO handle errors
             e.printStackTrace()
         }
@@ -246,7 +258,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
                 val st = String.format("%02X", b)
                 result += st
             }
-            productNfcTagInput.setText(result)
+            setNFCTag(result)
         }
     }
 
@@ -267,22 +279,37 @@ class AddProductActivity : AppCompatActivity(), IPickResult {
 
     }
 
+    private fun setNFCTag(tag: String) {
+        nfcTagValue.text = tag
+        nfcTagValue.visibility = View.VISIBLE
+        nfcLabel.text = resources.getString(R.string.add_product_nfc_tag_label)
+        nfcAddTagButton.visibility = View.GONE
+        nfcRemoveTagButton.visibility = View.VISIBLE
+    }
+
+    private fun removeNFCTag() {
+        nfcTagValue.text = ""
+        nfcTagValue.visibility = View.GONE
+        nfcLabel.text = resources.getString(R.string.add_product_nfc_tag_hint)
+        nfcRemoveTagButton.visibility = View.GONE
+        nfcAddTagButton.visibility = View.VISIBLE
+    }
+
     fun getBitmapFromDrawable(drawable: Drawable): Bitmap {
 
         if (drawable is BitmapDrawable) {
             return drawable.bitmap
         } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
-            val bitmap = Bitmap.createBitmap (drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
+            val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
             val canvas = Canvas(bitmap);
             drawable.setBounds(0, 0, canvas.width, canvas.height);
             drawable.draw(canvas);
 
             return bitmap;
         } else {
-            throw IllegalArgumentException ("unsupported drawable type");
+            throw IllegalArgumentException("unsupported drawable type");
         }
     }
-
 
 
 }
