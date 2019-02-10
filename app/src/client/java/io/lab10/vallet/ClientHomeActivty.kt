@@ -173,7 +173,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val item = menu.add(token.name)
             item.isCheckable = true
             item.isChecked = token.active
-            item.setActionView(R.layout.token_balance)
+            item.setActionView(R.layout.voucher_balance_in_nav)
             val view = item.actionView
             view.voucherBalance.text = Formatter.currency(Wallet.convertATS2EUR(token.balance))
             item.setOnMenuItemClickListener { _ ->
