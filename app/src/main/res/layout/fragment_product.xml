@@ -23,11 +23,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_margin="0dp"
-                android:scaleType="centerCrop"
+                android:scaleType="center"
                 card_view:layout_constraintLeft_toLeftOf="parent"
                 card_view:layout_constraintRight_toRightOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_camera" />
+                app:srcCompat="@drawable/noimageholder" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/backgroundArea"

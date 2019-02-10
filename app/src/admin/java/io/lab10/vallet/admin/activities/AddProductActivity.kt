@@ -53,6 +53,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragmen
     override fun onPickResult(p0: PickResult?) {
         if (p0!!.getError() == null) {
             productPicture.setImageBitmap(p0.bitmap)
+            pictureAdded = true
         } else {
             EventBus.getDefault().post(ErrorEvent("Pick image: " + p0!!.error.message))
         }
@@ -67,6 +68,7 @@ class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragmen
     private var product: Product? = null
     private var tokenBox: Box<Token>? = null
     private var productBox: Box<Product>? = null
+    private var pictureAdded: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,8 +150,12 @@ class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragmen
 
             if (price > 0 && name.isNotEmpty()) {
                 if (productPicture.drawable != null) {
-                    val bitmap = getBitmapFromDrawable(productPicture.drawable)
-
+                    var bitmap: Bitmap?
+                    if (pictureAdded) {
+                        bitmap = getBitmapFromDrawable(productPicture.drawable)
+                    } else {
+                        bitmap = getBitmapFromDrawable(resources.getDrawable(R.drawable.noimageholder))
+                    }
                     storeProduct(name, price.toLong(), bitmap, nfcTagId)
                     var resultIntent = Intent()
                     setResult(Activity.RESULT_OK, resultIntent)

@@ -15,7 +15,6 @@ import io.lab10.vallet.ProductRecyclerViewAdapter
 import io.lab10.vallet.models.Products
 
 import kotlinx.android.synthetic.main.fragment_product_list.view.*
-import android.support.v4.widget.SwipeRefreshLayout
 import android.view.*
 import io.lab10.vallet.events.RefreshProductsEvent
 import io.lab10.vallet.models.Product
