@@ -56,17 +56,21 @@ class IPFSManager private constructor() {
     }
 
     fun fetchProductList(priceListAddress: String, ipns: Boolean) {
-        // IF IPNS is provided we are trying to resolve it otherwise we take the direct address
-        if (ipns) {
-            val priceListIPFSAddress = getIPFSConnection().name.resolve(priceListAddress)
-            if (priceListIPFSAddress != null) {
-                val hash = priceListIPFSAddress.split("/")[2]
-                val productListJson = getIPFSConnection().get.cat(hash)
+        try {
+            // IF IPNS is provided we are trying to resolve it otherwise we take the direct address
+            if (ipns) {
+                val priceListIPFSAddress = getIPFSConnection().name.resolve(priceListAddress)
+                if (priceListIPFSAddress != null) {
+                    val hash = priceListIPFSAddress.split("/")[2]
+                    val productListJson = getIPFSConnection().get.cat(hash)
+                    PriceList.fromJson(productListJson, priceListAddress)
+                }
+            } else {
+                val productListJson = getIPFSConnection().get.cat(priceListAddress)
                 PriceList.fromJson(productListJson, priceListAddress)
             }
-        } else {
-            val productListJson = getIPFSConnection().get.cat(priceListAddress)
-            PriceList.fromJson(productListJson, priceListAddress)
+        }catch (error: Exception) {
+            EventBus.getDefault().post(ErrorEvent("Error: fetch price list from ipfs"))
         }
     }
 

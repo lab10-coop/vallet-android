@@ -92,11 +92,16 @@ class Web3jManager private constructor() {
         return "0x" + addr.last().split(".").first()
     }
 
-    fun getBalance(context: Context, address: String): EthGetBalance {
-        // send asynchronous requests to get balance
-        return getConnection(context).ethGetBalance(address, DefaultBlockParameterName.LATEST)
-                .sendAsync()
-                .get()
+    fun getBalance(context: Context, address: String): EthGetBalance? {
+        try {
+            // send asynchronous requests to get balance
+            return getConnection(context).ethGetBalance(address, DefaultBlockParameterName.LATEST)
+                    .sendAsync()
+                    .get()
+        } catch (error: Exception) {
+            EventBus.getDefault().post(ErrorEvent("Error: fetch balance: " + error.message))
+            return null
+        }
 
     }
 
@@ -166,7 +171,7 @@ class Web3jManager private constructor() {
             }
             .onErrorReturn {
                 // If error occur we return empty string and triggering event with error which we got
-                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                EventBus.getDefault().post(ErrorEvent("getTokenName: " + it.message))
                 ""
             }
             .subscribeOn(Schedulers.io()).subscribe { result ->
@@ -189,7 +194,7 @@ class Web3jManager private constructor() {
             }
             .onErrorReturn {
                 // If error occur we return empty string and triggering event with error which we got
-                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                EventBus.getDefault().post(ErrorEvent("getTokenType: " + it.message))
                 ""
             }
             .subscribeOn(Schedulers.io()).subscribe { result ->
@@ -225,7 +230,7 @@ class Web3jManager private constructor() {
             }
             .onErrorReturn {
                 // If error occur we return zero value and triggering event with error which we got
-                EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                EventBus.getDefault().post(ErrorEvent("getClientBalance: " + it.message))
                 BigInteger.ZERO
             }
             .subscribeOn(Schedulers.io())
@@ -244,7 +249,7 @@ class Web3jManager private constructor() {
                     .subscribeOn(Schedulers.io())
                     .onErrorReturn {
                         // If error occur we return empty token transfer response and triggering event with error which we got
-                        EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                        EventBus.getDefault().post(ErrorEvent("fetchIssuedTransactions: " + it.message))
                         Token.TransferEventResponse()
                     }
                     .subscribe() { event ->
@@ -256,7 +261,7 @@ class Web3jManager private constructor() {
                     .subscribeOn(Schedulers.io())
                     .onErrorReturn {
                         // If error occur we return empty token redeem response and triggering event with error which we got
-                        EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                        EventBus.getDefault().post(ErrorEvent("fetchRedeemTransactions: " + it.message))
                         Token.RedeemEventResponse()
                     }
                     .subscribe() { event ->
@@ -301,7 +306,7 @@ class Web3jManager private constructor() {
                 var base32ipfsAddress =  Base58Util.decode(ipfsAddress)
                token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
         }.onErrorReturn {
-                    EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+                    EventBus.getDefault().post(ErrorEvent("storePriceList: " + it.message))
                     TransactionReceipt()
 
         }
@@ -343,7 +348,7 @@ class Web3jManager private constructor() {
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
             // If error occur we return empty EthLog and triggering event with error which we got
-            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            EventBus.getDefault().post(ErrorEvent("poolTokenCreate: " + it.message))
             EthLog()
         }
         .subscribe { result ->
@@ -360,7 +365,7 @@ class Web3jManager private constructor() {
         }
         .onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got
-            EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
+            EventBus.getDefault().post(ErrorEvent("issueTokensTo: " + it.message))
             TransactionReceipt()
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->

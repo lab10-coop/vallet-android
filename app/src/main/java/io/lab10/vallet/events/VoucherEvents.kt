@@ -15,6 +15,7 @@ class ProductAddedEvent
 class RefreshProductsEvent
 class RefreshBalanceEvent
 class ProductChangedEvent
+class NoInternetEvent
 class NewTokenEvent
 class PriceListAddressEvent(val tokenAddress: String, val ipfsAddress: String)
 class AddNewStoreEvent(val tokenAddress: String)

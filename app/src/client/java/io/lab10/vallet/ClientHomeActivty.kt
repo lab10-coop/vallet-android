@@ -1,5 +1,7 @@
 package io.lab10.vallet
 
+import FaucetManager
+import Web3jManager
 import android.app.Activity
 import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
@@ -30,6 +32,9 @@ import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.utils.Formatter
+import io.lab10.vallet.utils.NetworkUtils
+import io.lab10.vallet.utils.PayDialog
+import it.lamba.random.nextAlphanumericString
 import kotlinx.android.synthetic.client.activity_client_home_activty.*
 import kotlinx.android.synthetic.client.app_bar_client_home_activty.*
 import kotlinx.android.synthetic.client.voucher_item.view.*
@@ -37,9 +42,8 @@ import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import io.lab10.vallet.utils.PayDialog
-import it.lamba.random.nextAlphanumericString
 import java.math.BigInteger
+import java.net.InetAddress
 import kotlin.random.Random
 
 
@@ -58,7 +62,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         setDefaultConfiguration()
-
 
         if (ValletApp.wallet == null) {
             var username = "User"
@@ -79,7 +82,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
         } else {
             var balance = Web3jManager.INSTANCE.getBalance(this, ValletApp.wallet!!.address)
-            if (balance.balance < BigInteger.valueOf(9977274220000)) {
+            if (balance != null && balance.balance < BigInteger.valueOf(9977274220000)) {
                 FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
             }
         }
@@ -259,6 +262,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onResume() {
         super.onResume()
 
+        NetworkUtils.isInternetAvailable()
         val nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, this.javaClass)
@@ -307,6 +311,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNoInternetEvent(event: NoInternetEvent) {
+        Toast.makeText(this, "No internet connection please connect to the internet to continue", Toast.LENGTH_LONG).show()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -361,7 +371,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (stickyEvent != null) {
             reloadNavigation(newToken = true)
             drawer_layout.openDrawer(GravityCompat.START)
-            doAsync {
+            NetworkUtils.doAsync {
                 Web3jManager.INSTANCE.fetchPriceListAddress(this, event.tokenAddress)
             }
         }
@@ -433,7 +443,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
                 if (productFragment is ProductListFragment && productFragment.view != null) {
                     productFragment.swiperefresh.isRefreshing = true
-                    doAsync {
+                    NetworkUtils.doAsync {
                         Web3jManager.INSTANCE.fetchPriceListAddress(this, ValletApp.activeToken!!.tokenAddress)
                     }
 
@@ -483,7 +493,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun refreshBalance() {
-        doAsync {
+        NetworkUtils.doAsync {
             // Trigger balance check for each token
             // copy the list to avoid ConcurrentModificationException
             val vouchers: MutableList<Token> = ArrayList()
@@ -495,10 +505,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    // TODO move to utils: Helper method for calling stuff in async
-    private fun doAsync(f: () -> Unit) {
-        Thread { f() }.start()
-    }
+
 
     private var scanningInProgress = false
 

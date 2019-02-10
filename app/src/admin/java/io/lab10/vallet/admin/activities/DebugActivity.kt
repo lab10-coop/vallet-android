@@ -110,7 +110,12 @@ class DebugActivity : AppCompatActivity() {
         Log.i(TAG, "Wallet address: " + voucherWalletAddress)
         try {
             var walletBalance = Web3jManager.INSTANCE.getBalance(this, voucherWalletAddress)
-            voucherWalletBalanceLabel.text = walletBalance.balance.toString()
+            if (walletBalance != null) {
+                voucherWalletBalanceLabel.text = walletBalance.balance.toString()
+            } else {
+                // TODO inform user about fail balance sync
+                voucherWalletBalanceLabel.text = "0e"
+            }
         } catch (e: Exception) {
             // TODO inform user about fail balance sync
             voucherWalletBalanceLabel.text = "0e"

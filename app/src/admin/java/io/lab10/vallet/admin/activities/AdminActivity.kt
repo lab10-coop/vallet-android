@@ -33,6 +33,7 @@ import java.lang.Exception
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import io.lab10.vallet.utils.Formatter
+import io.lab10.vallet.utils.NetworkUtils
 import it.lamba.random.nextAlphanumericString
 import kotlin.random.Random
 
@@ -60,7 +61,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         super.onCreate(savedInstanceState)
         Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_admin)
-
 
         setDefaultConfiguration()
 
@@ -144,6 +144,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             integrator.setBarcodeImageEnabled(true);
             integrator.initiateScan()
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNoInternetEvent(event: NoInternetEvent) {
+        Toast.makeText(this, "No internet connection please connect to the internet to continue", Toast.LENGTH_LONG).show()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -250,6 +255,10 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         EventBus.getDefault().unregister(this);
     }
 
+    override fun onResume() {
+        super.onResume()
+        NetworkUtils.isInternetAvailable()
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
