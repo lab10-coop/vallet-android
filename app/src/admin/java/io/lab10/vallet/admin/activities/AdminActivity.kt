@@ -37,7 +37,6 @@ import it.lamba.random.nextAlphanumericString
 import kotlin.random.Random
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
-        DiscoverUsersFragment.OnListFragmentInteractionListener,
         IssueDialogFragment.OnFragmentInteractionListener,
         PriceListFragment.OnFragmentInteractionListener,
         ProductListFragment.OnListFragmentInteractionListener {
@@ -46,10 +45,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val intent = Intent(this, AddProductActivity::class.java)
         intent.putExtra("PRODUCT_ID", item.id)
         startActivityForResult(intent, AddProductActivity.PRODUCT_RETURN_CODE)
-    }
-
-    override fun onListFragmentInteraction(user: BTUsers.User) {
-        IssueDialogFragment.newInstance(user).show(supportFragmentManager, "dialog")
     }
 
     override fun onFragmentInteraction(uri: Uri) {
@@ -139,7 +134,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     private fun setFabIssue() {
-        fab_button.setImageResource(R.drawable.fab_qr_button)
         fab_button.setOnClickListener() { v ->
             val integrator = IntentIntegrator(this@AdminActivity)
             integrator.setBeepEnabled(false);

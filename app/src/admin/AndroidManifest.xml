@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.lab10.vallet">
 
-    <uses-permission
-        android:name="android.permission.BLUETOOTH_ADMIN"
-        android:required="false" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
