@@ -11,7 +11,7 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_welcome)
 
         if (ValletApp.wallet != null) {
-            val intent = Intent(this, ClientHomeActivty::class.java)
+            val intent = Intent(this, ClientHomeActivity::class.java)
             startActivity(intent)
         } else {
             val intent = Intent(this, CreateUserActivity::class.java)

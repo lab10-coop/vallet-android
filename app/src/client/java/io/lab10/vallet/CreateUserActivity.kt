@@ -18,7 +18,7 @@ class CreateUserActivity : AppCompatActivity() {
 
         getStarterd.setOnClickListener {
             if (inputUserName.text.length > 3 ) {
-                val intent = Intent(this, ClientHomeActivty::class.java)
+                val intent = Intent(this, ClientHomeActivity::class.java)
                 intent.putExtra(NAME_EXTRA, inputUserName.text.toString())
                 startActivity(intent)
             } else {
