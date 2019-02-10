@@ -84,7 +84,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         myPagerAdapter.addFragment(HomeActivityFragment(), resources.getString(R.string.tab_activity))
         myPagerAdapter.addFragment(PriceListFragment(), resources.getString(R.string.tab_price_list))
         main_pager.adapter = myPagerAdapter
-        setFabIssue()
         main_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -97,7 +96,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             override fun onPageSelected(position: Int) {
                 when(position) {
                     0 -> {
-                        setFabIssue()
+                        setSendMoneyButton()
                         deleteProductVisible(false)
                     }
                     1 -> {
@@ -107,7 +106,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                 }
             }
         })
-
+        setSendMoneyButton()
         tab_layout.setupWithViewPager(main_pager)
         prepareHeader()
         EventBus.getDefault().register(this)
@@ -126,6 +125,8 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     private fun setFabAddProduct() {
+        fab_button.visibility = View.VISIBLE
+        sendMoneyButton.visibility = View.GONE
         fab_button.setImageResource(R.drawable.add_product_button)
         fab_button.setOnClickListener() { v ->
             val intent = Intent(this@AdminActivity, AddProductActivity::class.java)
@@ -133,8 +134,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         }
     }
 
-    private fun setFabIssue() {
-        fab_button.setOnClickListener() { v ->
+    private fun setSendMoneyButton() {
+        // We do not want to display add product fab button same time when send money so we hid it
+        fab_button.visibility = View.GONE
+        sendMoneyButton.visibility = View.VISIBLE
+        sendMoneyButton.setOnClickListener() { v ->
             val integrator = IntentIntegrator(this@AdminActivity)
             integrator.setBeepEnabled(false);
             integrator.setBarcodeImageEnabled(true);

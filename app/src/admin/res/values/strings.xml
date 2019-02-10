@@ -41,4 +41,5 @@
     <string name="nfc_tag_dialog_label">NFC tag</string>
     <string name="add_nfc_tag">Add</string>
     <string name="add_nfc_tag_input_hint">NFC ID</string>
+    <string name="send_money_button">Send money</string>
 </resources>
