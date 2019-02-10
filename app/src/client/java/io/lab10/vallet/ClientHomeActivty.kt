@@ -20,7 +20,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
 import io.lab10.vallet.activites.HistoryActivity
@@ -45,7 +44,7 @@ import kotlin.random.Random
 
 class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
 
-    private var voucherWalletAddress : String = "";
+    private var voucherWalletAddress: String = "";
 
     override fun onProductClickListner(item: Product) {
         payFor(item)
@@ -59,9 +58,12 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         setDefaultConfiguration()
 
-        val username = intent.extras.getString(CreateUserActivity.NAME_EXTRA)
 
         if (ValletApp.wallet == null) {
+            var username = "User"
+            if (intent.extras != null) {
+                username = intent.extras.getString(CreateUserActivity.NAME_EXTRA)
+            }
 
             val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
             val alhpanum: String = Random.nextAlphanumericString()
@@ -83,11 +85,11 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         // TODO move that to settings
         val nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if(nfcAdapter == null){
+        if (nfcAdapter == null) {
             Toast.makeText(this,
                     "NFC NOT supported on this devices!",
                     Toast.LENGTH_SHORT).show();
-        }else if(!nfcAdapter.isEnabled()){
+        } else if (!nfcAdapter.isEnabled()) {
             Toast.makeText(this,
                     "NFC NOT Enabled!",
                     Toast.LENGTH_SHORT).show();
@@ -107,9 +109,9 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun setDefaultConfiguration() {
-            val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
-            // TODO do not override if will be already set
-            configBox.put(Configuration(0, "ipfsAddress", resources.getString(R.string.ipfs_server)))
+        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
+        // TODO do not override if will be already set
+        configBox.put(Configuration(0, "ipfsAddress", resources.getString(R.string.ipfs_server)))
     }
 
     private fun showPlaceHolderFragment() {
@@ -159,7 +161,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             i.title = s
         }
 
-        if(ValletApp.activeToken == null && newToken == null){
+        if (ValletApp.activeToken == null && newToken == null) {
             val i = menu.add(resources.getString(R.string.no_token_available))
             val txt = resources.getString(R.string.no_token_available)
             val s = SpannableString(txt)
@@ -170,7 +172,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val item = menu.add(token.name)
             item.isCheckable = true
             item.isChecked = token.active
-            item.setActionView(R.layout.token_balance )
+            item.setActionView(R.layout.token_balance)
             val view = item.actionView
             view.voucherBalance.text = Wallet.convertATS2EUR(token.balance).toString()
             item.setOnMenuItemClickListener { _ ->
@@ -274,7 +276,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onPostResume() {
         super.onPostResume()
-        if(ValletApp.activeToken != null) {
+        if (ValletApp.activeToken != null) {
             showPriceListFragment()
         } else {
             showPlaceHolderFragment()
@@ -337,7 +339,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     @Subscribe
     fun onPriceListEvent(event: PriceListAddressEvent) {
-        val token = Token(0, "", event.tokenAddress, 0, "", "", true, 0 )
+        val token = Token(0, "", event.tokenAddress, 0, "", "", true, 0)
         token.storage().fetch(event.ipfsAddress)
     }
 
@@ -355,7 +357,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun onAddNewStore(event: AddNewStoreEvent) {
 
         val stickyEvent = EventBus.getDefault().removeStickyEvent(AddNewStoreEvent::class.java)
-        if ( stickyEvent != null) {
+        if (stickyEvent != null) {
             reloadNavigation(newToken = true)
             drawer_layout.openDrawer(GravityCompat.START)
             doAsync {
@@ -396,15 +398,15 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshBalanceEvent(event: RefreshBalanceEvent) {
-       refreshBalance()
+        refreshBalance()
     }
 
     @Subscribe(sticky = true)
     fun onPendingTransaction(event: PendingTransactionEvent) {
 
         val stickyEvent = EventBus.getDefault().removeStickyEvent(PendingTransactionEvent::class.java)
-        if(stickyEvent != null) {
-            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber,  event.transactionId, event.to, event.tokenAddress)
+        if (stickyEvent != null) {
+            val transaction = ValletTransaction(0, event.name, event.amount, event.blockNumber, event.transactionId, event.to, event.tokenAddress)
             History.addTransaction(transaction)
             EventBus.getDefault().post(RefreshBalanceEvent())
         }
@@ -417,7 +419,9 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
             if (productFragment is ProductListFragment) {
                 productFragment.notifyAboutchange()
-                productFragment.swiperefresh.isRefreshing = false
+                if (productFragment.view != null) {
+                    productFragment.swiperefresh.isRefreshing = false
+                }
             }
         }
     }
@@ -426,7 +430,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (ValletApp.activeToken != null) {
             if (ValletApp.activeToken!!.remoteReadStoragePresent()) {
                 var productFragment = supportFragmentManager.findFragmentById(R.id.price_list_fragment_container)
-                if (productFragment is ProductListFragment) {
+                if (productFragment is ProductListFragment && productFragment.view != null) {
                     productFragment.swiperefresh.isRefreshing = true
                     doAsync {
                         Web3jManager.INSTANCE.fetchPriceListAddress(this, ValletApp.activeToken!!.tokenAddress)
