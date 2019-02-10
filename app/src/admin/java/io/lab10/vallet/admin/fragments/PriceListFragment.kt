@@ -149,11 +149,12 @@ class PriceListFragment : Fragment() {
     }
     private fun reloadProducts() {
 
-        var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
-        productFragment.swiperefresh.isRefreshing = true;
         val token = ValletApp.activeToken
 
         if (token != null) {
+            var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
+            productFragment.swiperefresh.isRefreshing = true;
+
             // Load first from local storage
             Products.refresh(token!!)
             productFragment.notifyAboutchange()
