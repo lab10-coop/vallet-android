@@ -35,20 +35,20 @@
     </style>
 
     <style name="ValletText" parent="@style/ValletFont">
-        <item name="android:fontFamily">Work Sans</item>
+        <item name="android:fontFamily">@font/work_sans</item>
         <item name="android:textColor">#FF333333</item>
         <item name="android:textSize">28.8sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="RegularText" parent="@style/ValletFont">
-        <item name="android:fontFamily">Work Sans</item>
+        <item name="android:fontFamily">@font/work_sans</item>
         <item name="android:textColor">#FF333333</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="GrayLabel" parent="@style/ValletFont">
-        <item name="android:fontFamily">Work Sans</item>
+        <item name="android:fontFamily">@font/work_sans</item>
         <item name="android:textColor">#ff9b9ea0</item>
         <item name="android:textSize">16sp</item>
     </style>

@@ -11,7 +11,6 @@ import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Token
 import kotlinx.android.synthetic.main.activity_show_qr_code.*
-import kotlinx.android.synthetic.main.token_balance.*
 import org.greenrobot.eventbus.EventBus
 
 class ShowQrCodeActivity : AppCompatActivity() {

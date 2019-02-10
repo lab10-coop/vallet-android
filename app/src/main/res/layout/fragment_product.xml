@@ -76,14 +76,6 @@
                     android:layout_height="wrap_content">
 
 
-                    <ImageView
-                        android:id="@+id/voucherTypeIcon"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/euro_icon_black"
-                        />
-
                     <TextView
                         android:id="@+id/productPrice"
                         style="@style/RegularText"

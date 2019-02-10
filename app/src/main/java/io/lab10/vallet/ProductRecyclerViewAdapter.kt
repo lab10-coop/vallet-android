@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso
 import io.lab10.vallet.events.ProductRemoveEvent
 import io.lab10.vallet.models.*
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.utils.Formatter
 import io.objectbox.Box
 import kotlinx.android.synthetic.main.fragment_product.view.*
 import org.greenrobot.eventbus.EventBus
@@ -38,9 +39,6 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         // TODO add multi token support
         token = tokenBox!!.query().build().findFirst()
 
-        if (token!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
-            view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
-        }
         return ProductViewHolder(view)
     }
 
@@ -51,7 +49,7 @@ class ProductRecyclerViewAdapter(private val mValues: List<Product>, private val
         if (token!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
             holder.mProductPrice.setText(mValues.get(position).price.toString())
         } else {
-            holder.mProductPrice.setText(Wallet.convertATS2EUR(mValues.get(position).price).toString())
+            holder.mProductPrice.setText(Formatter.currency(Wallet.convertATS2EUR(mValues.get(position).price)))
         }
 
         holder.mProductNfcTagId.setText(mValues.get(position).nfcTagId.toString())

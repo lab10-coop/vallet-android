@@ -29,6 +29,7 @@ import io.lab10.vallet.fragments.NoStoreFragment
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.*
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.utils.Formatter
 import kotlinx.android.synthetic.client.activity_client_home_activty.*
 import kotlinx.android.synthetic.client.app_bar_client_home_activty.*
 import kotlinx.android.synthetic.client.voucher_item.view.*
@@ -174,7 +175,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             item.isChecked = token.active
             item.setActionView(R.layout.token_balance)
             val view = item.actionView
-            view.voucherBalance.text = Wallet.convertATS2EUR(token.balance).toString()
+            view.voucherBalance.text = Formatter.currency(Wallet.convertATS2EUR(token.balance))
             item.setOnMenuItemClickListener { _ ->
                 ValletApp.activeToken = token
                 reloadProductListFromLocalStorage()

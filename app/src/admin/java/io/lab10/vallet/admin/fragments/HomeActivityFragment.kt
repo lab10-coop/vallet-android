@@ -19,6 +19,7 @@ import io.lab10.vallet.admin.activities.AdminActivity
 import io.lab10.vallet.admin.adapters.SimpleHistoryViewAdapter
 import io.lab10.vallet.events.*
 import io.lab10.vallet.models.*
+import io.lab10.vallet.utils.Formatter
 import io.objectbox.android.AndroidScheduler
 import kotlinx.android.synthetic.admin.fragment_home_activity.*
 import org.greenrobot.eventbus.ThreadMode
@@ -57,7 +58,7 @@ class HomeActivityFragment : Fragment() {
         query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().build().property(ValletTransaction_.value).sum() }
                 .observer { sum ->
                     if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                        circulating_vouchers_value.text = Wallet.convertATS2EUR(sum).toString() + "€"
+                        circulating_vouchers_value.text = Formatter.currency(Wallet.convertATS2EUR(sum))
                     } else {
                         circulating_vouchers_value.text = sum.toString()
                     }
@@ -67,7 +68,7 @@ class HomeActivityFragment : Fragment() {
         query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().greater(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                 .observer { sum ->
                     if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                        outgoing_total.text = Wallet.convertATS2EUR(sum).toString() + "€"
+                        outgoing_total.text = Formatter.currency(Wallet.convertATS2EUR(sum))
                     } else {
                         outgoing_total.text = sum.toString()
                     }
@@ -77,7 +78,7 @@ class HomeActivityFragment : Fragment() {
         query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().less(ValletTransaction_.value, 0).build().property(ValletTransaction_.value).sum() }
                 .observer { sum ->
                     if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                        incoming_total.text = Wallet.convertATS2EUR(abs(sum)).toString() + "€"
+                        incoming_total.text = Formatter.currency(Wallet.convertATS2EUR(abs(sum)))
                     } else {
                         incoming_total.text = abs(sum).toString()
                     }

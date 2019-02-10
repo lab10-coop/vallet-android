@@ -32,6 +32,7 @@ import io.lab10.vallet.connectivity.BTUtils
 import java.lang.Exception
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
+import io.lab10.vallet.utils.Formatter
 import it.lamba.random.nextAlphanumericString
 import kotlin.random.Random
 
@@ -231,7 +232,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         runOnUiThread {
             if (ValletApp.activeToken!!.tokenAddress.equals(event.address)) {
                 if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-                    circulating_vouchers_value.text = Wallet.convertATS2EUR(event.value).toString() + "€"
+                    circulating_vouchers_value.text = Formatter.currency(Wallet.convertATS2EUR(event.value))
                 } else {
                     circulating_vouchers_value.text = event.value.toString()
                 }

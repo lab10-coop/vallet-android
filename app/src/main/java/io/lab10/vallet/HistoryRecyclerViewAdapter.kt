@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import io.lab10.vallet.models.*
+import io.lab10.vallet.utils.Formatter
 
 class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransaction>, val voucherType: String) :
         RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>() {
@@ -41,7 +42,7 @@ class HistoryRecyclerViewAdapter(private val history: MutableList<ValletTransact
             if (history.size > 0 && history.size >= position) {
                 holder.mTransaction = history[position]
                 if (voucherType.equals(Tokens.Type.EUR.type)) {
-                    holder.mValue.text = Wallet.convertATS2EUR(history[position].value).toString() + "€"
+                    holder.mValue.text = Formatter.currency(Wallet.convertATS2EUR(history[position].value))
                 } else {
                     holder.mValue.text = history[position].value.toString()
                 }

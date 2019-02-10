@@ -14,6 +14,7 @@ import io.lab10.vallet.models.User
 import io.lab10.vallet.models.User_
 import io.lab10.vallet.models.ValletTransaction
 import io.lab10.vallet.models.Wallet
+import io.lab10.vallet.utils.Formatter
 
 class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransaction>, val voucherType: Int) :
         RecyclerView.Adapter<SimpleHistoryViewAdapter.ViewHolder>() {
@@ -41,7 +42,7 @@ class SimpleHistoryViewAdapter(private val history: MutableList<ValletTransactio
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mTransaction = history[position]
         if (voucherType == 0) {
-            holder.mValue.text = "€" + Wallet.convertATS2EUR(history[position].value).toString()
+            holder.mValue.text = Formatter.currency(Wallet.convertATS2EUR(history[position].value))
         } else {
             holder.mValue.text = history[position].value.toString()
         }
