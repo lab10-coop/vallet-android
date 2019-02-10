@@ -33,9 +33,8 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
         (yes as Button).setOnClickListener(this)
         (no as ImageButton).setOnClickListener(this)
         if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.EUR.type)) {
-            price_label.text = Wallet.convertATS2EUR(product.price).toString()
+            price_label.text = Formatter.currency(Wallet.convertATS2EUR(product.price))
         } else {
-            voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
             price_label.text = product.price.toString()
         }
         product_name.text = product.name

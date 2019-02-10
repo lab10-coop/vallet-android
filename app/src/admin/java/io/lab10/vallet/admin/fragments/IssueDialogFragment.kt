@@ -46,12 +46,7 @@ class IssueDialogFragment : DialogFragment() {
 
         view.issueUserName.text = userName
 
-        if (voucher!!.tokenType.equals(Tokens.Type.EUR.type)) {
-            view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(4, 2)))
-            view.voucherTypeIcon.setBackgroundResource(R.drawable.euro_icon)
-        } else {
-            view.voucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
-        }
+        view.voucherAmountInput.setFilters(arrayOf<InputFilter>(EuroInputFilter(4, 2)))
 
         view.issueButton.setOnClickListener() { v ->
             val amountInput = voucherAmountInput.text.toString()

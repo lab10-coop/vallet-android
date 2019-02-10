@@ -32,15 +32,6 @@
         app:layout_constraintRight_toRightOf="parent"
         />
 
-    <ImageView
-        android:id="@+id/voucherTypeIcon"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:background="@drawable/euro_icon"
-        android:layout_marginTop="30dp"
-        app:layout_constraintRight_toLeftOf="@+id/voucherAmountInput"
-        app:layout_constraintTop_toBottomOf="@+id/issueLabel"/>
-
     <EditText
         android:id="@+id/voucherAmountInput"
         android:layout_width="180dp"
@@ -52,7 +43,7 @@
         android:digits="0123456789."
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:textSize="60sp"
+        android:textSize="42sp"
         android:textAlignment="center"
         android:fontFamily="@font/work_sans_bold"
         app:layout_constraintTop_toBottomOf="@+id/issueLabel"
