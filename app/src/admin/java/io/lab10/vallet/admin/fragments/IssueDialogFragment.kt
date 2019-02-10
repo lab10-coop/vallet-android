@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import io.lab10.vallet.R
-import io.lab10.vallet.models.BTUsers
+import io.lab10.vallet.models.Users
 import kotlinx.android.synthetic.admin.fragment_issue_token.*
 import android.text.InputFilter
 import io.lab10.vallet.ValletApp
@@ -83,7 +83,7 @@ class IssueDialogFragment : DialogFragment() {
         }
     }
 
-    fun updateUser(user: BTUsers.User) {
+    fun updateUser(user: Users.User) {
         userAddress = user.address
         userName = user.name
     }
@@ -121,7 +121,7 @@ class IssueDialogFragment : DialogFragment() {
         val USER_NAME_PARAM = "user_name"
         val USER_ADDRESS_PARAM = "user_address"
 
-        fun newInstance(user: BTUsers.User) =
+        fun newInstance(user: Users.User) =
             IssueDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(USER_NAME_PARAM, user.name)

@@ -16,7 +16,6 @@ import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.admin.fragments.*
-import io.lab10.vallet.models.BTUsers
 import io.lab10.vallet.models.User
 import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment

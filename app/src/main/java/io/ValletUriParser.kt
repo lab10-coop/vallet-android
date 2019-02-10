@@ -1,11 +1,8 @@
 package io
 
-import android.app.Application
 import android.net.Uri
 import io.lab10.vallet.events.*
-import io.lab10.vallet.models.BTUsers
-import io.lab10.vallet.models.Token
-import io.lab10.vallet.models.Tokens
+import io.lab10.vallet.models.Users
 import io.lab10.vallet.models.Wallet
 import org.greenrobot.eventbus.EventBus
 
@@ -44,7 +41,7 @@ class ValletUriParser {
 
         private fun addUser(address: String, name: String) {
             if (Wallet.isValidAddress(address)) {
-                var user = BTUsers.User(address, address, name)
+                var user = Users.User(address, address, name)
                 EventBus.getDefault().post(DeepLinkUserAddEvent(user))
             } else {
                 EventBus.getDefault().post(ErrorEvent("Invalid wallet address"))

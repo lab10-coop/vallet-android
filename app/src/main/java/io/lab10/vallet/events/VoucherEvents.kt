@@ -1,8 +1,6 @@
 package io.lab10.vallet.events
 
-import io.lab10.vallet.models.BTUsers
-import io.lab10.vallet.models.Token
-import java.math.BigDecimal
+import io.lab10.vallet.models.Users
 import java.math.BigInteger
 
 class TransferVoucherEvent(val address: String, val transactionId: String, val to: String, val value: BigInteger, val blockNumber: BigInteger, val tokenAddress: String)
@@ -22,7 +20,7 @@ class PriceListAddressEvent(val tokenAddress: String, val ipfsAddress: String)
 class AddNewStoreEvent(val tokenAddress: String)
 class ProductRemoveEvent
 class ProductListPublishedEvent(val voucherId: Long, val ipfsAddress: String = "")
-class DeepLinkUserAddEvent(val user: BTUsers.User)
+class DeepLinkUserAddEvent(val user: Users.User)
 
 class IssueTokenEvent(val userAddress: String, val amount: String, val userName: String?)
 class PendingTransactionEvent(val to: String, val amount: Long, val name: String, val blockNumber: Long, val transactionId: String, val tokenAddress: String)
