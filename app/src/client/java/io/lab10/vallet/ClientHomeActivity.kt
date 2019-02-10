@@ -43,11 +43,10 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.math.BigInteger
-import java.net.InetAddress
 import kotlin.random.Random
 
 
-class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
+class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ProductListFragment.OnListFragmentInteractionListener {
 
     private var voucherWalletAddress: String = "";
 
@@ -120,7 +119,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun showPlaceHolderFragment() {
         val noStorePlaceHolder = NoStoreFragment.newInstance()
-        toolbarVoucherTypeIcon.visibility = View.GONE
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.price_list_fragment_container, noStorePlaceHolder)
         transaction.addToBackStack(null)
@@ -128,16 +126,8 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun showPriceListFragment() {
-        if (ValletApp.activeToken != null) {
-            if (ValletApp.activeToken!!.tokenType.equals(Tokens.Type.VOUCHER.type)) {
-                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.voucher_icon)
-            } else {
-                toolbarVoucherTypeIcon.setBackgroundResource(R.drawable.euro_icon_white)
-            }
-        }
         setPriceListHeader()
         val productListFragment = ProductListFragment.newInstance()
-        toolbarVoucherTypeIcon.visibility = View.VISIBLE
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.price_list_fragment_container, productListFragment)
         transaction.addToBackStack(null)
@@ -146,7 +136,7 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun setPriceListHeader() {
         if (ValletApp.activeToken != null) {
-            toolbarBalance.text = Wallet.convertATS2EUR(ValletApp.activeToken!!.balance).toString()
+            toolbarBalance.text = Formatter.currency(Wallet.convertATS2EUR(ValletApp.activeToken!!.balance))
         }
     }
 
@@ -312,7 +302,6 @@ class ClientHomeActivty : AppCompatActivity(), NavigationView.OnNavigationItemSe
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNoInternetEvent(event: NoInternetEvent) {
