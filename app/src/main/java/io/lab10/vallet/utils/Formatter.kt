@@ -6,7 +6,7 @@ class Formatter {
 
     companion object {
         fun currency(value: Float) : String {
-            val formatter = DecimalFormat("###,###.00")
+            val formatter = DecimalFormat("###,##0.00")
             return "¤" + formatter.format(value)
         }
     }
