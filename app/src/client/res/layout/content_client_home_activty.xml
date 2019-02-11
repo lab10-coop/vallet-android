@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ClientHomeActivty"
+    tools:context=".ClientHomeActivity"
     tools:showIn="@layout/app_bar_client_home_activty">
 
 </android.support.constraint.ConstraintLayout>
