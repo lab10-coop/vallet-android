@@ -48,7 +48,7 @@ class PayDialog(var activity: Activity, val product: Product) : Dialog(activity)
                 Thread {
                     Web3jManager.INSTANCE.redeemToken(activity, product.price.toBigInteger(), ValletApp.activeToken!!.tokenAddress, product.name)
                 }.start()
-                EventBus.getDefault().post(MessageEvent("You paid for " + product.name))
+                EventBus.getDefault().post(MessageEvent("Payment sent!"))
                 EventBus.getDefault().post(ProductPaidEvent(product.price))
             }
             R.id.close_button -> dismiss()

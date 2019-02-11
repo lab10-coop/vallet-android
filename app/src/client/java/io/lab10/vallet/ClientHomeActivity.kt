@@ -474,7 +474,7 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     private fun payFor(product: Product) {
         if (product.price > ValletApp.activeToken!!.balance) {
-            Toast.makeText(this, "Sorry not enough funds", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Not enough funds to pay for this item!", Toast.LENGTH_LONG).show()
         } else {
             val cdd = PayDialog(this, product)
             cdd.show()
