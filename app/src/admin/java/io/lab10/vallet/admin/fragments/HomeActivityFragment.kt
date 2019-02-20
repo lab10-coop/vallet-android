@@ -108,6 +108,7 @@ class HomeActivityFragment : Fragment() {
             History.addTransaction(transaction)
             reloadStats()
             reloadTransactions()
+            pendingTransaction.visibility = View.GONE
         }
     }
 
@@ -129,6 +130,10 @@ class HomeActivityFragment : Fragment() {
                 reloadTransactions()
             }
         }
+    }
+    @Subscribe
+    fun onIssueTokenEvent(event: IssueTokenEvent) {
+        pendingTransaction.visibility = View.VISIBLE
     }
 
     @Subscribe
