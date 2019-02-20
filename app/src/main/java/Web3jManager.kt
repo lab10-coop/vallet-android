@@ -218,7 +218,7 @@ class Web3jManager private constructor() {
 
     fun getClientBalance(context: Context, tokenContractAddress: String, address: String) {
         val credentials = loadCredential(context)
-        var balance = BigInteger.ZERO
+        var error = false
         if (credentials != null) {
             var token = Token.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
             Single.fromCallable {
@@ -231,11 +231,14 @@ class Web3jManager private constructor() {
             .onErrorReturn {
                 // If error occur we return zero value and triggering event with error which we got
                 EventBus.getDefault().post(ErrorEvent("getClientBalance: " + it.message))
+                error = true
                 BigInteger.ZERO
             }
             .subscribeOn(Schedulers.io())
             .subscribe() { result ->
-                EventBus.getDefault().post(TokenBalanceEvent(result.toLong(), tokenContractAddress))
+                if (!error) {
+                    EventBus.getDefault().post(TokenBalanceEvent(result.toLong(), tokenContractAddress))
+                }
             }
         }
     }

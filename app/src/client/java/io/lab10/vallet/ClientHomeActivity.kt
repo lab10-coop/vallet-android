@@ -326,7 +326,6 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onErrorEvent(event: ErrorEvent) {
         Toast.makeText(this, event.message, Toast.LENGTH_LONG).show()
-        EventBus.getDefault().post(RefreshBalanceEvent())
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -357,7 +356,7 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         // Reduce the balance on the view as soon as user will take the action.
         // This is not persitant and we should mark it somehow
         if (toolbarBalance != null) {
-            toolbarBalance.text = (Wallet.convertATS2EUR(ValletApp.activeToken!!.balance - event.price)).toString() + " ..."
+            toolbarBalance.text = Formatter.currency(Wallet.convertATS2EUR(ValletApp.activeToken!!.balance - event.price)) + " ..."
         }
 
     }
@@ -407,6 +406,9 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshBalanceEvent(event: RefreshBalanceEvent) {
+        if (toolbarBalance != null) {
+            toolbarBalance.text = Formatter.currency(Wallet.convertATS2EUR(ValletApp.activeToken!!.balance)) + " ..."
+        }
         refreshBalance()
     }
 
