@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.net.Uri
+import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
@@ -260,6 +261,8 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     override fun onResume() {
         super.onResume()
+
+        resolveIntent(intent)
 
         NetworkUtils.isInternetAvailable()
         val nfcAdapter = NfcAdapter.getDefaultAdapter(this)
