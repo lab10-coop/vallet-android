@@ -99,8 +99,17 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
 
 
-        val toggle = ActionBarDrawerToggle(
+        val toggle:ActionBarDrawerToggle = object: ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        {
+            override fun onDrawerClosed(view:View){
+                super.onDrawerClosed(view)
+                reloadProductListFromLocalStorage()
+                reloadProductListFromRemoteStorage()
+                setPriceListHeader()
+
+            }
+        }
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
