@@ -28,9 +28,6 @@ class ProductListFragment : Fragment() {
     private var adapter: ProductRecyclerViewAdapter? = null
     private var recyclerView: RecyclerView? = null
 
-    private val MY_CAMERA_REQUEST_CODE = 100;
-
-
     companion object {
         fun newInstance(): ProductListFragment {
             val fragment = ProductListFragment()

@@ -38,7 +38,6 @@ import io.lab10.vallet.utils.PayDialog
 import it.lamba.random.nextAlphanumericString
 import kotlinx.android.synthetic.client.activity_client_home_activty.*
 import kotlinx.android.synthetic.client.app_bar_client_home_activty.*
-import kotlinx.android.synthetic.client.nav_header_client_home_activty.view.*
 import kotlinx.android.synthetic.client.voucher_item.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
@@ -284,6 +283,10 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             if (nfcAdapter.isEnabled())
                 nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
         }
+
+        reloadProductListFromLocalStorage()
+        reloadProductListFromRemoteStorage()
+        showPriceListFragment()
     }
 
     override fun onNewIntent(intent: Intent) {
