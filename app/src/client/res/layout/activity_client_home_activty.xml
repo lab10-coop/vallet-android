@@ -19,6 +19,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:theme="@style/Vallet.NavigationDrawer"
+        app:itemTextColor="@color/black"
         app:headerLayout="@layout/nav_header_client_home_activty" />
 
 </android.support.v4.widget.DrawerLayout>

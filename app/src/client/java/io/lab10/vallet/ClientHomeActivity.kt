@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.net.Uri
-import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
@@ -22,6 +21,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
@@ -38,6 +38,7 @@ import io.lab10.vallet.utils.PayDialog
 import it.lamba.random.nextAlphanumericString
 import kotlinx.android.synthetic.client.activity_client_home_activty.*
 import kotlinx.android.synthetic.client.app_bar_client_home_activty.*
+import kotlinx.android.synthetic.client.nav_header_client_home_activty.view.*
 import kotlinx.android.synthetic.client.voucher_item.view.*
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.EventBus
@@ -153,9 +154,18 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private fun reloadNavigation(newToken: Boolean? = null) {
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
+
+
+        val versionCode = BuildConfig.VERSION_CODE
+        val versionName = BuildConfig.VERSION_NAME
+
+        val header = navigationView.getHeaderView(0)
+        /*View view=navigationView.inflateHeaderView(R.layout.nav_header_main);*/
+        val versionLabel = header.findViewById<View>(R.id.versionLabel) as TextView
+        versionLabel.text = "v$versionName($versionCode)"
+
         val menu = navigationView.menu
         menu.clear()
-
         // If we having adding token in progress we show it here
         if (newToken != null) {
             val i = menu.add(resources.getString(R.string.adding_new_token))
@@ -188,7 +198,7 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 true
             }
         }
-        menu.addSubMenu("Settings")
+
         val scanMenu = menu.add(resources.getString(R.string.add_new_store))
         var txt = resources.getString(R.string.add_new_store)
         var s = SpannableString(txt)
@@ -201,7 +211,7 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             integrator.initiateScan()
             true
         }
-        val qrMenu = menu.add(resources.getString(R.string.your_qrcode))
+        val qrMenu = menu.add(2,2,5, resources.getString(R.string.your_qrcode))
         txt = resources.getString(R.string.your_qrcode)
         s = SpannableString(txt)
         s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.blue)), 0, txt.length, 0);

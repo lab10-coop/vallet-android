@@ -1,1 +1,8 @@
-<resources></resources>
+<resources>
+
+    <style name="Vallet.NavigationDrawer" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlHighlight">@color/lightBlue</item>
+        <item name="android:itemBackground">@color/white</item>
+    </style>
+
+</resources>
