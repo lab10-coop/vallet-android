@@ -1,10 +1,12 @@
 package io.lab10.vallet.admin.activities
 
+import FaucetManager
+import Web3jManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.google.zxing.BarcodeFormat
@@ -13,6 +15,7 @@ import io.lab10.vallet.R
 import io.lab10.vallet.ValletApp
 import io.lab10.vallet.events.ErrorEvent
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.models.Wallet
 import kotlinx.android.synthetic.admin.activity_debug.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -105,11 +108,12 @@ class DebugActivity : AppCompatActivity() {
     }
 
     private fun refreshBalance() {
-        val voucherWalletAddress = sharedPref!!.getString(resources.getString(R.string.shared_pref_voucher_wallet_address), "0x0")
-        voucherWalletAddresLabel.text = voucherWalletAddress.toString()
-        Log.i(TAG, "Wallet address: " + voucherWalletAddress)
+        val walletBox = ValletApp.getBoxStore().boxFor(Wallet::class.java)
+        val wallet = walletBox.query().build().findFirst() as Wallet
+
+        voucherWalletAddresLabel.text = wallet.address
         try {
-            var walletBalance = Web3jManager.INSTANCE.getBalance(this, voucherWalletAddress)
+            var walletBalance = Web3jManager.INSTANCE.getBalance(this, wallet.address)
             if (walletBalance != null) {
                 voucherWalletBalanceLabel.text = walletBalance.balance.toString()
             } else {
