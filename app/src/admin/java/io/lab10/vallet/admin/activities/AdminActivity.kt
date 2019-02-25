@@ -64,6 +64,10 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
         setDefaultConfiguration()
 
+        if (ValletApp.wallet == null) {
+            createWallet()
+        }
+
         // When activity is triggered from on boarding screen we create token with given name
         val tokenName = intent.getStringExtra("TOKEN_NAME")
         if (tokenName != null) {
@@ -94,7 +98,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
             }
 
             override fun onPageSelected(position: Int) {
-                when(position) {
+                when (position) {
                     0 -> {
                         setSendMoneyButton()
                         deleteProductVisible(false)
@@ -259,6 +263,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         super.onResume()
         NetworkUtils.isInternetAvailable()
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -284,7 +289,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode,resultCode,data)
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IntentIntegrator.REQUEST_CODE) {
             val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null && result.contents != null) {
@@ -314,6 +319,17 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     private fun createToken(tokenName: String) {
         val voucherDecimal = 12;
         var voucherType = Tokens.Type.EUR.type
+
+        // TODO trigger that only if balance is lower then needed amount for creating transaction.
+        // For now this is triggered anyway just once a start of the app
+        if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
+            FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, ValletApp.wallet!!.address, tokenName, voucherType, voucherDecimal)
+        } else {
+            Web3jManager.INSTANCE.generateNewToken(this, tokenName, voucherType, voucherDecimal)
+        }
+    }
+
+    private fun createWallet() {
         val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
         val alhpanum: String = Random.nextAlphanumericString()
 
@@ -324,15 +340,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
         val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
         ValletApp.wallet = Wallet(0, "Main", walletAddress, walletFile)
-
-        // TODO trigger that only if balance is lower then needed amount for creating transaction.
-        //
-
-        if (true) { // TOOD Check for balance if 0 request funds and create new token if balance is positive generate only new token
-            FaucetManager.INSTANCE.getFoundsAndGenerateNewToken(this, walletAddress, tokenName, voucherType, voucherDecimal)
-        } else {
-            Web3jManager.INSTANCE.generateNewToken(this, tokenName, voucherType, voucherDecimal)
-        }
     }
 
     private fun prepareHeader() {

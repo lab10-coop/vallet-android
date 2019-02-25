@@ -34,10 +34,10 @@ class FaucetManager private constructor() {
                     .build()
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
-                //Artificial pause to wait untill funds on the account will arrive.
+                //Artificial pause to wait until funds on the account will arrive.
                 // There is a small delay between funds on the account and the success respond from
                 // server
-                Thread.sleep(2_000)
+                Thread.sleep(4_000)
                 Web3jManager.INSTANCE.generateNewToken(context, voucherName, voucherType, voucherDecimal)
                 // After creating new token we need to request more funds to be able to start using it
                 FaucetManager.INSTANCE.getFounds(context, addr)
