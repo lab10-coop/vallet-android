@@ -73,7 +73,7 @@
                             android:fontFamily="@font/work_sans"
                             android:lineSpacingExtra="0dp"
                             android:lineSpacingMultiplier="1.5"
-                            android:text="0"
+                            android:text="¤0.00"
                             android:textColor="@color/black"
                             android:textSize="30sp" />
                     </LinearLayout>
@@ -108,7 +108,7 @@
                         style="@style/RegularText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0€"
+                        android:text="¤ 0.00"
                         android:textAlignment="center"
                         android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="@id/outgoing_label"
@@ -145,7 +145,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
-                        android:text="0€"
+                        android:text="¤ 0.00"
                         android:textAlignment="center"
                         android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="@id/incoming_label"
