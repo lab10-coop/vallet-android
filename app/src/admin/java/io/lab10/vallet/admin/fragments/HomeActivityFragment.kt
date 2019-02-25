@@ -89,7 +89,7 @@ class HomeActivityFragment : Fragment() {
     private fun reloadTransactions() {
         val valletTransactionBox = ValletApp.getBoxStore().boxFor(ValletTransaction::class.java)
         val query = valletTransactionBox.query().build()
-        query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0, 6) }
+        query.subscribe().on(AndroidScheduler.mainThread()).transform { transaction -> valletTransactionBox.query().orderDesc(ValletTransaction_.blockNumber).build().find(0, 5) }
                 .observer { recent ->
                     if (recent.size > 0) {
                         no_history.visibility = View.GONE

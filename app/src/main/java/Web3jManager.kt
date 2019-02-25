@@ -22,8 +22,15 @@ import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.TransactionReceipt
+import org.web3j.tx.ChainId
 import org.web3j.tx.Contract
+import org.web3j.tx.RawTransactionManager
+import org.web3j.tx.TransactionManager
 import org.web3j.tx.exceptions.ContractCallException
+import org.web3j.tx.response.Callback
+import org.web3j.tx.response.EmptyTransactionReceipt
+import org.web3j.tx.response.QueuingTransactionReceiptProcessor
+import rx.Observable
 import rx.Single
 import rx.schedulers.Schedulers
 import java.io.File
@@ -143,9 +150,9 @@ class Web3jManager private constructor() {
                     token.totalSupply().send()
                 }.subscribeOn(Schedulers.io())
                 .onErrorReturn {
-                // If error occur we return zero value and triggering event with error which we got
+                    // If error occur we return zero value and triggering event with error which we got
                     EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
-                BigInteger.ZERO
+                    BigInteger.ZERO
                 }
                 .subscribe { result ->
                     EventBus.getDefault().post(TokenTotalSupplyEvent(result.toLong(), tokenContractAddress))
@@ -306,11 +313,11 @@ class Web3jManager private constructor() {
         // TODO validate if address is valid if not throw exception.
         var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
         Single.fromCallable {
-                var base32ipfsAddress =  Base58Util.decode(ipfsAddress)
-               token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
+            var base32ipfsAddress = Base58Util.decode(ipfsAddress)
+            token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
         }.onErrorReturn {
-                    EventBus.getDefault().post(ErrorEvent("storePriceList: " + it.message))
-                    TransactionReceipt()
+            EventBus.getDefault().post(ErrorEvent("storePriceList: " + it.message))
+            TransactionReceipt()
 
         }
         .subscribeOn(Schedulers.io()).subscribe { event ->
@@ -334,7 +341,7 @@ class Web3jManager private constructor() {
         }
         .subscribeOn(Schedulers.io()).subscribe { address ->
             val refiiled = address.toMutableList()
-            refiiled.addAll(0, byteArrayOf(18,32).toList())
+            refiiled.addAll(0, byteArrayOf(18, 32).toList())
             val ipfsAddress = Base58Util.encode(refiiled.toByteArray())
             EventBus.getDefault().post(PriceListAddressEvent(tokenContractAddress, ipfsAddress))
         }
@@ -361,19 +368,38 @@ class Web3jManager private constructor() {
 
     fun issueTokensTo(context: Context, to: String, amount: BigInteger, tokenContractAddress: String, userName: String) {
         val credentials = loadCredential(context)
-        // TODO validate if address is valid if not throw exception.
-        var token = Token.Companion.load(tokenContractAddress, getConnection(context), credentials!!, GAS_PRICE, Contract.GAS_LIMIT)
-        Single.fromCallable {
-                token.issue(to, amount).send()
-        }
-        .onErrorReturn {
+        // TODO check if address is valid if not throw exception.
+
+        val transactionReceiptProcessor = QueuingTransactionReceiptProcessor(getConnection(context), object : Callback {
+            override fun accept(transactionReceipt: TransactionReceipt?) {
+                if (transactionReceipt != null) {
+                    transactionReceipt.transactionHash
+                }
+            }
+
+            override fun exception(exception: java.lang.Exception?) {
+                if (exception != null) {
+                    exception.message
+                }
+            }
+
+        }, 10, 1000)
+
+
+        val transactionManager = RawTransactionManager(
+                getConnection(context), credentials, ChainId.NONE, transactionReceiptProcessor)
+
+        var token = Token.Companion.load(tokenContractAddress, getConnection(context), transactionManager, GAS_PRICE, Contract.GAS_LIMIT)
+        Observable.fromCallable {
+            token.issue(to, amount).send()
+        }.onErrorReturn {
             // If error occur we return empty transaction receipt response and triggering event with error which we got
             EventBus.getDefault().post(ErrorEvent("issueTokensTo: " + it.message))
             TransactionReceipt()
-        }
-        .subscribeOn(Schedulers.io()).subscribe { event ->
-            val transaction = event as TransactionReceipt
-            EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "", transaction.getBlockNumber().toLong(), transaction.transactionHash, tokenContractAddress))
+        }.subscribeOn(Schedulers.io()).subscribe {
+            if (it is EmptyTransactionReceipt) {
+                EventBus.getDefault().postSticky(PendingTransactionEvent(to, amount.toLong(), "Pending ...", Long.MAX_VALUE, it.transactionHash, tokenContractAddress))
+            }
         }
     }
 
@@ -398,13 +424,13 @@ class Web3jManager private constructor() {
 
     private fun emitTransactionEvent(log: Token.TransferEventResponse, address: String, tokenAddress: String) {
         if (log._value != null && log._from != null && log._to != null && log._transactionId != null && log._blockNumber != null)
-            if(log._to.equals(address) || ValletApp.isAdmin)
+            if (log._to.equals(address) || ValletApp.isAdmin)
                 EventBus.getDefault().post(TransferVoucherEvent(address, log._transactionId as String, log._to as String, log._value as BigInteger, log._blockNumber as BigInteger, tokenAddress))
     }
 
     private fun emitRedeemEvent(log: Token.RedeemEventResponse, address: String, tokenAddress: String) {
         if (log._value != null)
-            if(log._from.equals(address) || ValletApp.isAdmin )
+            if (log._from.equals(address) || ValletApp.isAdmin)
                 EventBus.getDefault().post(RedeemVoucherEvent(address, log._transactionId as String, log._from as String, log._value as BigInteger, log._blockNumber as BigInteger, tokenAddress))
     }
 

@@ -19,6 +19,9 @@ data class ValletTransaction(@Id var id: Long, var name: String, val value: Long
             if (user != null) {
                 text = what + user.name
             }
+            if (this.blockNumber == Long.MAX_VALUE) {
+                text += " ..."
+            }
             return text
         } else {
             var what = "Received"
