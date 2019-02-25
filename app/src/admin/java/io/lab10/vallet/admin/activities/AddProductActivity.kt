@@ -59,8 +59,6 @@ class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragmen
         }
     }
 
-    val REQUEST_IMAGE_CAPTURE = 101;
-
     val TAG = AddProductActivity::class.java.name
     private var pendingIntent: PendingIntent? = null
     private var nfcAdapter: NfcAdapter? = null
@@ -170,33 +168,6 @@ class AddProductActivity : AppCompatActivity(), IPickResult, NFCTagDialogFragmen
             finish()
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), MY_PERMISSIONS_REQUEST_CAMERA);
-        }
-    }
-
-    var MY_PERMISSIONS_REQUEST_CAMERA = 101
-
-
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_CAMERA -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Do nothing
-                } else {
-                    finish()
-                }
-                return
-            }
-
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
-            else -> {
-                // Ignore all other requests.
-            }
-        }
     }
 
     companion object {

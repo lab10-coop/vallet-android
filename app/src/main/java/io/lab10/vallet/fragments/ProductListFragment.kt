@@ -57,19 +57,7 @@ class ProductListFragment : Fragment() {
             EventBus.getDefault().post(RefreshBalanceEvent())
         }
 
-        setupPermissions()
         return view
-    }
-
-    private fun setupPermissions() {
-        val permission = ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.CAMERA)
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    arrayOf(Manifest.permission.CAMERA),
-                    MY_CAMERA_REQUEST_CODE)
-        }
     }
 
     override fun onAttach(context: Context?) {

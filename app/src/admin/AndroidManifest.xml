@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.lab10.vallet">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-
     <application
         android:name=".ValletApp"
         android:allowBackup="true"
