@@ -30,8 +30,6 @@ import java.math.BigInteger
 import io.lab10.vallet.admin.adapters.MainPagerAdapter
 import io.lab10.vallet.connectivity.BTUtils
 import java.lang.Exception
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import io.lab10.vallet.utils.Formatter
 import io.lab10.vallet.utils.NetworkUtils
 import it.lamba.random.nextAlphanumericString
@@ -59,7 +57,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_admin)
 
         setDefaultConfiguration()
