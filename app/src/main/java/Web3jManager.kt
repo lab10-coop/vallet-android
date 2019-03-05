@@ -1,6 +1,7 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.crashlytics.android.Crashlytics
 import io.lab10.vallet.R
 import io.lab10.vallet.Token
 import io.lab10.vallet.ValletApp
@@ -106,6 +107,7 @@ class Web3jManager private constructor() {
                     .sendAsync()
                     .get()
         } catch (error: Exception) {
+            Crashlytics.logException(error)
             EventBus.getDefault().post(ErrorEvent("Error: fetch balance: " + error.message))
             return null
         }
@@ -123,6 +125,7 @@ class Web3jManager private constructor() {
             // and the active token is not set. When we will support multi tokens this could change
             tokenFactory.tokenCreatedEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io()).onErrorReturn {
+                        Crashlytics.logException(it)
                         // If error occur we return empty token create event response and triggering event with error which we got
                         EventBus.getDefault().post(ErrorEvent("getTokenContractAddress: " + it.message))
                         TokenFactory.TokenCreatedEventResponse()
@@ -150,6 +153,8 @@ class Web3jManager private constructor() {
                     token.totalSupply().send()
                 }.subscribeOn(Schedulers.io())
                 .onErrorReturn {
+                    Crashlytics.logException(it)
+
                     // If error occur we return zero value and triggering event with error which we got
                     EventBus.getDefault().post(ErrorEvent("getCirculatingVoucher: " + it.message))
                     BigInteger.ZERO
@@ -159,6 +164,7 @@ class Web3jManager private constructor() {
                 }
             }
         } catch (e: Exception) {
+            Crashlytics.logException(e)
             if (e.message != null)
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
@@ -177,6 +183,7 @@ class Web3jManager private constructor() {
                 token.name().send()
             }
             .onErrorReturn {
+                Crashlytics.logException(it)
                 // If error occur we return empty string and triggering event with error which we got
                 EventBus.getDefault().post(ErrorEvent("getTokenName: " + it.message))
                 ""
@@ -185,6 +192,7 @@ class Web3jManager private constructor() {
                 EventBus.getDefault().post(TokenNameEvent(result, tokenAddress))
             }
         } catch (e: Exception) {
+            Crashlytics.logException(e)
             if (e.message != null)
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
@@ -200,6 +208,7 @@ class Web3jManager private constructor() {
                 token.symbol().send()
             }
             .onErrorReturn {
+                Crashlytics.logException(it)
                 // If error occur we return empty string and triggering event with error which we got
                 EventBus.getDefault().post(ErrorEvent("getTokenType: " + it.message))
                 ""
@@ -208,6 +217,7 @@ class Web3jManager private constructor() {
                 EventBus.getDefault().post(TokenTypeEvent(result, tokenAddress))
             }
         } catch (e: Exception) {
+            Crashlytics.logException(e)
             if (e.message != null)
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
@@ -232,10 +242,12 @@ class Web3jManager private constructor() {
                 try {
                     token.balanceOf(address).send()
                 } catch (e: ContractCallException) {
+                    Crashlytics.logException(e)
                     return@fromCallable BigInteger.ZERO;
                 }
             }
             .onErrorReturn {
+                Crashlytics.logException(it)
                 // If error occur we return zero value and triggering event with error which we got
                 EventBus.getDefault().post(ErrorEvent("getClientBalance: " + it.message))
                 error = true
@@ -258,6 +270,7 @@ class Web3jManager private constructor() {
             token.transferEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io())
                     .onErrorReturn {
+                        Crashlytics.logException(it)
                         // If error occur we return empty token transfer response and triggering event with error which we got
                         EventBus.getDefault().post(ErrorEvent("fetchIssuedTransactions: " + it.message))
                         Token.TransferEventResponse()
@@ -270,6 +283,7 @@ class Web3jManager private constructor() {
             token.redeemEventObservable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
                     .subscribeOn(Schedulers.io())
                     .onErrorReturn {
+                        Crashlytics.logException(it)
                         // If error occur we return empty token redeem response and triggering event with error which we got
                         EventBus.getDefault().post(ErrorEvent("fetchRedeemTransactions: " + it.message))
                         Token.RedeemEventResponse()
@@ -280,6 +294,7 @@ class Web3jManager private constructor() {
                     }
 
         } catch (e: Exception) {
+            Crashlytics.logException(e)
             if (e.message != null)
                 EventBus.getDefault().post(ErrorEvent(e.message.toString()))
 
@@ -295,6 +310,7 @@ class Web3jManager private constructor() {
             tokenFactory.createTokenContract(name, symbol, decimal.toBigInteger()).send()
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
+            Crashlytics.logException(it)
             // If error occur we return empty transaction receipt response and triggering event with error which we got
             EventBus.getDefault().post(ErrorEvent("generateNewToken: " + it.message))
             TransactionReceipt()
@@ -316,6 +332,7 @@ class Web3jManager private constructor() {
             var base32ipfsAddress = Base58Util.decode(ipfsAddress)
             token.setPriceListAddress(base32ipfsAddress.drop(2).toByteArray()).send()
         }.onErrorReturn {
+            Crashlytics.logException(it)
             EventBus.getDefault().post(ErrorEvent("storePriceList: " + it.message))
             TransactionReceipt()
 
@@ -336,6 +353,7 @@ class Web3jManager private constructor() {
         Single.fromCallable {
             token.priceListAddress.send()
         }.onErrorReturn {
+            Crashlytics.logException(it)
             EventBus.getDefault().post((ErrorEvent("fetchPriceListAddress: " + it.message)))
             "".toByteArray()
         }
@@ -357,6 +375,7 @@ class Web3jManager private constructor() {
             getConnection(context).ethGetLogs(filter).send()
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
+            Crashlytics.logException(it)
             // If error occur we return empty EthLog and triggering event with error which we got
             EventBus.getDefault().post(ErrorEvent("poolTokenCreate: " + it.message))
             EthLog()
@@ -393,6 +412,7 @@ class Web3jManager private constructor() {
         Observable.fromCallable {
             token.issue(to, amount).send()
         }.onErrorReturn {
+            Crashlytics.logException(it)
             // If error occur we return empty transaction receipt response and triggering event with error which we got
             EventBus.getDefault().post(ErrorEvent("issueTokensTo: " + it.message))
             TransactionReceipt()
@@ -411,6 +431,7 @@ class Web3jManager private constructor() {
             token.redeem(amount).send()
         }.subscribeOn(Schedulers.io())
         .onErrorReturn {
+            Crashlytics.logException(it)
             // If error occur we return empty transaction receipt response and triggering event with error which we got
             EventBus.getDefault().post(ErrorEvent("redeemToken: " + it.message))
             TransactionReceipt()

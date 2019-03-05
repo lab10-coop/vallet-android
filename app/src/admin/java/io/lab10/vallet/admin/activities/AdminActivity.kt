@@ -12,6 +12,7 @@ import io.lab10.vallet.R
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
 import io.lab10.vallet.ValletApp
@@ -154,6 +155,7 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onError(event: ErrorEvent) {
+        Crashlytics.log(event.message)
         Toast.makeText(this, "Error: " + event.message, Toast.LENGTH_LONG).show()
         if (progress_overlay.visibility == View.VISIBLE) {
             progress_overlay.visibility = View.GONE
