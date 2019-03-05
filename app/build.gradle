@@ -25,15 +25,15 @@ android {
     productFlavors {
         client {
             applicationId "io.lab10.vallet"
-            versionCode 32
-            versionName "5.3.0"
+            versionCode 33
+            versionName "5.3.1"
             dimension "free"
         }
 
         admin {
             applicationId "io.lab10.vallet.admin"
-            versionCode 35
-            versionName "5.3.0"
+            versionCode 36
+            versionName "5.3.1"
             dimension "free"
         }
         staging {
