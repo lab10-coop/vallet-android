@@ -62,6 +62,13 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+
+        // Initialization of ObjectBox should happen always when the app starts
+        // But for some reason during the lifecycle of the app happens that the onCreate()
+        // is not triggered and the box is null. To avoid that issue we are triggering initialization
+        // manually while the screens pops up.
+        ValletApp.initBox(this)
+
         setDefaultConfiguration()
 
         if (ValletApp.wallet == null) {
