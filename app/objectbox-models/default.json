@@ -1,0 +1,215 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:961455571563707317",
+      "lastPropertyId": "4:8246198060297366723",
+      "name": "Wallet",
+      "properties": [
+        {
+          "id": "1:121617030561852295",
+          "name": "id"
+        },
+        {
+          "id": "2:2289824704305199738",
+          "name": "name"
+        },
+        {
+          "id": "3:7171476199036033522",
+          "name": "address"
+        },
+        {
+          "id": "4:8246198060297366723",
+          "name": "filePath"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:6299487256778261116",
+      "lastPropertyId": "7:146880691668768071",
+      "name": "Product",
+      "properties": [
+        {
+          "id": "1:1871981470646656517",
+          "name": "id"
+        },
+        {
+          "id": "2:7434739394633284966",
+          "name": "name"
+        },
+        {
+          "id": "3:2118269378344445937",
+          "name": "price"
+        },
+        {
+          "id": "4:622070860699404318",
+          "name": "imagePath"
+        },
+        {
+          "id": "6:6980992508127323319",
+          "name": "nfcTagId"
+        },
+        {
+          "id": "7:146880691668768071",
+          "indexId": "1:3169211028735691487",
+          "name": "tokenId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:1048981574448340261",
+      "lastPropertyId": "7:2683031133902010471",
+      "name": "ValletTransaction",
+      "properties": [
+        {
+          "id": "1:2673049178684679034",
+          "name": "id"
+        },
+        {
+          "id": "2:3428286484034965835",
+          "name": "name"
+        },
+        {
+          "id": "3:5264842209465144975",
+          "name": "value"
+        },
+        {
+          "id": "4:1681541425377972423",
+          "name": "blockNumber"
+        },
+        {
+          "id": "5:5484091951038351074",
+          "name": "transactionId"
+        },
+        {
+          "id": "6:1791985192364766113",
+          "name": "to"
+        },
+        {
+          "id": "7:2683031133902010471",
+          "name": "tokenAddress"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:8509821240309415273",
+      "lastPropertyId": "10:4499962931172381378",
+      "name": "Token",
+      "properties": [
+        {
+          "id": "1:6513246291984985124",
+          "name": "id"
+        },
+        {
+          "id": "2:4082288135748724852",
+          "name": "name"
+        },
+        {
+          "id": "3:4278627379460590508",
+          "name": "tokenAddress"
+        },
+        {
+          "id": "4:5108017059875763364",
+          "name": "balance"
+        },
+        {
+          "id": "5:5159792291438576983",
+          "name": "tokenType"
+        },
+        {
+          "id": "7:5354980152592043158",
+          "name": "active"
+        },
+        {
+          "id": "8:6596084467134744859",
+          "name": "lastBlockNumber"
+        },
+        {
+          "id": "9:3070949953924856172",
+          "name": "secret"
+        },
+        {
+          "id": "10:4499962931172381378",
+          "name": "ipnsAddress"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "9:3110718393909371468",
+      "lastPropertyId": "3:3786724431179769142",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:407856251025049582",
+          "name": "id"
+        },
+        {
+          "id": "2:7294846662274642406",
+          "name": "name"
+        },
+        {
+          "id": "3:3786724431179769142",
+          "name": "address"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "10:7634865669838826319",
+      "lastPropertyId": "3:7797209549916819900",
+      "name": "Configuration",
+      "properties": [
+        {
+          "id": "1:5800486303920339317",
+          "name": "id"
+        },
+        {
+          "id": "2:8600442871349096025",
+          "name": "name"
+        },
+        {
+          "id": "3:7797209549916819900",
+          "name": "value"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "10:7634865669838826319",
+  "lastIndexId": "1:3169211028735691487",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [
+    8735894899753112586,
+    4093251613525158067,
+    5584289902344333225,
+    1205349777003355037
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    4329720577719199054,
+    4780918379532738769,
+    6975404502602929531,
+    2094429391203473460,
+    5122517945900316134,
+    70166649189242427,
+    7170869420175495596,
+    4869935411822921406,
+    7720146832400696878,
+    4654303676056407493,
+    1234992429738266155,
+    3113158673813736832,
+    3634362082042196144,
+    3857269698756674989
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
