@@ -20,9 +20,9 @@
             tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/picker_provider_paths" />
+                android:resource="@xml/picker_provider_paths"
+                tools:replace="android:resource"/>
         </provider>
-
 
         <activity
             android:name=".admin.activities.AdminActivity"
