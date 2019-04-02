@@ -2,6 +2,10 @@ package io.lab10.vallet
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import io.lab10.vallet.activites.BackupActivity
+import io.lab10.vallet.activites.RestoreActivity
 import io.lab10.vallet.models.MyObjectBox
 import io.lab10.vallet.models.Token
 import io.lab10.vallet.models.Token_
@@ -56,8 +60,13 @@ open class ValletApp : Application() {
         }
 
         fun initBox(context: Context) {
-            if (box == null) {
+            try {
+            if (box == null || box!!.isClosed) {
                 box = MyObjectBox.builder().androidContext(context).build()
+            } } catch (e: java.lang.Exception) {
+                Toast.makeText(context, "The database is corrupted can't start the app. Error: " + e.message, Toast.LENGTH_LONG).show()
+                val intent = Intent(context, RestoreActivity::class.java)
+                context.startActivity(intent)
             }
         }
 
@@ -70,8 +79,14 @@ open class ValletApp : Application() {
     }
 
     fun initBox() {
-        if (box == null) {
-            box = MyObjectBox.builder().androidContext(this).build()
+        try {
+            if (box == null) {
+                box = MyObjectBox.builder().androidContext(this).build()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "The database is corrupted can't start the app. Error: " + e.message, Toast.LENGTH_LONG).show()
+            val intent = Intent(this, BackupActivity::class.java)
+            startActivity(intent)
         }
     }
 

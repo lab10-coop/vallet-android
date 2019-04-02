@@ -18,27 +18,18 @@ class WelcomeActivity : AppCompatActivity() {
         Fabric.with(this, Crashlytics())
         setContentView(R.layout.activity_welcome)
 
-        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
-        val backupPerformed = sharedPref.getBoolean(getString(R.string.shared_pref_backup), false)
+        // Initialization of ObjectBox should happen always when the app starts
+        // But for some reason during the lifecycle of the app happens that the onCreate()
+        // is not triggered and the box is null. To avoid that issue we are triggering initialization
+        // manually while the screens pops up.
+        ValletApp.initBox(this)
 
-        if (!backupPerformed) {
-            val intent = Intent(this, BackupActivity::class.java)
+        if (ValletApp.activeToken != null) {
+            val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         } else {
-
-            // Initialization of ObjectBox should happen always when the app starts
-            // But for some reason during the lifecycle of the app happens that the onCreate()
-            // is not triggered and the box is null. To avoid that issue we are triggering initialization
-            // manually while the screens pops up.
-            ValletApp.initBox(this)
-
-            if (ValletApp.activeToken != null) {
-                val intent = Intent(this, AdminActivity::class.java)
-                startActivity(intent)
-            } else {
-                val intent = Intent(this, CreateTokenActivity::class.java)
-                startActivity(intent)
-            }
+            val intent = Intent(this, CreateTokenActivity::class.java)
+            startActivity(intent)
         }
     }
 }

@@ -1,6 +1,7 @@
 package io.lab10.vallet.admin.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
 import io.lab10.vallet.ValletApp
+import io.lab10.vallet.activites.BackupActivity
 import io.lab10.vallet.admin.fragments.*
 import io.lab10.vallet.models.User
 import io.lab10.vallet.events.*
@@ -34,6 +36,7 @@ import java.lang.Exception
 import io.lab10.vallet.utils.Formatter
 import io.lab10.vallet.utils.NetworkUtils
 import it.lamba.random.nextAlphanumericString
+import java.io.File
 import kotlin.random.Random
 
 class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentInteractionListener,
@@ -286,6 +289,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
                     startActivity(intent)
                     return true
                 }
+                R.id.menu_backup -> {
+                    val intent = Intent(this, BackupActivity::class.java)
+                    startActivity(intent)
+                    return true
+                }
                 else -> return super.onOptionsItemSelected(item)
             }
         } else {
@@ -335,17 +343,19 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
     }
 
     private fun createWallet() {
-        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
-        val alhpanum: String = Random.nextAlphanumericString()
+        val password: String = Random.nextAlphanumericString()
+        val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
 
-        configBox.put(Configuration(0, "walletPassword", alhpanum))
+        // Store password for the wallet file in shared pref in case if the db wil be corrupted that we can restore
+        val editor = sharedPref.edit()
+        editor.putString(resources.getString(R.string.shared_pref_wallet_password), password)
+        editor.commit()
 
-        val passwordConfig = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()
-
-        val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
+        val walletFile = Web3jManager.INSTANCE.createWallet(this, password)
         val walletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
         ValletApp.wallet = Wallet(0, "Main", walletAddress, walletFile)
     }
+
 
     private fun prepareHeader() {
         setSupportActionBar(toolbar);

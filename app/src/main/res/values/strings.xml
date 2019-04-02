@@ -60,7 +60,9 @@
     <string name="shared_pref_backup">backup</string>
     <string name="backup">Backup Now</string>
     <string name="backup_explanation">To backup your Vallet please type password on top of the screen and then press backup. This what would happen is that your Vallet data would be encrypted with that password and you would be able to securely send that content via email or store in any location. To restore it just paste it below and type password again.</string>
-    <string name="restore_desc">To restore please set your password on top of the screen and paste the secret text into the text area below.</string>
+    <string name="restore_desc">To restore please set your password below and paste the secret text into the text area below.</string>
     <string name="restore">Restore now</string>
     <string name="password_hint">Set your password</string>
+    <string name="shared_pref_wallet_password">shared_pref_wallet_password</string>
+    <string name="button_restore">Restore backup</string>
 </resources>

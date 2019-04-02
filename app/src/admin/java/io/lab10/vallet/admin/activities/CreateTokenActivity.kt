@@ -19,6 +19,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
 import android.net.ConnectivityManager
+import io.lab10.vallet.activites.RestoreActivity
 
 class CreateTokenActivity : AppCompatActivity() {
 
@@ -89,6 +90,11 @@ class CreateTokenActivity : AppCompatActivity() {
             val sharedPref = activity.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
             val voucherName = sharedPref.getString(resources.getString(R.string.shared_pref_voucher_name), "")
             rootView.inputVoucherName.setText(voucherName)
+
+            rootView.btn_restore_backup.setOnClickListener {
+                val intent = Intent(rootView.context, RestoreActivity::class.java)
+                startActivity(intent)
+            }
 
             val finishButton = rootView.getStarterd
             finishButton.setOnClickListener() { v ->

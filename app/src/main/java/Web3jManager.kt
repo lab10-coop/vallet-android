@@ -81,9 +81,17 @@ class Web3jManager private constructor() {
         return fileName
     }
 
+    fun restoreWallet(context: Context, password: String, fileName: String, fileContent: String) : String {
+        val appDirectory = context.filesDir
+
+        val destination = File(appDirectory, fileName)
+        destination.writeText(fileContent)
+        return fileName
+    }
+
     fun loadCredential(context: Context): Credentials? {
-        val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
-        val password = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()!!.value
+        val sharedPref = context.getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+        val password = sharedPref.getString(context.resources.getString(R.string.shared_pref_wallet_password), "")
 
         val walletFile = ValletApp.wallet!!.filePath
         if (walletFile != "") {
