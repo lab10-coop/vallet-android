@@ -35,14 +35,18 @@ class BackupActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
             val keyPass = sharedPref.getString(resources.getString(R.string.shared_pref_wallet_password), "")
             val fileName = ValletApp.wallet!!.filePath
-            val storeName = ValletApp.activeToken!!.name
-            val storeAddress = ValletApp.activeToken!!.tokenAddress
+            // In case of Admin app it is store name, for user app it is user name
+            val name = ValletApp.wallet!!.name
+            var smartContractAddress = ""
+            if (ValletApp.activeToken != null) {
+                smartContractAddress = ValletApp.activeToken!!.tokenAddress
+            }
             val walletFileContent = File(filesDir, fileName).inputStream().readBytes().toString(Charsets.UTF_8)
             var inputForEncryption = String(Base64.encode(fileName.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)) + "]"
             inputForEncryption += String(Base64.encode(walletFileContent.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)) + "]"
             inputForEncryption += String(Base64.encode(keyPass.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)) + "]"
-            inputForEncryption += String(Base64.encode(storeName.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)) + "]"
-            inputForEncryption += String(Base64.encode(storeAddress.toByteArray(Charsets.UTF_8), Base64.NO_WRAP))
+            inputForEncryption += String(Base64.encode(name.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)) + "]"
+            inputForEncryption += String(Base64.encode(smartContractAddress.toByteArray(Charsets.UTF_8), Base64.NO_WRAP))
 
             val secureKey = encrypt(inputForEncryption, edit_backup_password.text.toString())
 

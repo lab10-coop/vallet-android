@@ -10,6 +10,8 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
+        <activity android:name="io.lab10.vallet.RestoreActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name="io.lab10.vallet.WelcomeActivity"
             android:noHistory="true"

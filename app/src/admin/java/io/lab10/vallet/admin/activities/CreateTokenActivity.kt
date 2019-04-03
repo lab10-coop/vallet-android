@@ -2,24 +2,21 @@ package io.lab10.vallet.admin.activities
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-
+import android.net.ConnectivityManager
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.lab10.vallet.R
-
-import kotlinx.android.synthetic.admin.activity_voucher.*
 import android.widget.Toast
+import io.lab10.vallet.R
+import kotlinx.android.synthetic.admin.activity_voucher.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.*
 import kotlinx.android.synthetic.admin.fragment_voucher_name.view.*
-import android.net.ConnectivityManager
-import io.lab10.vallet.activites.RestoreActivity
 
 class CreateTokenActivity : AppCompatActivity() {
 

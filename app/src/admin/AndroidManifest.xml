@@ -23,7 +23,8 @@
                 android:resource="@xml/picker_provider_paths"
                 tools:replace="android:resource"/>
         </provider>
-
+        <activity android:name=".admin.activities.RestoreActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".admin.activities.AdminActivity"
             android:label="@string/app_name"

@@ -25,5 +25,10 @@ class CreateUserActivity : AppCompatActivity() {
                 Toast.makeText(this, resources.getString(R.string.create_user_error), Toast.LENGTH_LONG).show()
             }
         }
+
+        btn_restore_backup.setOnClickListener {
+            val intent = Intent(this, RestoreActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

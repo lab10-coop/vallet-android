@@ -81,7 +81,7 @@ class Web3jManager private constructor() {
         return fileName
     }
 
-    fun restoreWallet(context: Context, password: String, fileName: String, fileContent: String) : String {
+    fun restoreWallet(context: Context, fileName: String, fileContent: String) : String {
         val appDirectory = context.filesDir
 
         val destination = File(appDirectory, fileName)

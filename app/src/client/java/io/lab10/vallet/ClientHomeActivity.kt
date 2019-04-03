@@ -5,6 +5,7 @@ import Web3jManager
 import android.app.Activity
 import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.nfc.NfcAdapter
@@ -26,6 +27,7 @@ import android.widget.Toast
 import com.crashlytics.android.Crashlytics
 import com.google.zxing.integration.android.IntentIntegrator
 import io.ValletUriParser
+import io.lab10.vallet.activites.BackupActivity
 import io.lab10.vallet.activites.HistoryActivity
 import io.lab10.vallet.connectivity.BTUtils
 import io.lab10.vallet.events.*
@@ -62,13 +64,6 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-
-        // Initialization of ObjectBox should happen always when the app starts
-        // But for some reason during the lifecycle of the app happens that the onCreate()
-        // is not triggered and the box is null. To avoid that issue we are triggering initialization
-        // manually while the screens pops up.
-        ValletApp.initBox(this)
-
         setDefaultConfiguration()
 
         if (ValletApp.wallet == null) {
@@ -77,14 +72,15 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 username = intent.extras.getString(CreateUserActivity.NAME_EXTRA)
             }
 
-            val configBox = ValletApp.getBoxStore().boxFor(Configuration::class.java)
-            val alhpanum: String = Random.nextAlphanumericString()
+            val password: String = Random.nextAlphanumericString()
 
-            configBox.put(Configuration(0, "walletPassword", alhpanum))
+            val sharedPref = getSharedPreferences("voucher_pref", Context.MODE_PRIVATE)
+            // Store password for the wallet file in shared pref in case if the db wil be corrupted that we can restore
+            val editor = sharedPref.edit()
+            editor.putString(resources.getString(R.string.shared_pref_wallet_password), password)
+            editor.commit()
 
-            val passwordConfig = configBox.query().equal(Configuration_.name, "walletPassword").build().findFirst()
-
-            val walletFile = Web3jManager.INSTANCE.createWallet(this, passwordConfig!!.value)
+            val walletFile = Web3jManager.INSTANCE.createWallet(this, password)
             voucherWalletAddress = Web3jManager.INSTANCE.getWalletAddressFromFile(walletFile)
             ValletApp.wallet = Wallet(0, username, voucherWalletAddress, walletFile)
             FaucetManager.INSTANCE.getFounds(this, ValletApp.wallet!!.address)
@@ -225,6 +221,16 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         qrMenu.title = s
         qrMenu.setOnMenuItemClickListener { _ ->
             val intent = Intent(this, ShowQrCodeActivity::class.java)
+            startActivity(intent)
+            true
+        }
+        val backup = menu.add(2,2,5, resources.getString(R.string.backup))
+        txt = resources.getString(R.string.backup)
+        s = SpannableString(txt)
+        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.blue)), 0, txt.length, 0);
+        backup.title = s
+        backup.setOnMenuItemClickListener { _ ->
+            val intent = Intent(this, BackupActivity::class.java)
             startActivity(intent)
             true
         }
