@@ -262,6 +262,15 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         IssueDialogFragment.newInstance(event.user).show(supportFragmentManager, event.user.name)
     }
 
+    @Subscribe
+    fun onPriceListEvent(event: PriceListAddressEvent) {
+        val tokenBox = ValletApp.getBoxStore().boxFor(Token::class.java)
+        val token = tokenBox.query().equal(Token_.tokenAddress, event.tokenAddress).build().findFirst()
+        token!!.ipnsAddress = event.ipfsAddress
+        tokenBox.put(token)
+        token.storage().fetch(token.ipnsAddress)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this);

@@ -20,6 +20,7 @@ import io.lab10.vallet.events.*
 import io.lab10.vallet.fragments.ProductListFragment
 import io.lab10.vallet.models.Products
 import io.lab10.vallet.models.Token
+import io.lab10.vallet.utils.NetworkUtils
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -153,7 +154,12 @@ class PriceListFragment : Fragment() {
 
         if (token != null) {
             var productFragment = childFragmentManager.findFragmentById(R.id.product_fragment) as ProductListFragment
-            productFragment.swiperefresh.isRefreshing = true;
+            productFragment.swiperefresh.isRefreshing = true
+
+            NetworkUtils.doAsync {
+                Web3jManager.INSTANCE.fetchPriceListAddress(context, ValletApp.activeToken!!.tokenAddress)
+            }
+
 
             // Load first from local storage
             Products.refresh(token!!)
