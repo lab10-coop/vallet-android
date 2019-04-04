@@ -160,16 +160,10 @@ class PriceListFragment : Fragment() {
                 Web3jManager.INSTANCE.fetchPriceListAddress(context, ValletApp.activeToken!!.tokenAddress)
             }
 
-
-            // Load first from local storage
+            // Load first from local storage, above call would trigger fetch async from remote
             Products.refresh(token!!)
             productFragment.notifyAboutchange()
             productFragment.swiperefresh.isRefreshing = false
-            if (token!!.remoteWriteStoragePresent()) {
-                token.storage().fetch(token.ipnsAddress)
-            } else {
-                token.storage().create()
-            }
         }
     }
 }

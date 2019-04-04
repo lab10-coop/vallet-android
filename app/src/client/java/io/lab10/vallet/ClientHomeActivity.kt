@@ -477,8 +477,6 @@ class ClientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     NetworkUtils.doAsync {
                         Web3jManager.INSTANCE.fetchPriceListAddress(this, ValletApp.activeToken!!.tokenAddress)
                     }
-
-
                 }
             }
         }

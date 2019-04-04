@@ -211,11 +211,6 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
 
             progress_overlay.visibility = View.GONE
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-
-            // prepare remote storage
-            Thread(Runnable {
-                voucher.storage().create()
-            }).start()
         }
     }
 
@@ -268,7 +263,11 @@ class AdminActivity : AppCompatActivity(), HomeActivityFragment.OnFragmentIntera
         val token = tokenBox.query().equal(Token_.tokenAddress, event.tokenAddress).build().findFirst()
         token!!.ipnsAddress = event.ipfsAddress
         tokenBox.put(token)
-        token.storage().fetch(token.ipnsAddress)
+        if (token!!.remoteWriteStoragePresent()) {
+            token.storage().fetch(token.ipnsAddress)
+        } else {
+            token.storage().create()
+        }
     }
 
     override fun onDestroy() {
