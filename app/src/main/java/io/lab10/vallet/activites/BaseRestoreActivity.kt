@@ -29,7 +29,7 @@ open class BaseRestoreActivity : AppCompatActivity() {
     }
 
     open fun performRestore() {
-        try {
+
             if (edit_restore_secret.text.length < 10) {
                 Toast.makeText(this, "Seems like the restore secret is empty, please paste it in the text area", Toast.LENGTH_LONG).show()
             } else {
@@ -50,9 +50,7 @@ open class BaseRestoreActivity : AppCompatActivity() {
                 ValletApp.initBox(this)
                 restoreWallet(password, fileName, fileContent, name, smartContractAddress)
             }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Seems like the content is not valid backup", Toast.LENGTH_LONG).show()
-        }
+
     }
 
     private fun decrypt(ciphertext: String, password: String): List<String> {
